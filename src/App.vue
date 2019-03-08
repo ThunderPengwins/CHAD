@@ -1,9 +1,11 @@
 <template>
   <div id="app">
     <div class="bkgd">
-      <h1 id="title">Is this working?</h1>
+      <h1 id="title">insert CHAD logo here</h1>
       <p class ="words">
-        Welcome to CHAD!<br/>This is where you do all of your autonomous coding forever more.
+        &emsp;&emsp;&emsp;Welcome to CHAD! CHAD is online FTC autonomous program builder,
+        meant to help program all movement in autonomous programs. CHAD works with four different types of chasses,
+        which are shown below.
       </p>
     </div>
   </div>
@@ -46,5 +48,6 @@ export default {
 .words{
   text-align: left;
   margin-left: 3%;
+  font-family: 'Montserrat', sans-serif;
 }
 </style>
