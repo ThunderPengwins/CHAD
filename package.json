@@ -11,7 +11,8 @@
     "material-design-icons-iconfont": "^3.0.3",
     "roboto-fontface": "*",
     "vue": "^2.6.6",
-    "vuetify": "^1.5.5"
+    "vue-router": "^3.0.1",
+    "vuetify": "^1.5.7"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.4.0",
