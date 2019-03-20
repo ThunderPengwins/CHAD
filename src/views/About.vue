@@ -1,7 +1,7 @@
 <template>
   <div class="about">
-      <a href="#/About" target="_blank" class="words"><img src="https://cdn.shopify.com/s/files/1/1061/1924/products/Gift_Present_Emoji_large.png?v=1480481039" alt="Whoops">
-</a><h1 class="words">Click the present to open it!</h1>
+      <a href="/assets/Miscellaneous/EncoderTest.java" download class="words"><img src="https://cdn.shopify.com/s/files/1/1061/1924/products/Gift_Present_Emoji_large.png?v=1480481039" alt="Whoops">
+</a><h1 class="words">Click the present to download code!</h1>
   </div>
 </template>
 

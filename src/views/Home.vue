@@ -16,20 +16,26 @@
         In addition to having one of these four chasses, you must have encoders and a gyro
         in order for CHAD to work. If you fit these requirements, follow these steps to get started:<br/>
         &emsp;&emsp;&emsp;1.&emsp;Click Start! and choose your chassis<br/>
-        &emsp;&emsp;&emsp;2.&emsp;Enter your encoder count to wheel circumference radius in the input box 
-        (download these files and follow instructions to find it: <a href="#/About" target="_blank">super special suprise</a>)<br/>
+        &emsp;&emsp;&emsp;2.&emsp;Enter your encoder count to wheel circumference ratio in the input box 
+        (follow these instructions to find it: <a href="About" target="_blank">super special suprise</a>)<br/>
         &emsp;&emsp;&emsp;3.&emsp;Click a movement icon to add a step to your autonomous<br/>
         &emsp;&emsp;&emsp;4.&emsp;Enter the neccesary inputs to complete the step<br/>
         &emsp;&emsp;&emsp;5.&emsp;Repeat steps 3 and 4 until you're finished building your autonomous<br/>
         &emsp;&emsp;&emsp;6.&emsp;Click generate code to get automatically generated code!<br/>
       </p>
     </div>
+    <bottom-navigation>
+    </bottom-navigation>
   </div>
 </template>
 
 <script>
+import BottomNavigation from '@/components/BottomNavigation'
 export default {
-    name: 'Home'
+    name: 'Home',
+    components: {
+    BottomNavigation
+  }
 }
 </script>
 
