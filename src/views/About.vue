@@ -1,5 +1,15 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+      <a href="#/About" target="_blank" class="words"><img src="https://cdn.shopify.com/s/files/1/1061/1924/products/Gift_Present_Emoji_large.png?v=1480481039" alt="Whoops">
+</a><h1 class="words">Click the present to open it!</h1>
   </div>
 </template>
+
+<style>
+.words{
+  text-align: left;
+  margin: 3%;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+}
+</style>
