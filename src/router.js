@@ -24,6 +24,11 @@ export default new Router({
       path: '/creator',
       name: 'creator',
       component: () => import('./views/Creator.vue')
-    } 
+    },
+    {
+      path: '/tipsninfo',
+      name: 'tipsninfo',
+      component: () => import('./views/TipsNInfo.vue')
+    }
   ]
 })

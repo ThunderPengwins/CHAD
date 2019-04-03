@@ -3,26 +3,21 @@
     <div class="top">
         <img src="@/assets/Pictures/chadLogo.jpg" alt="Logo" class="logo">
     </div>
-    <div class="bkgd">
-      <p class ="words">
-        &emsp;&emsp;&emsp;Welcome to CHAD! CHAD is online FTC autonomous program builder,
-        meant to help program all movement in autonomous programs. CHAD works with four different types of chasses,
-        which are shown below.<br/>
-        <img src="https://cdn10.bigcommerce.com/s-cn6mxlx/products/1459/images/3382/GR-LJ-Chassis-Tracer-Suspension-1200__92452.1509032823.1280.1280.jpg?c=2" alt="First Chassis" class="chaspic">
-        <img src="@/assets/Pictures/4omnitest.jpg" alt="Second Chassis" class="chaspic">
-        <img src="https://ae01.alicdn.com/kf/HTB1D228bx6I8KJjSszfq6yZVXXaG/MT200S-4WD-100mm-Omni-Wheels-Robot-Car-Chassis-Stainsteel-Frame-Big-Power-Motor-For-DIY-Toy.jpg_640x640.jpg" alt="Third Chassis" class="chaspic">
-        <img src="https://www.superdroidrobots.com/images/TP/TP-152-004.jpg" alt="Fourth Chassis" class="chaspic">
-        <br/>
-        In addition to having one of these four chasses, you must have encoders and a gyro
-        in order for CHAD to work. If you fit these requirements, follow these steps to get started:<br/>
-        &emsp;&emsp;&emsp;1.&emsp;Click Start! and choose your chassis<br/>
-        &emsp;&emsp;&emsp;2.&emsp;Enter your encoder count to wheel circumference ratio in the input box 
-        (follow these instructions to find it: <a href="About" target="_blank">super special suprise</a>)<br/>
-        &emsp;&emsp;&emsp;3.&emsp;Click a movement icon to add a step to your autonomous<br/>
-        &emsp;&emsp;&emsp;4.&emsp;Enter the neccesary inputs to complete the step<br/>
-        &emsp;&emsp;&emsp;5.&emsp;Repeat steps 3 and 4 until you're finished building your autonomous<br/>
-        &emsp;&emsp;&emsp;6.&emsp;Click generate code to get automatically generated code!<br/>
-      </p>
+    <div class="topbkgd">
+      <v-carousel  hide-controls height="100%" class="carol">
+        <v-carousel-item
+      v-for="(item,i) in items"
+      :key="i"
+      :src="item.src"
+    ></v-carousel-item>
+    </v-carousel>
+    </div>
+    <h1 class="desc">Select Chassis:</h1>
+    <div class="bottom">
+     <v-btn color="rgba(100,230,209)" outline class="baton">Hello</v-btn>
+     <v-btn color="rgba(100,230,209)" outline class="baton">Hello</v-btn>
+     <v-btn color="rgba(100,230,209)" outline class="baton">Hello</v-btn>
+     <v-btn color="rgba(100,230,209)" outline class="baton">Hello</v-btn>
     </div>
     <bottom-navigation>
     </bottom-navigation>
@@ -32,10 +27,28 @@
 <script>
 import BottomNavigation from '@/components/BottomNavigation'
 export default {
-    name: 'Home',
-    components: {
-    BottomNavigation
-  }
+  name: 'Home',
+  components: {
+      BottomNavigation
+  },
+  data () {
+      return {
+        items: [
+          {
+            src: 'https://static.techspot.com/images2/news/bigimage/2018/07/2018-07-10-image-35.jpg'
+          },
+          {
+            src: 'https://www.brookings.edu/wp-content/uploads/2017/11/metro_20171121_tech-empowers-tech-polarizes-mark-muro.jpg'
+          },
+          {
+            src: 'https://www.homage.sg/wp-content/uploads/2018/09/47724337_l-1080x675.jpg'
+          },
+          {
+            src: 'http://www.sandiego-tech.com/wp-content/uploads/2016/09/tech3.jpg'
+          }
+        ]
+      }
+    }
 }
 </script>
 
@@ -62,16 +75,44 @@ export default {
   position: absolute;
 }
 
-.bkgd{
-  height: 80%;
+.topbkgd{
+  height: 30%;
   width: 94%;
-  top: 10%;
-  margin: 3%;
   position: absolute;
-  border-radius: 5px;
-  background-color: lightgrey;
+  top: 3%;
+  margin: 3%;
+  background-color: rgb(12, 12, 12);
 }
 
+.carol{
+  height: 35%;
+  border-radius: 5px;
+}
+
+.desc{
+  top: 40%;
+  margin: 1%;
+  position: absolute;
+  width: 18%;
+  left: 40%;
+  text-align: center;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.bottom{
+  height: 36%;
+  width: 94%;
+  position: absolute;
+  top: 44%;
+  margin: 3%;
+}
+
+.baton{
+  height: 100%;
+  width: 23%;
+  margin: 1%;
+}
 .words{
   text-align: left;
   margin: 3%;
@@ -89,9 +130,10 @@ export default {
 }
 
 .logo{
-  width: 20%;
+  width: 10%;
   position: absolute;
-  left: 40%;
+  left: 4%;
   top: 1%;
 }
+
 </style>

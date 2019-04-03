@@ -8,9 +8,6 @@
 import BottomNavigation from '@/components/BottomNavigation'
 export default {
   name: 'app',
-  components: {
-    BottomNavigation
-  }
 }
 </script>
 

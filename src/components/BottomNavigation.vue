@@ -4,10 +4,10 @@
       :active.sync="bottomNav"
       :value="true"
       absolute
-      color="transparent"
+      color="white"
     >
       <v-btn
-        color="teal"
+        color="rgba(100,230,209)"
         flat
         value="Home"
         to="/"
@@ -17,7 +17,7 @@
       </v-btn>
 
       <v-btn
-        color="teal"
+        color="rgba(100,230,209)"
         flat
         value="Creator"
         to="/Creator"
@@ -27,12 +27,22 @@
       </v-btn>
 
       <v-btn
-        color="teal"
+        color="rgba(100,230,209)"
+        flat
+        value="Generate"
+      >
+        <span>Generate</span>
+        <v-icon>code</v-icon>
+      </v-btn>
+      
+      <v-btn
+        color="rgba(100,230,209)"
         flat
         value="nearby"
+        to="/TipsNInfo"
       >
-        <span>Nearby</span>
-        <v-icon>place</v-icon>
+        <span>Tips & Info</span>
+        <v-icon>info</v-icon>
       </v-btn>
     </v-bottom-nav>
 </div>
