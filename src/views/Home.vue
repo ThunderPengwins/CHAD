@@ -14,10 +14,10 @@
     </div>
     <h1 class="desc">Select Chassis:</h1>
     <div class="bottom">
-     <v-btn color="rgba(100,230,209)" outline class="baton">Hello</v-btn>
-     <v-btn color="rgba(100,230,209)" outline class="baton">Hello</v-btn>
-     <v-btn color="rgba(100,230,209)" outline class="baton">Hello</v-btn>
-     <v-btn color="rgba(100,230,209)" outline class="baton">Hello</v-btn>
+     <v-btn color="rgba(100,230,209)" outline class="baton">Traction</v-btn>
+     <v-btn color="rgba(100,230,209)" outline class="baton">Omni Wheel</v-btn>
+     <v-btn color="rgba(100,230,209)" outline class="baton">Meccanum</v-btn>
+     <v-btn color="rgba(100,230,209)" outline class="baton">Holonomic</v-btn>
     </div>
     <bottom-navigation>
     </bottom-navigation>

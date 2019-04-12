@@ -3,7 +3,10 @@
     <div class="top">
         <img src="@/assets/Pictures/chadLogo.jpg" class="logo">
     </div>
-    <p>This is a new page?</p>
+    <div class="interface">
+        <input v-model="message" placeholder="Autonomous name" id="in-name"/>
+        <p class="display">Chassis: </p>
+    </div>
     <bottom-navigation>
     </bottom-navigation>
 </div>
@@ -33,5 +36,25 @@ export default {
 
 #bkgd{
     margin: 0%;
+}
+
+.interface{
+    background-color: white;
+    border-radius: 5px;
+    position: absolute;
+    margin: 3%;
+    width: 94%;
+    height: 80%;
+    top: 3%;
+}
+
+#in-name{
+    border: 2px solid gray;
+    border-radius: 4px;
+    position: absolute;
+    padding: 3px;
+    margin: 3%;
+    left: 3%;
+    color: black;
 }
 </style>
