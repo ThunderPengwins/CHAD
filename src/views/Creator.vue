@@ -4,15 +4,23 @@
         <img src="@/assets/Pictures/chadLogo.jpg" class="logo">
     </div>
     <div class="interface">
-        <input v-model="message" placeholder="Autonomous name" id="in-name"/>
-        <div class="cchas"><p class="chassischoice">Chassis: {{ $store.getters.chassis }}</p></div>
-        <v-container class="encoders" grid-list-xl>
+        <v-container class="encoders" fluid>
             <v-layout row wrap>
+                <v-flex align-start sm3>
+                    <input v-model="message" placeholder="Autonomous name" id="in-name"/>
+                </v-flex>
+                <v-flex sm3>
+                    <p class="chassischoice">Chassis: {{ $store.getters.chassis }}</p>
+                </v-flex>
                 <v-flex sm3>
                     <v-overflow-btn outline color="gray" style="margin-top: 0em" height="2em" margin="0em" :items="presets" label="cpi presets" target=".encoders"></v-overflow-btn>
                 </v-flex>
+                <v-flex sm3>
+                    <input type="number" v-model="message" placeholder="Movement bias" id="in-bias"/>
+                </v-flex>
             </v-layout>
         </v-container>
+        
     </div>
     <bottom-navigation>
     </bottom-navigation>
@@ -27,7 +35,7 @@ export default {
     BottomNavigation
   },
   data: () => ({
-      presets: ['Preset 1', 'Preset 2', 'Preset 3', 'Custom']
+      presets: ['Gear ratio: 20', 'Gear ratio: 40', 'Gear ratio: 60', 'Custom']
     })
 }
 </script>
@@ -61,10 +69,15 @@ export default {
 #in-name{
     border: 2px solid gray;
     border-radius: 4px;
-    position: absolute;
     padding: 3px;
-    margin: 3%;
-    left: 3%;
+    color: black;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#in-bias{
+    border: 2px solid gray;
+    border-radius: 4px;
+    padding: 3px;
     color: black;
     font-family: 'Montserrat', sans-serif;
 }
@@ -80,15 +93,17 @@ export default {
     left: 23%;
 }
 
-.encoders{
-    position: absolute;
-    left: 40%;
-    top: 0%;
-    padding: 0%;
-    margin: 0%;
-}
-
 #hope{
     border: 2px solid gray;
 }
+
+#field{
+    top: 10%;
+    position: absolute;
+    width: 40%;
+    height: 40%;
+    left: 10%;
+    background-color: gray;
+}
+
 </style>
