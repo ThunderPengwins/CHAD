@@ -5,7 +5,14 @@
     </div>
     <div class="interface">
         <input v-model="message" placeholder="Autonomous name" id="in-name"/>
-        <p class="display">Chassis: </p>
+        <p class="display">Chassis: {{ $store.getters.chassis }}</p>
+        <v-container class="encoders" grid-list-xl>
+            <v-layout row wrap>
+                <v-flex xs12 sm4>
+                    <v-overflow-btn :items="presets" label="cpi presets" target="#encoders"></v-overflow-btn>
+                </v-flex>
+            </v-layout>
+        </v-container>
     </div>
     <bottom-navigation>
     </bottom-navigation>
@@ -18,7 +25,10 @@ export default {
     name: "Creator",
     components: {
     BottomNavigation
-  }
+  },
+  data: () => ({
+      presets: ['Preset 1', 'Preset 2', 'Preset 3', 'Custom']
+    })
 }
 </script>
 
@@ -56,5 +66,20 @@ export default {
     margin: 3%;
     left: 3%;
     color: black;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.display{
+    position: absolute;
+    margin: 3%;
+    padding: 3px;
+    left: 23%;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#encoders{
+    position: absolute;
+    left: 40%;
+    margin: 3%;
 }
 </style>

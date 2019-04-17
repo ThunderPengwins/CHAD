@@ -14,10 +14,10 @@
     </div>
     <h1 class="desc">Select Chassis:</h1>
     <div class="bottom">
-     <v-btn color="rgba(100,230,209)" outline class="baton">Traction</v-btn>
-     <v-btn color="rgba(100,230,209)" outline class="baton">Omni Wheel</v-btn>
-     <v-btn color="rgba(100,230,209)" outline class="baton">Meccanum</v-btn>
-     <v-btn color="rgba(100,230,209)" outline class="baton">Holonomic</v-btn>
+     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'traction', baton:$store.getters.chassis != 'traction'}" v-on:click="chassisChanged('traction')">traction</v-btn>
+     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'omni wheel', baton:$store.getters.chassis != 'omni wheel'}" v-on:click="chassisChanged('omni wheel')">Omni Wheel</v-btn>
+     <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')" outline>Meccanum</v-btn>
+     <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'holonomic', baton:$store.getters.chassis != 'holonomic'}" v-on:click="chassisChanged('holonomic')" outline>Holonomic</v-btn>
     </div>
     <bottom-navigation>
     </bottom-navigation>
@@ -30,6 +30,11 @@ export default {
   name: 'Home',
   components: {
       BottomNavigation
+  },
+  methods: {
+    chassisChanged: function(chassis){
+      this.$store.commit('changeChassis', chassis)
+    }
   },
   data () {
       return {
@@ -112,7 +117,16 @@ export default {
   height: 100%;
   width: 23%;
   margin: 1%;
+  vertical-align: top;
 }
+
+.betterBaton{
+  height: 100%;
+  width: 23%;
+  margin: 1%;
+  color: red;
+}
+
 .words{
   text-align: left;
   margin: 3%;
