@@ -5,11 +5,11 @@
     </div>
     <div class="interface">
         <input v-model="message" placeholder="Autonomous name" id="in-name"/>
-        <p class="display">Chassis: {{ $store.getters.chassis }}</p>
+        <div class="cchas"><p class="chassischoice">Chassis: {{ $store.getters.chassis }}</p></div>
         <v-container class="encoders" grid-list-xl>
             <v-layout row wrap>
-                <v-flex xs12 sm4>
-                    <v-overflow-btn :items="presets" label="cpi presets" target="#encoders"></v-overflow-btn>
+                <v-flex sm3>
+                    <v-overflow-btn outline color="gray" style="margin-top: 0em" height="2em" margin="0em" :items="presets" label="cpi presets" target=".encoders"></v-overflow-btn>
                 </v-flex>
             </v-layout>
         </v-container>
@@ -69,17 +69,26 @@ export default {
     font-family: 'Montserrat', sans-serif;
 }
 
-.display{
-    position: absolute;
-    margin: 3%;
-    padding: 3px;
-    left: 23%;
+.chassischoice{
     font-family: 'Montserrat', sans-serif;
 }
 
-#encoders{
+.cchas{
+    padding:3px;
+    position: absolute;
+    margin: 3%;
+    left: 23%;
+}
+
+.encoders{
     position: absolute;
     left: 40%;
-    margin: 3%;
+    top: 0%;
+    padding: 0%;
+    margin: 0%;
+}
+
+#hope{
+    border: 2px solid gray;
 }
 </style>
