@@ -6,7 +6,7 @@
     <div class="interface">
         <v-container class="encoders" fluid>
             <v-layout row wrap>
-                <v-flex align-start sm3>
+                <v-flex align-content-start sm3>
                     <input v-model="message" placeholder="Autonomous name" id="in-name"/>
                 </v-flex>
                 <v-flex sm3>
