@@ -13,6 +13,7 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
-    chassis: state => state.chassis
+    chassis: state => state.chassis,
+    isArcingAvail: state => state.chassis=='traction' || state.chassis=='omni wheel'
   }
 })
