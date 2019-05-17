@@ -6,11 +6,13 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 import router from './router'
 import {store} from './store/store'
+import {MovementOptions} from './store/steps'
 
 Vue.config.productionTip = false
 
 new Vue({
   router,
   store,
+  MovementOptions,
   render: h => h(App)
 }).$mount('#app')

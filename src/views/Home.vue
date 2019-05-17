@@ -14,7 +14,7 @@
     </div>
     <h1 class="desc">Select Chassis:</h1>
     <div class="bottom">
-     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'traction', baton:$store.getters.chassis != 'traction'}" v-on:click="chassisChanged('traction')">traction</v-btn>
+     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'traction', baton:$store.getters.chassis != 'traction'}" v-on:click="chassisChanged('traction')"><img src="@/assets/Pictures/Traction.png" alt="traction" class=""/></v-btn>
      <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'omni wheel', baton:$store.getters.chassis != 'omni wheel'}" v-on:click="chassisChanged('omni wheel')">Omni Wheel</v-btn>
      <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')" outline>Meccanum</v-btn>
      <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'holonomic', baton:$store.getters.chassis != 'holonomic'}" v-on:click="chassisChanged('holonomic')" outline>Holonomic</v-btn>
