@@ -7,63 +7,63 @@
         <v-container class="encoders" fluid grid-list-m box>
             <!-- #region General Inputs -->
             <v-layout row>
-                <v-flex align-content-start sm3>
+                <v-flex align-content-start sm2>
                     <input placeholder="Autonomous name" id="in-name"/>
                 </v-flex>
-                <v-flex sm3>
+                <v-flex sm2>
                     <p class="chassischoice">Chassis: {{ $store.getters.chassis }}</p>
                 </v-flex>
                 <v-flex sm3>
                     <v-overflow-btn outline color="gray" style="margin-top: 0em" height="2em" margin="0em" :items="presets" label="cpi presets" target=".encoders"></v-overflow-btn>
                 </v-flex>
                 <v-flex sm3>
-                    <input type="number" placeholder="Movement bias" class="in-num"/>
+                    <v-overflow-btn outline color="gray" style="margin-top: 0em" height="2em" margin="0em" :items="starts" label="starting side" target=".encoders"></v-overflow-btn>
+                </v-flex>
+                <v-flex sm2>
+                    <input type="number" placeholder="Movement bias" value="1" class="in-num"/>
                 </v-flex>
             </v-layout>
             <!-- #endregion -->
             <v-layout row>
                 <!-- #region Field Container -->
-                <v-flex d-flex sm4>
-                    <div id="field">
-                        <br/>I am a field?<br/><br/><br/>Supposedly<br/>.
-                    </div>
+                <v-flex d-flex sm5>
+                    <!-- 36 pixels per foot or 3 pixels per inch -->
+                    <!--<svg width="396" height="396">-->
+                        <v-card>
+                        <v-img :src="require('@/assets/Pictures/field.jpg')" style="height:396px; width:396px;" alt="Field" class="logo"/>
+                        </v-card>
+                    <!--</svg>-->
                 </v-flex>
                 <!-- #endregion -->
                 <!-- #region Input Zone -->
                 <v-flex d-flex sm4>
                     <v-layout row wrap>
                         <!-- #region toggle -->
+                        <v-flex d-flex sm12>
                             <v-btn-toggle mandatory>
-                                <v-flex sm4>
-                                    <v-btn v-on:click="newStep(drive)">Drive</v-btn>
-                                </v-flex>
-                                <v-flex sm4>
-                                    <v-btn v-on:click="newStep(turn)">Turn</v-btn>
-                                </v-flex>
-                                <v-flex sm4 v-if=$store.getters.isArcingAvail>
-                                    <v-btn v-on:click="newStep(arc)">Arc</v-btn>
-                                </v-flex>
-                                <v-flex sm4 v-if=!$store.getters.isArcingAvail>
-                                    <v-btn v-on:click="newStep(strafe)">Strafe</v-btn>
-                                </v-flex>
+                                <v-btn block v-on:click="newStep(drive)" class="button">Drive</v-btn>
+                                <v-btn block v-on:click="newStep(turn)">Turn</v-btn>
+                                <v-btn block v-if=$store.getters.isArcingAvail v-on:click="newStep(arc)">Arc</v-btn>
+                                <v-btn block v-if=!$store.getters.isArcingAvail v-on:click="newStep(strafe)">Strafe</v-btn>
                             </v-btn-toggle>
+                        </v-flex>
                         <!-- #endregion -->
                         <!-- #region inputs -->
                         <v-flex v-if="($store.getters.isCurrentStepTurn || $store.getters.isCurrentStepArc)" sm12>
                             Angle:
-                            <input type="number" v-model="angle" placeholder="angle" class="in-num" id="in-dist"/>
+                            <input type="number" v-model="angle" placeholder="angle" step="5" min="-360" max="360" class="in-num" id="in-dist"/>
                         </v-flex>
                         <v-flex v-if="($store.getters.isCurrentStepStrafe)" sm12>
                             Direction:
-                            <input v-model="direction" placeholder="direction" class="in-num" id="in-dist"/>
+                            <input v-model="direction" placeholder="direction" step="1" min="1" max="4" class="in-num" id="in-dist"/>
                         </v-flex>
                         <v-flex v-if="($store.getters.isCurrentStepMove || $store.getters.isCurrentStepArc || $store.getters.isCurrentStepStrafe)" sm12>
                             Distance:
-                            <input type="number" v-model="distance" placeholder="distance" class="in-num" id="in-dist"/>
+                            <input type="number" v-model="distance" placeholder="distance" step="0.2" class="in-num" id="in-dist"/>
                         </v-flex>
                         <v-flex sm12>
                             Speed:
-                            <input type="number" v-model="speed" placeholder="speed" class="in-num" id="in-dist"/>
+                            <input type="number" v-model="speed" placeholder="speed" step="0.05" min="-1" max="1" class="in-num" id="in-dist"/>
                         </v-flex>
                         <v-flex sm4>
                             <v-btn v-on:click="confirmStep()">Done</v-btn>
@@ -73,7 +73,7 @@
                 </v-flex>
                 <!-- #endregion -->
                 <!-- #region Step List -->
-                <v-flex d-flex sm4>
+                <v-flex class="whatever_you_want" d-flex sm3>
                     <v-flex sm12>
                         <v-card v-for="step in $store.getters.getTheSteps" v-bind:key="step.stepNumber">
                             <v-card-title primary-title>
@@ -192,12 +192,13 @@ export default {
   },
   data: () => ({
     presets: ["Gear ratio: 20", "Gear ratio: 40", "Gear ratio: 60", "Custom"],
+    starts: ["top left", "top right", "bottom left", "bottom right"],
     drive: MovementOptions.DRIVE,
     turn: MovementOptions.TURN,
     arc: MovementOptions.ARC,
     strafe: MovementOptions.STRAFE,
     angle: 0,
-    direction: 0,
+    direction: "right",
     distance: 0,
     speed: 0
   })
@@ -257,7 +258,16 @@ export default {
 
 #field {
   background-color: gray;
-  height: 100%;
+  height: 330px;
+  width: 50px;
   border-radius: 5px;
+}
+
+.button {
+    width: 100%;
+}
+
+.whatever_you_want{
+    overflow-y: auto;
 }
 </style>
