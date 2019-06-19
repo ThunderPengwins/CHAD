@@ -25,7 +25,7 @@ export const store = new Vuex.Store({
         params: params
       })
     },
-    setGenerateVisible(state, params){
+    setGenerateVisible(state){
       state.generateClicked = true;
     }
   },
