@@ -29,6 +29,11 @@ export default new Router({
       path: '/tipsninfo',
       name: 'tipsninfo',
       component: () => import('./views/TipsNInfo.vue')
+    },
+    {
+      path: '/generate',
+      name: 'generate',
+      component: () => import('./views/Generate.vue')
     }
   ]
 })

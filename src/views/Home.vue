@@ -19,18 +19,12 @@
      <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')" outline>Meccanum</v-btn>
      <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'holonomic', baton:$store.getters.chassis != 'holonomic'}" v-on:click="chassisChanged('holonomic')" outline>Holonomic</v-btn>
     </div>
-    <bottom-navigation>
-    </bottom-navigation>
   </div>
 </template>
 
 <script>
-import BottomNavigation from '@/components/BottomNavigation'
 export default {
   name: 'Home',
-  components: {
-      BottomNavigation
-  },
   methods: {
     chassisChanged: function(chassis){
       this.$store.commit('changeChassis', chassis)

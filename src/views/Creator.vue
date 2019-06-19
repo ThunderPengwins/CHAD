@@ -5,7 +5,10 @@
     </div>
     <div class="interface">
         <!-- #region General Inputs -->
-            <input placeholder="Autonomous name" id="in-name" class="colors"/>
+            <div class="tooltip" id="pos-name">
+                <input placeholder="Autonomous name" id="in-name" class="colors"/>
+                <span class="tooltiptext">Tooltip text</span>
+            </div>
             <input type="number" placeholder="Movement bias" id="in-num" class="colors"/>
             <p class="chassischoice">Chassis: {{ $store.getters.chassis }}</p>
             <select @change="cpichange($event)" class="dropdown" id="in-preset">
@@ -141,23 +144,24 @@
                 </div>
             </div>
         <!-- #endregion -->
+        <div sm4>
+            <v-btn v-on:click="setGenerateVisible()">Generate</v-btn><!-- v-on:click="confirmStep()" -->
+        </div>
     </div>
-    <bottom-navigation>
-    </bottom-navigation>
 </div>
 </template>
 
 <script>
-import BottomNavigation from "@/components/BottomNavigation";
 import { MovementOptions } from "@/store/steps";
 export default {
   name: "Creator",
-  components: {
-    BottomNavigation
-  },
   methods: {
     newStep: function(step) {
       this.$store.commit("setCurrentStep", step);
+    },
+    setGenerateVisible: function(){
+        this.$store.commit("setGenerateVisible");
+        this.$router.push('/Generate');
     },
     cpichange: function(event){
         if(event.target.value=="Custom"){
@@ -251,15 +255,18 @@ export default {
   top: 2%;
 }
 
-#in-name {
-  padding: 3px;
-  color: black;
-  font-family: "Montserrat", sans-serif;
+#pos-name{
   position: absolute;
   left: 2%;
   top: 12%;
   width: 16.5%;
   height: 5%;
+}
+
+#in-name {
+  padding: 3px;
+  color: black;
+  font-family: "Montserrat", sans-serif;
   border-right-width: 1px;
   text-align: center;
 }
@@ -377,5 +384,28 @@ html, body {
 
 #autostep{
     height: 20%;
+}
+
+.tooltip {
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: white;
+  color: b;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 </style>

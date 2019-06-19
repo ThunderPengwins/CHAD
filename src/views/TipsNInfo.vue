@@ -23,18 +23,12 @@
     </v-expansion-panel-content>
         </v-expansion-panel>
     </div>
-    <bottom-navigation>
-    </bottom-navigation>
 </div>
 </template>
 
 <script>
-import BottomNavigation from '@/components/BottomNavigation'
 export default {
     name: "TipsNInfo",
-    components: {
-    BottomNavigation
-  }
 }
 </script>
 

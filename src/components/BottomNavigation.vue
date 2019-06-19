@@ -5,6 +5,7 @@
       :value="true"
       absolute
       color="white"
+      shift
     >
       <v-btn
         color="rgba(100,230,209)"
@@ -30,6 +31,9 @@
         color="rgba(100,230,209)"
         flat
         value="Generate"
+        to="/Generate"
+        class="hide"
+        v-bind:class="{'show': $store.getters.getGenerateVisibility}"
       >
         <span>Generate</span>
         <v-icon>code</v-icon>
@@ -58,3 +62,13 @@ export default {
     }
 }
 </script>
+
+<style>
+.hide{
+  visibility: hidden;
+}
+
+.show{
+  visibility: visible;
+}
+</style>
