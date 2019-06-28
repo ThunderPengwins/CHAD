@@ -6,14 +6,16 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    chassis: 'traction',
+    chassis: null,
     currentStep: MovementOptions.DRIVE,
     listOfSteps: [],
-    generateClicked: false
+    generateClicked: false,
+    firstChassis: false
   },
   mutations: {
     changeChassis(state, chassis) {
-      state.chassis = chassis
+      state.chassis = chassis;
+      state.listOfSteps = [];
     },
     setCurrentStep(state, step) {
       state.currentStep = step
@@ -27,6 +29,9 @@ export const store = new Vuex.Store({
     },
     setGenerateVisible(state){
       state.generateClicked = true;
+    },
+    setFirstChassis(state){
+      state.firstChassis = true;
     }
   },
   getters: {
@@ -38,6 +43,7 @@ export const store = new Vuex.Store({
     isCurrentStepArc: state => state.currentStep==MovementOptions.ARC,
     isCurrentStepStrafe: state => state.currentStep==MovementOptions.STRAFE,
     getTheSteps: state => state.listOfSteps,
-    getGenerateVisibility: state => state.generateClicked
+    getGenerateVisibility: state => state.generateClicked,
+    getFirstChassis: state => state.firstChassis
   }
 })

@@ -22,6 +22,7 @@
         flat
         value="Creator"
         to="/Creator"
+        v-if="$store.getters.chassis"
       >
         <span>Creator</span>
         <v-icon>create</v-icon>
@@ -32,8 +33,7 @@
         flat
         value="Generate"
         to="/Generate"
-        class="hide"
-        v-bind:class="{'show': $store.getters.getGenerateVisibility}"
+        v-if="$store.getters.getGenerateVisibility"
       >
         <span>Generate</span>
         <v-icon>code</v-icon>

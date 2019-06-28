@@ -62,18 +62,17 @@
         <!-- #endregion -->
         <!-- #region Input Zone -->
             <!-- #region toggle -->
-                <v-btn-toggle id="toggle" mandatory>
-                    <v-btn block v-on:click="newStep(drive)" class="button">Drive</v-btn>
-                    <v-btn block v-on:click="newStep(turn)">Turn</v-btn>
-                    <v-btn block v-if=$store.getters.isArcingAvail v-on:click="newStep(arc)">Arc</v-btn>
-                    <v-btn block v-if=!$store.getters.isArcingAvail v-on:click="newStep(strafe)">Strafe</v-btn>
-                </v-btn-toggle>
+                    <button block v-bind:class="{active: $store.getters.isCurrentStepMove}" v-on:click="newStep(drive)" class="button">Drive</button>
+                    <button block v-bind:class="{active: $store.getters.isCurrentStepTurn}" v-on:click="newStep(turn)" class="button">Turn</button>
+                    <button block v-bind:class="{active: $store.getters.isCurrentStepArc}" v-if=$store.getters.isArcingAvail v-on:click="newStep(arc)" class="button">Arc</button>
+                    <button block v-bind:class="{active: $store.getters.isCurrentStepStrafe}" v-if=!$store.getters.isArcingAvail v-on:click="newStep(strafe)" class="button">Strafe</button>
             <!-- #endregion -->
             <!-- #region inputs -->
                 <div id="stepinputs">
                     <div v-if="($store.getters.isCurrentStepTurn || $store.getters.isCurrentStepArc)" sm12>
                         <p class="label">Angle:</p>
                         <input type="number" v-model="angle" placeholder="angle" step="5" min="-360" max="360" class="colors" id="in-dist"/>
+                        <div class="amount">label</div>
                     </div>
                     <div v-if="($store.getters.isCurrentStepStrafe)" sm12>
                         <p class="label">Direction:</p>
@@ -97,11 +96,11 @@
             <div id="listofsteps">
                 <div id="autostep" v-for="step in $store.getters.getTheSteps" v-bind:key="step.stepNumber">
                     <!--<v-card-title primary-title>-->
-                        <div sm12>
+                        <div id="step-title" sm12>
                             <h3>
                                 {{step.type}}
                             </h3>
-                        </div>
+                        </div> 
                         <!-- #region Steps -->
                         <div sm12>
                             <div v-if="step.type==drive">
@@ -334,8 +333,17 @@ export default {
 }
 
 #in-dist {
-  width: 90%;
+  width: 85%;
   padding-left: 4px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.amount{
+    background-color: white;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    width: 5%;
 }
 
 .dropdown{
@@ -345,6 +353,7 @@ export default {
     padding: 10px;
     text-align-last: center;
     border-radius: 4px;
+    font-family: "Montserrat", sans-serif;
 }
 
 .colors{
@@ -353,7 +362,7 @@ export default {
 }
 
 .popup{
-    background-color: rgb(100,230,209);
+    background-color: lightgray;/*rgb(100,230,209);*/
 }
 
 .popup-text{
@@ -362,7 +371,7 @@ export default {
 
 .popup-inputs{
     background-color: white;
-    border: 3px solid black;
+    border: 0.5px solid black;
     border-radius: 4px;
     text-align: left;
     margin: 3px;
@@ -371,7 +380,7 @@ export default {
 }
 
 .popup-button{
-    background-color: rgb(100,230,209);
+    background-color: lightgray;/*rgb(100,230,209);*/
 }
 
 #field {
@@ -384,6 +393,11 @@ export default {
 
 .button {
     width: 100%;
+    background-color: white;
+}
+
+.active{
+    background-color: lightgray;
 }
 
 .label{
@@ -418,6 +432,11 @@ export default {
     overflow: auto;
     background-color: gray;
     border-radius: 4px;
+    border: 0.5px solid black;
+}
+
+#step-title{
+    padding: 10px;
 }
 
 #generate{
@@ -443,6 +462,7 @@ hr{
 
 #autostep{
     height: 20%;
+    background-color: white;
 }
 
 .tooltip {

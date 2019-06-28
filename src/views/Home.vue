@@ -19,15 +19,43 @@
      <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')" outline>Meccanum</v-btn>
      <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'holonomic', baton:$store.getters.chassis != 'holonomic'}" v-on:click="chassisChanged('holonomic')" outline>Holonomic</v-btn>
     </div>
+    <v-dialog v-model="openWarning" width="500">
+      <v-card>
+        <v-card-title class="headline popup" primary-title>Custom Inputs</v-card-title>
+        <v-card-text class="popup-text">
+          WARNING: Some words I don't want to write yet.
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="popup-button" flat @click="openWarning = false">Cancel</v-btn>
+          <v-btn class="popup-button" flat @click="bunnyOctopus()">Okay</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
+import { MovementOptions } from "@/store/steps";
 export default {
   name: 'Home',
   methods: {
     chassisChanged: function(chassis){
-      this.$store.commit('changeChassis', chassis)
+      if (this.$store.getters.getFirstChassis){
+        this.chassis = chassis;
+        this.openWarning = true;
+      }else{
+        this.$router.push('/Creator');
+        this.$store.commit("setFirstChassis");
+        this.$store.commit('changeChassis', chassis);
+      }
+    },
+    bunnyOctopus: function(){
+      this.$router.push('/Creator');
+      this.openWarning = false;
+      this.$store.commit('changeChassis', this.chassis);
+      this.$store.commit("setCurrentStep", MovementOptions.DRIVE);
     }
   },
   data () {
@@ -45,7 +73,9 @@ export default {
           {
             src: 'http://www.sandiego-tech.com/wp-content/uploads/2016/09/tech3.jpg'
           }
-        ]
+        ],
+        openWarning: false,
+        chassis: ''
       }
     }
 }
@@ -142,6 +172,10 @@ export default {
   position: absolute;
   left: 4%;
   top: 1%;
+}
+
+.popup-button{
+    background-color: lightgray;/*rgb(100,230,209);*/
 }
 
 </style>
