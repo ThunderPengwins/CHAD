@@ -7,7 +7,9 @@ import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 import router from './router'
 import {store} from './store/store'
 import {MovementOptions} from './store/steps'
+import VueKonva from 'vue-konva'
 
+Vue.use(VueKonva);
 Vue.config.productionTip = false
 
 new Vue({

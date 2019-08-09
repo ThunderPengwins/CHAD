@@ -1,7 +1,9 @@
 <template>
 <div class="bkgd">
     <div class="top">
+        <button>
         <img src="@/assets/Pictures/chadLogo.jpg" class="logo">
+        </button>
     </div>
     <div class="interface">
         <!-- #region General Inputs -->
@@ -19,7 +21,7 @@
                     <option disabled selected value="">CPI Presets</option>
                     <option text-xs-center v-for="(preset, index) in presets" v-bind:key="index">{{preset}}</option>
                 </select>
-                <span class="tooltiptext">CPI Info<br/><hr/><p class="hover-info">Presets assume 4.125 inch wheel diameter and 28 counts per rotation motor. Select custom to bypass this.</p></span>
+                <span class="tooltiptext">CPI Info<br/><hr/><p class="hover-info">Determines rotation of wheels. Presets assume 4.125 inch wheel diameter and 28 counts per rotation motor. Select custom to bypass this.</p></span>
             </div>
             <div class="tooltip" id="pos-start">
                 <select class="dropdown">
@@ -29,9 +31,9 @@
                 <span class="tooltiptext">Side Info<br/><hr/><p class="hover-info">Used for the field display. This won't affect the code.</p></span>
             </div>
             <div class="tooltip" id="pos-dims">
-                <input type="number" placeholder="robot width" id="in-width" class="colors"/> 
+                <input type="number" placeholder="robot width" id="in-width" class="colors" v-model="robotWidth"/> 
                 <div id="flourish" color="color"></div>
-                <input type="number" placeholder="robot length" id="in-length" class="colors"/>
+                <input type="number" placeholder="robot length" id="in-length" class="colors" v-model="robotLength"/>
                 <span class="tooltiptext">Dimension Info<br/><hr/><p class="hover-info">Dimensions are important for arcing, but should be filled in even without arcs.</p></span>
             </div>
             <v-dialog v-model="opencustoms" width="500">
@@ -55,17 +57,29 @@
         <!-- #region Field Container -->
             <!-- 36 pixels per foot or 3 pixels per inch -->
             <!--<svg width="396" height="396">-->
-                <div>
-                    <v-img :src="require('@/assets/Pictures/field.jpg')" style="height:396px; width:396px;" alt="Field" id="field"/>
+                <div id="field">
+                    <draw-lines
+                        @hey = 'setStepPoint'
+                        @lock = 'setInterimFloat'
+                        :imageSrc = 'field'
+                        :imageHeight = 'fieldDim'
+                        :imageWidth = 'fieldDim'
+                        :lines = 'lines'
+                        :points = 'points'
+                        :interimPoint = 'interimPoint'
+                        :interimLine = 'interimLine'
+                        :interimArc = 'interimArc'
+                    >
+                    </draw-lines>
                 </div>
             <!--</svg>-->
         <!-- #endregion -->
         <!-- #region Input Zone -->
             <!-- #region toggle -->
-                    <button block v-bind:class="{active: $store.getters.isCurrentStepMove}" v-on:click="newStep(drive)" class="button">Drive</button>
-                    <button block v-bind:class="{active: $store.getters.isCurrentStepTurn}" v-on:click="newStep(turn)" class="button">Turn</button>
-                    <button block v-bind:class="{active: $store.getters.isCurrentStepArc}" v-if=$store.getters.isArcingAvail v-on:click="newStep(arc)" class="button">Arc</button>
-                    <button block v-bind:class="{active: $store.getters.isCurrentStepStrafe}" v-if=!$store.getters.isArcingAvail v-on:click="newStep(strafe)" class="button">Strafe</button>
+                    <button block v-bind:class="{active: $store.getters.isCurrentStepMove}" v-on:click="newStep(drive)" class="button" id="tog-drive">Drive</button>
+                    <button block v-bind:class="{active: $store.getters.isCurrentStepTurn}" v-on:click="newStep(turn)" class="button" id="tog-turn">Turn</button>
+                    <button block v-bind:class="{active: $store.getters.isCurrentStepArc}" v-if=$store.getters.isArcingAvail v-on:click="newStep(arc)" class="button" id="tog-fancy">Arc</button>
+                    <button block v-bind:class="{active: $store.getters.isCurrentStepStrafe}" v-if=!$store.getters.isArcingAvail v-on:click="newStep(strafe)" class="button" id="tog-fancy">Strafe</button>
             <!-- #endregion -->
             <!-- #region inputs -->
                 <div id="stepinputs">
@@ -80,7 +94,7 @@
                     </div>
                     <div v-if="($store.getters.isCurrentStepMove || $store.getters.isCurrentStepArc || $store.getters.isCurrentStepStrafe)" sm12>
                         <p class="label">Distance:</p>
-                        <input type="number" v-model="distance" placeholder="distance" step="0.2" class="colors" id="in-dist"/>
+                        <input type="number" v-model="distance" @change="getStepPoint" placeholder="distance" step="0.2" class="colors" id="in-dist"/>
                     </div>
                     <div sm12>
                         <p class="label">Speed:</p>
@@ -164,8 +178,10 @@
 
 <script>
 import { MovementOptions } from "@/store/steps";
+import DrawLines from "@/components/DrawLines"
 export default {
   name: "Creator",
+  components: {DrawLines},
   methods: {
     newStep: function(step) {
       this.$store.commit("setCurrentStep", step);
@@ -212,6 +228,261 @@ export default {
           break;
       }
       this.$store.commit("confirmStep", params);
+      //
+      this.interimPoint = null;
+      this.interimLine = null;
+      this.interimArc = null;
+    },
+    setInterimFloat: function(mousePos){
+        //
+        if(this.interimFloat){
+            this.interimFloat = false;
+        }else{
+            this.interimFloat = true;
+        }
+        //
+        this.setStepPoint(mousePos);
+    },
+    getStepPoint: function(mousePos){
+        //
+        var l2 = this.distance * 3;
+        var x2 = l2 * Math.cos(this.curAngle * Math.PI / 180);
+        var y2 = l2 * Math.sin(this.curAngle * Math.PI / 180);
+        //
+        this.nextX = x2;
+        this.nextY = y2 * -1;
+        //
+        this.interimPoint = {
+            //
+            x: this.curX + x2,
+            y: this.curY - y2,
+            width: this.robotWidth * 3,
+            height: this.robotLength * 3,
+            offsetX: this.robotWidth * 3 / 2,
+            offsetY: this.robotLength * 3 / 2,
+            stroke: 'rgb(100,230,209)',
+            strokeWidth: 5,
+            cornerRadius: 5,
+            rotation: this.points[0].rotation,
+            lineCap: 'round',
+            lineJoin: 'round'
+        };
+        //
+        this.interimLine = {
+            x: 0,
+            y: 0,
+            points: [this.points[0].x, this.points[0].y, this.curX + x2, this.curY - y2],
+            stroke: 'rgb(100,230,209)',
+            strokeWidth: 4,
+            lineCap: 'round',
+            lineJoin: 'round'
+        };
+        //
+        this.interimFloat = false;
+        //
+    },
+    setStepPoint: function(mousePos){
+        console.log("Click location--X: " + mousePos.x + ",Y: " + mousePos.y);
+        //
+        /*
+        this.interimArc = {
+            x: this.points[0].x - 70,
+            y: this.points[0].y,
+            innerRadius: 70,
+            outerRadius: 70,
+            angle: 180,
+            stroke: 'black',
+            strokeWidth: 4,
+            lineJoin: 'round'
+        }
+        */
+        switch (this.$store.getters.currentStep) {
+            case MovementOptions.DRIVE:
+                //
+                if(this.interimFloat){
+                    //
+                    if(mousePos.x > this.curX){
+                        var l1 = Math.sqrt(Math.pow(this.curY - mousePos.y, 2) + Math.pow(mousePos.x - this.curX, 2));
+                        var a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
+                        var a2 = 90 - this.curAngle - a1;
+                        var l2 = l1 * Math.cos(a2 * Math.PI / 180);
+                        var x2 = l2 * Math.cos(this.curAngle * Math.PI / 180);
+                        var y2 = l2 * Math.sin(this.curAngle * Math.PI / 180);
+                        console.log("L2 components--Y: " + (Math.pow(this.curY - mousePos.y, 2)) + ", X: " + (Math.pow(mousePos.x - this.curX, 2)));
+                        console.log("New position--L1: " + l1 + ", A1: " + a1 + ", A2: " + a2 + ", L2: " + l2 + ", X2: " + x2 + ", Y2: " + y2);
+                        //
+                        this.interimPoint = {
+                            //
+                            x: this.curX + x2,
+                            y: this.curY - y2,
+                            width: this.robotWidth * 3,
+                            height: this.robotLength * 3,
+                            offsetX: this.robotWidth * 3 / 2,
+                            offsetY: this.robotLength * 3 / 2,
+                            stroke: 'rgb(100,230,209)',
+                            strokeWidth: 5,
+                            dash: [20, 20],
+                            cornerRadius: 5,
+                            rotation: this.points[0].rotation,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        };
+                        //
+                        this.interimLine = {
+                            x: 0,
+                            y: 0,
+                            points: [this.points[0].x, this.points[0].y, this.curX + x2, this.curY - y2],
+                            stroke: 'rgb(100,230,209)',
+                            strokeWidth: 4,
+                            dash: [20, 20],
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        };
+                        //
+                        this.nextX = x2;
+                        this.nextY = y2 * -1;
+                        //
+                    }else{
+                        var l1 = Math.sqrt(Math.pow(mousePos.y - this.curY, 2) + Math.pow(this.curX - mousePos.x, 2));
+                        var a1 = Math.atan((this.curX - mousePos.x) / (mousePos.y - this.curY)) * 180 / Math.PI;
+                        var a2 = 90 - this.curAngle - a1;//90 - (90 - this.curAngle) - a1;
+                        var l2 = l1 * Math.cos(a2 * Math.PI / 180);
+                        var x2 = l2 * Math.cos(this.curAngle * Math.PI / 180);
+                        var y2 = l2 * Math.sin(this.curAngle * Math.PI / 180);
+                        //
+                        this.interimPoint = {
+                            //
+                            x: this.curX - x2,
+                            y: this.curY + y2,
+                            width: this.robotWidth * 3,
+                            height: this.robotLength * 3,
+                            offsetX: this.robotWidth * 3 / 2,
+                            offsetY: this.robotLength * 3 / 2,
+                            stroke: 'rgb(100,230,209)',
+                            strokeWidth: 5,
+                            dash: [20, 20],
+                            cornerRadius: 5,
+                            rotation: this.points[0].rotation,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        };
+                        //
+                        this.interimLine = {
+                            x: 0,
+                            y: 0,
+                            points: [this.points[0].x, this.points[0].y, this.curX - x2, this.curY + y2],
+                            stroke: 'rgb(100,230,209)',
+                            strokeWidth: 4,
+                            dash: [20, 20],
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        };
+                        l2 = l2 * -1;
+                        //
+                        this.nextX = x2 * -1;
+                        this.nextY = y2;
+                        //
+                    }
+                    //
+                    this.distance = Math.round(l2 / 3);
+                    //
+                }else{
+                    this.interimPoint = {
+                        //
+                        x: this.curX + this.nextX,
+                        y: this.curY + this.nextY,
+                        width: this.robotWidth * 3,
+                        height: this.robotLength * 3,
+                        offsetX: this.robotWidth * 3 / 2,
+                        offsetY: this.robotLength * 3 / 2,
+                        stroke: 'rgb(100,230,209)',
+                        strokeWidth: 5,
+                        cornerRadius: 5,
+                        rotation: this.points[0].rotation,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    };
+                    //
+                    this.interimLine = {
+                            x: 0,
+                            y: 0,
+                            points: [this.points[0].x, this.points[0].y, this.curX + this.nextX, this.curY + this.nextY],
+                            stroke: 'rgb(100,230,209)',
+                            strokeWidth: 4,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        };
+                }
+                //
+                x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                console.log("X1: " + x1 + ", Y1: " + y1);
+                //
+                this.lines.pop();
+                //
+                this.lines.push({
+                    x: 0,
+                    y: 0,
+                    points: [this.curX, this.curY, this.curX + x1 * 3, this.curY - y1 * 3],
+                    stroke: 'orange',
+                    strokeWidth: 4,
+                    lineCap: 'round'
+                });
+                //
+            break;
+            case MovementOptions.TURN:
+                var x1 = 0;
+                var y1 = 0;
+                var op = 0;
+                var ax = 0;
+                var ay = 0;
+                if (this.curAngle > 0){
+                    x1 = this.curY / Math.tan((90 - this.curAngle) * Math.PI / 180);
+                    //
+                    if((this.curX + x1) > this.fieldDim){
+                        y1 = (this.fieldDim - this.curX) * Math.tan((90 - this.curAngle) * Math.PI / 180);
+                        console.log("Angle line--X: " + this.fieldDim + ", Y: " + (this.curY - y1));
+                        ax = this.fieldDim;
+                        ay = this.curY - y1;
+                    }else{
+                        console.log("Angle line--X: " + (this.curX + x1) + ", Y: 0");
+                        ax = this.curX + x1;
+                        ay = 0;
+                    }
+                }else{
+                    x1 = this.curY / Math.tan((90 - this.curAngle) * Math.PI / -180);
+                    //
+                    if(this.curX - x1 > 0){
+                        y1 = this.curX * Math.tan((90 - this.curAngle) * Math.PI / -180);
+                        console.log("Angle line--X: 0, Y: " + (this.curY - y1));
+                        ax = 0;
+                        ay = this.curY - y1;
+                    }else{
+                        console.log("Angle line--X: " + (this.curX - x1) + ", Y: 0");
+                        ax = this.curX - x1;
+                        ay = 0;
+                    }
+                }
+                //
+                this.lines.pop();
+                //
+                this.lines.push({
+                    x: 0,
+                    y: 0,
+                    points: [this.curX, this.curY, ax, ay],
+                    stroke: 'orange',
+                    strokeWidth: 4,
+                    lineCap: 'round'
+                })
+            break;
+            case MovementOptions.ARC:
+            
+            break;
+            case MovementOptions.STRAFE:
+            
+            break;
+        }
     }
   },
   data: () => ({
@@ -224,9 +495,55 @@ export default {
     strafe: MovementOptions.STRAFE,
     angle: 0,
     direction: "right",
-    distance: 0,
+    distance: 10,
     speed: 0,
-    opencustoms: false
+    pxperinch: 3,
+    robotWidth: 16,
+    robotLength: 18,
+    opencustoms: false,
+    stepInProgress: true,
+    interimPoint: null,
+    interimLine: null,
+    interimArc: null,
+    field: require('@/assets/Pictures/field2.jpg'),
+    fieldDim: 423,
+    curX: 161,
+    curY: 159,
+    nextX: 0,
+    nextY: 0,
+    curAngle: -45,
+    interimFloat: true,
+    topLeft: {
+        x:161,
+        y:159,
+        rotation: -45
+    },
+    topRight: {
+        x:256,
+        y:143,
+        rotation:45
+    },
+    bottomLeft: {
+        x:160,
+        y:260,
+        rotation: -135
+    },
+    points: [{
+        x:161,
+        y:159,
+        width:48,
+        height:54,
+        fill:'',
+        stroke: 'black',
+        strokeWidth: 5,
+        cornerRadius: 5,
+        rotation: -45,
+        offsetX: 24,
+        offsetY: 27
+    }],
+    lines: [{
+        points: [147, 240, 200, 200]
+    }]
   })
 };
 </script>
@@ -243,12 +560,11 @@ export default {
   width: 10%;
 }
 
-#bkgd {
+.bkgd {
   margin: 0%;
 }
 
 .interface {
-  background-color: black;
   border-radius: 5px;
   position: absolute;
   margin: 3%;
@@ -343,7 +659,9 @@ export default {
     background-color: white;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
-    width: 5%;
+    width: 10%;
+    text-align: right;
+    padding-right: 4px;
 }
 
 .dropdown{
@@ -385,15 +703,34 @@ export default {
 
 #field {
   position: absolute;
-  width: 30%;
-  height: 30%;
   left: 2%;
   top: 20%;
+  border-radius: 4px;
 }
 
 .button {
-    width: 100%;
+    width: 10%;
+    height: 7%;
+    top: 25%;
     background-color: white;
+    position: absolute;
+}
+
+#tog-drive{
+    left: 40%;
+    position: absolute;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+#tog-turn{
+    left: 50%;
+}
+
+#tog-fancy{
+    left: 60%;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 
 .active{
@@ -418,7 +755,7 @@ export default {
 
 #stepinputs{
     position: absolute;
-    top: 40%;
+    top: 37%;
     width: 30%;
     left: 40%;
 }
@@ -432,7 +769,7 @@ export default {
     overflow: auto;
     background-color: gray;
     border-radius: 4px;
-    border: 0.5px solid black;
+    /*border: 0.5px solid black;*/
 }
 
 #step-title{
@@ -463,6 +800,9 @@ hr{
 #autostep{
     height: 20%;
     background-color: white;
+    border: 0.5px solid black;
+    padding-bottom: 70px;
+    border-top-width: 0;
 }
 
 .tooltip {

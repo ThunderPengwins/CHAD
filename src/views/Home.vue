@@ -16,14 +16,14 @@
     <div class="bottom">
      <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'traction', baton:$store.getters.chassis != 'traction'}" v-on:click="chassisChanged('traction')"><img src="@/assets/Pictures/Traction.png" alt="traction" class=""/></v-btn>
      <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'omni wheel', baton:$store.getters.chassis != 'omni wheel'}" v-on:click="chassisChanged('omni wheel')"><img src="@/assets/Pictures/Omni.png" alt="omni" class=""/></v-btn>
-     <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')" outline>Meccanum</v-btn>
+     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')"><img src="@/assets/Pictures/Meccanum.png" alt="meccanum" class="chaspic"/></v-btn>
      <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'holonomic', baton:$store.getters.chassis != 'holonomic'}" v-on:click="chassisChanged('holonomic')" outline>Holonomic</v-btn>
     </div>
     <v-dialog v-model="openWarning" width="500">
       <v-card>
-        <v-card-title class="headline popup" primary-title>Custom Inputs</v-card-title>
+        <v-card-title class="headline" primary-title>WARNING</v-card-title>
         <v-card-text class="popup-text">
-          WARNING: Some words I don't want to write yet.
+          Reselecting your chassis will remove all steps in your current autonomous.
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
@@ -46,9 +46,9 @@ export default {
         this.chassis = chassis;
         this.openWarning = true;
       }else{
-        this.$router.push('/Creator');
         this.$store.commit("setFirstChassis");
         this.$store.commit('changeChassis', chassis);
+        this.$router.push('/Creator');
       }
     },
     bunnyOctopus: function(){
@@ -159,12 +159,8 @@ export default {
 }
 
 .chaspic{
-  height: 10%;
-  width: 10%;
-  border-radius: 3px;
-  margin-left: 12%;
-  margin-top:2%;
-  margin-bottom: 2%;
+  height: 100%;
+  width: 100%;
 }
 
 .logo{
@@ -176,6 +172,10 @@ export default {
 
 .popup-button{
     background-color: lightgray;/*rgb(100,230,209);*/
+}
+
+.headline{
+  background-color: red;
 }
 
 </style>
