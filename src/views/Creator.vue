@@ -12,7 +12,7 @@
                 <span class="tooltiptext">Naming Info<br/><hr/><p class="hover-info">This is the name that will appear in your driver station app.</p></span>
             </div>
             <div class="tooltip" id="pos-num">
-                <input type="number" placeholder="Movement bias" id="in-num" class="colors"/>
+                <input type="number" value="1" placeholder="Movement bias" id="in-num" class="colors"/>
                 <span class="tooltiptext">Bias Info<br/><hr/><p class="hover-info">Set to one as default. This value can be used to counteract friction and other factors.</p></span>
             </div>
             <p class="chassischoice">Chassis: {{ $store.getters.chassis }}</p>
@@ -66,9 +66,11 @@
                         :imageWidth = 'fieldDim'
                         :lines = 'lines'
                         :points = 'points'
+                        :arcs = 'arcs'
                         :interimPoint = 'interimPoint'
                         :interimLine = 'interimLine'
                         :interimArc = 'interimArc'
+                        :directionLine = 'directionLine'
                     >
                     </draw-lines>
                 </div>
@@ -85,7 +87,7 @@
                 <div id="stepinputs">
                     <div v-if="($store.getters.isCurrentStepTurn || $store.getters.isCurrentStepArc)" sm12>
                         <p class="label">Angle:</p>
-                        <input type="number" v-model="angle" placeholder="angle" step="5" min="-360" max="360" class="colors" id="in-dist"/>
+                        <input type="number" v-model="angle" @change="getStepPoint" placeholder="angle" step="5" min="-360" max="360" class="colors" id="in-dist"/>
                         <div class="amount">label</div>
                     </div>
                     <div v-if="($store.getters.isCurrentStepStrafe)" sm12>
@@ -185,6 +187,16 @@ export default {
   methods: {
     newStep: function(step) {
       this.$store.commit("setCurrentStep", step);
+      //
+      this.interimFloat = false;
+      //
+      if(step == MovementOptions.DRIVE){
+          //this.interimArc = null;
+          console.log("test");
+      }
+      //
+      this.getStepPoint();
+      //
     },
     setGenerateVisible: function(){
         this.$store.commit("setGenerateVisible");
@@ -198,35 +210,228 @@ export default {
         }
     },
     confirmStep: function() {
-      var params;
-      switch (this.$store.getters.currentStep) {
-        case MovementOptions.DRIVE:
-          params = {
-            distance: this.$data.distance,
-            speed: this.$data.speed
-          };
-          break;
-        case MovementOptions.TURN:
-          params = {
-            angle: this.$data.angle,
-            speed: this.$data.speed
-          };
-          break;
-        case MovementOptions.ARC:
-          params = {
-            angle: this.$data.angle,
-            distance: this.$data.distance,
-            speed: this.$data.speed
-          };
-          break;
-        case MovementOptions.STRAFE:
-          params = {
-            direction: this.$data.direction,
-            distance: this.$data.distance,
-            speed: this.$data.speed
-          };
-          break;
-      }
+        var params;
+        switch (this.$store.getters.currentStep) {
+            case MovementOptions.DRIVE:
+                params = {
+                    distance: this.$data.distance,
+                    speed: this.$data.speed
+                };
+                //#region
+                //
+                this.lines.push({
+                    x: 0,
+                    y: 0,
+                    points: [this.curX, this.curY, this.curX + this.nextX, this.curY + this.nextY],
+                    stroke: this.stepColors[this.currentColor],
+                    strokeWidth: 4,
+                    lineCap: 'round'
+                });
+                //
+                this.points.pop();
+                //#endregion
+                var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                this.directionLine = {
+                    x: 0,
+                    y: 0,
+                    points: [this.curX + this.nextX, this.curY + this.nextY, this.curX + this.nextX + x1 * 3, this.curY + this.nextY - y1 * 3],
+                    stroke: 'orange',
+                    strokeWidth: 4,
+                    lineCap: 'round'
+                };
+                //
+                this.points.push({
+                    //
+                    x: this.curX,
+                    y: this.curY,
+                    rotation: this.curAngle,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: this.stepColors[this.currentColor],
+                    strokeWidth: 5,
+                    cornerRadius: 5
+                });
+                //
+                if(this.currentColor > this.stepColors.length - 2){
+                    this.currentColor = 0;
+                }else{
+                    this.currentColor++;
+                }
+                //
+                var mx = this.distance * 3 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var my = this.distance * 3 * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                this.curX = this.curX + mx;
+                this.curY = this.curY - my;
+                //
+                this.points.push({
+                    //
+                    x: this.curX,
+                    y: this.curY,
+                    rotation: this.curAngle,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: '#32cd32',
+                    strokeWidth: 5,
+                    cornerRadius: 5
+                });
+                //
+                this.distance = 30;
+                //
+                var l2 = this.distance * 3;
+                var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                this.nextX = x2;
+                this.nextY = y2 * -1;
+                //
+                console.log("x2: " + x2 + ", y2: " + y2);
+                //
+                this.interimPoint = {
+                    //
+                    x: this.curX + this.nextX,
+                    y: this.curY + this.nextY,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: this.newColor,
+                    strokeWidth: 5,
+                    cornerRadius: 5,
+                    rotation: this.curAngle,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                };
+                //
+                this.interimLine = {
+                    x: 0,
+                    y: 0,
+                    points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
+                    stroke: this.newColor,
+                    strokeWidth: 4,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                };
+                //
+                console.log("You made it!");
+                //
+                this.interimFloat = false;
+                //
+            break;
+            case MovementOptions.TURN:
+                params = {
+                    angle: this.$data.angle,
+                    speed: this.$data.speed
+                };
+                //
+                if(this.nextAngle > 0){
+                    this.arcs.push({
+                        x: this.curX,
+                        y: this.curY,
+                        innerRadius: 0,
+                        outerRadius: 70,
+                        angle: this.angle,
+                        rotation: (this.curAngle - 90),
+                        stroke: this.stepColors[this.currentColor],
+                        strokeWidth: 4,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    });
+                }else{
+                    this.arcs.push({
+                        x: this.curX,
+                        y: this.curY,
+                        innerRadius: 0,
+                        outerRadius: 70,
+                        angle: this.angle * -1,
+                        rotation: (Math.round(this.nextAngle / 5) * 5 - 90),
+                        stroke: this.stepColors[this.currentColor],
+                        strokeWidth: 4,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    });
+                }
+                //
+                this.points.pop();
+                //
+                this.points.push({
+                    x: this.curX,
+                    y: this.curY,
+                    rotation: this.curAngle,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: this.stepColors[this.currentColor],
+                    strokeWidth: 5,
+                    cornerRadius: 5
+                });
+                //
+                if(this.currentColor > this.stepColors.length - 2){
+                    this.currentColor = 0;
+                }else{
+                    this.currentColor++;
+                }
+                //
+                this.points.push({
+                    x: this.curX,
+                    y: this.curY,
+                    rotation: this.nextAngle,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: '#32cd32',
+                    strokeWidth: 5,
+                    cornerRadius: 5
+                });
+                //
+                this.curAngle = Math.round(this.nextAngle / 5) * 5;
+                this.angle = 45;
+                //
+                this.distance = 30;
+                //
+                var l2 = this.distance * 3;
+                var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                this.nextX = x2;
+                this.nextY = y2 * -1;
+                //
+                var x1 = (this.fieldDim * 2) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var y1 = (this.fieldDim * 2) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                this.directionLine = {
+                    x: 0,
+                    y: 0,
+                    points: [this.curX, this.curY, this.curX + x1, this.curY - y1],
+                    stroke: 'orange',
+                    strokeWidth: 4,
+                    lineCap: 'round'
+                };
+                //
+            break;
+            case MovementOptions.ARC:
+            params = {
+                angle: this.$data.angle,
+                distance: this.$data.distance,
+                speed: this.$data.speed
+            };
+            break;
+            case MovementOptions.STRAFE:
+            params = {
+                direction: this.$data.direction,
+                distance: this.$data.distance,
+                speed: this.$data.speed
+            };
+            break;
+        }
       this.$store.commit("confirmStep", params);
       //
       this.interimPoint = null;
@@ -235,51 +440,157 @@ export default {
     },
     setInterimFloat: function(mousePos){
         //
-        if(this.interimFloat){
-            this.interimFloat = false;
-        }else{
-            this.interimFloat = true;
-        }
+        //if(!this.clickAssist){
+            if(this.interimFloat){
+                this.interimFloat = false;
+            }else{
+                this.interimFloat = true;
+            }
+            //this.clickAssist = true;
+        //}
         //
         this.setStepPoint(mousePos);
     },
-    getStepPoint: function(mousePos){
+    getStepPoint: function(){
         //
-        var l2 = this.distance * 3;
-        var x2 = l2 * Math.cos(this.curAngle * Math.PI / 180);
-        var y2 = l2 * Math.sin(this.curAngle * Math.PI / 180);
-        //
-        this.nextX = x2;
-        this.nextY = y2 * -1;
-        //
-        this.interimPoint = {
-            //
-            x: this.curX + x2,
-            y: this.curY - y2,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
-            stroke: 'rgb(100,230,209)',
-            strokeWidth: 5,
-            cornerRadius: 5,
-            rotation: this.points[0].rotation,
-            lineCap: 'round',
-            lineJoin: 'round'
-        };
-        //
-        this.interimLine = {
-            x: 0,
-            y: 0,
-            points: [this.points[0].x, this.points[0].y, this.curX + x2, this.curY - y2],
-            stroke: 'rgb(100,230,209)',
-            strokeWidth: 4,
-            lineCap: 'round',
-            lineJoin: 'round'
-        };
-        //
-        this.interimFloat = false;
-        //
+        switch (this.$store.getters.currentStep) {
+            case MovementOptions.DRIVE:
+                //
+                var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                this.directionLine = {
+                    x: 0,
+                    y: 0,
+                    points: [this.curX /*+ this.nextX*/, this.curY /*+ this.nextY*/, this.curX/* + this.nextX*/ + x1 * 3, this.curY/* + this.nextY*/ - y1 * 3],
+                    stroke: 'orange',
+                    strokeWidth: 4,
+                    lineCap: 'round'
+                };
+                //
+                this.interimArc = {
+                    stroke: ''
+                };
+                //
+                var l2 = this.distance * 3;
+                var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                this.nextX = x2;
+                this.nextY = y2 * -1;
+                //
+                this.interimPoint = {
+                    //
+                    x: this.curX + x2,
+                    y: this.curY - y2,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: this.newColor,
+                    strokeWidth: 5,
+                    cornerRadius: 5,
+                    rotation: this.curAngle,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                };
+                //
+                this.interimLine = {
+                    x: 0,
+                    y: 0,
+                    points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
+                    stroke: this.newColor,
+                    strokeWidth: 4,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                };
+                //
+                this.interimFloat = false;
+                //
+            break;
+            case MovementOptions.TURN:
+                //
+                var x1 = (this.fieldDim * 2) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var y1 = (this.fieldDim * 2) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                this.directionLine = {
+                    x: 0,
+                    y: 0,
+                    points: [this.curX, this.curY, this.curX + x1, this.curY - y1],
+                    stroke: 'orange',
+                    strokeWidth: 4,
+                    lineCap: 'round'
+                };
+                //
+                this.nextAngle = this.curAngle + parseFloat(this.angle);
+                //
+                var x2 = (this.fieldDim * 2) * Math.cos((90 - this.nextAngle) * Math.PI / 180);
+                var y2 = (this.fieldDim * 2) * Math.sin((90 - this.nextAngle) * Math.PI / 180);
+                //
+                this.interimLine = {
+                    x: 0,
+                    y: 0,
+                    points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
+                    stroke: this.newColor,
+                    strokeWidth: 4,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                };
+                //
+                this.interimPoint = {
+                    x: this.curX,
+                    y: this.curY,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: this.newColor,
+                    strokeWidth: 5,
+                    cornerRadius: 5,
+                    rotation: this.nextAngle,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                }
+                //
+                if(this.angle > 0){
+                    this.interimArc = {
+                        x: this.curX,
+                        y: this.curY,
+                        innerRadius: 70,
+                        outerRadius: 70,
+                        angle: this.angle,
+                        rotation: this.curAngle - 90,
+                        stroke: this.newColor,
+                        strokeWidth: 4,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }
+                }else{
+                    this.interimArc = {
+                        x: this.curX,
+                        y: this.curY,
+                        innerRadius: 70,
+                        outerRadius: 70,
+                        angle: -this.angle,
+                        rotation: (this.nextAngle - 90),
+                        stroke: this.newColor,
+                        strokeWidth: 4,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }
+                    console.log("Rotation: " + (this.curAngle + this.nextAngle - 90));
+                }
+                //
+                this.interimFloat = false;
+                //
+            break;
+            case MovementOptions.ARC:
+                //
+            break;
+            case MovementOptions.STRAFE:
+                //
+            break;
+        }
     },
     setStepPoint: function(mousePos){
         console.log("Click location--X: " + mousePos.x + ",Y: " + mousePos.y);
@@ -299,15 +610,27 @@ export default {
         switch (this.$store.getters.currentStep) {
             case MovementOptions.DRIVE:
                 //
+                var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                this.directionLine = {
+                    x: 0,
+                    y: 0,
+                    points: [this.curX /*+ this.nextX*/, this.curY /*+ this.nextY*/, this.curX/* + this.nextX*/ + x1 * 3, this.curY/* + this.nextY*/ - y1 * 3],
+                    stroke: 'orange',
+                    strokeWidth: 4,
+                    lineCap: 'round'
+                };
+                //
                 if(this.interimFloat){
-                    //
+                    //Fix Click Assist
                     if(mousePos.x > this.curX){
                         var l1 = Math.sqrt(Math.pow(this.curY - mousePos.y, 2) + Math.pow(mousePos.x - this.curX, 2));
                         var a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
                         var a2 = 90 - this.curAngle - a1;
                         var l2 = l1 * Math.cos(a2 * Math.PI / 180);
-                        var x2 = l2 * Math.cos(this.curAngle * Math.PI / 180);
-                        var y2 = l2 * Math.sin(this.curAngle * Math.PI / 180);
+                        var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                        var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
                         console.log("L2 components--Y: " + (Math.pow(this.curY - mousePos.y, 2)) + ", X: " + (Math.pow(mousePos.x - this.curX, 2)));
                         console.log("New position--L1: " + l1 + ", A1: " + a1 + ", A2: " + a2 + ", L2: " + l2 + ", X2: " + x2 + ", Y2: " + y2);
                         //
@@ -319,11 +642,11 @@ export default {
                             height: this.robotLength * 3,
                             offsetX: this.robotWidth * 3 / 2,
                             offsetY: this.robotLength * 3 / 2,
-                            stroke: 'rgb(100,230,209)',
+                            stroke: this.newColor,
                             strokeWidth: 5,
                             dash: [20, 20],
                             cornerRadius: 5,
-                            rotation: this.points[0].rotation,
+                            rotation: this.curAngle,
                             lineCap: 'round',
                             lineJoin: 'round'
                         };
@@ -331,8 +654,8 @@ export default {
                         this.interimLine = {
                             x: 0,
                             y: 0,
-                            points: [this.points[0].x, this.points[0].y, this.curX + x2, this.curY - y2],
-                            stroke: 'rgb(100,230,209)',
+                            points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
+                            stroke: this.newColor,
                             strokeWidth: 4,
                             dash: [20, 20],
                             lineCap: 'round',
@@ -343,12 +666,12 @@ export default {
                         this.nextY = y2 * -1;
                         //
                     }else{
-                        var l1 = Math.sqrt(Math.pow(mousePos.y - this.curY, 2) + Math.pow(this.curX - mousePos.x, 2));
-                        var a1 = Math.atan((this.curX - mousePos.x) / (mousePos.y - this.curY)) * 180 / Math.PI;
-                        var a2 = 90 - this.curAngle - a1;//90 - (90 - this.curAngle) - a1;
+                        var l1 = Math.sqrt(Math.pow(this.curY - mousePos.y, 2) + Math.pow(mousePos.x - this.curX, 2));
+                        var a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
+                        var a2 = 90 - this.curAngle - a1;
                         var l2 = l1 * Math.cos(a2 * Math.PI / 180);
-                        var x2 = l2 * Math.cos(this.curAngle * Math.PI / 180);
-                        var y2 = l2 * Math.sin(this.curAngle * Math.PI / 180);
+                        var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                        var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
                         //
                         this.interimPoint = {
                             //
@@ -358,11 +681,11 @@ export default {
                             height: this.robotLength * 3,
                             offsetX: this.robotWidth * 3 / 2,
                             offsetY: this.robotLength * 3 / 2,
-                            stroke: 'rgb(100,230,209)',
+                            stroke: this.newColor,
                             strokeWidth: 5,
                             dash: [20, 20],
                             cornerRadius: 5,
-                            rotation: this.points[0].rotation,
+                            rotation: this.curAngle,
                             lineCap: 'round',
                             lineJoin: 'round'
                         };
@@ -370,8 +693,8 @@ export default {
                         this.interimLine = {
                             x: 0,
                             y: 0,
-                            points: [this.points[0].x, this.points[0].y, this.curX - x2, this.curY + y2],
-                            stroke: 'rgb(100,230,209)',
+                            points: [this.curX, this.curY, this.curX - x2, this.curY + y2],
+                            stroke: this.newColor,
                             strokeWidth: 4,
                             dash: [20, 20],
                             lineCap: 'round',
@@ -384,7 +707,7 @@ export default {
                         //
                     }
                     //
-                    this.distance = Math.round(l2 / 3);
+                    this.distance = Math.round((l2 / 3) * 5) / 5;
                     //
                 }else{
                     this.interimPoint = {
@@ -395,95 +718,244 @@ export default {
                         height: this.robotLength * 3,
                         offsetX: this.robotWidth * 3 / 2,
                         offsetY: this.robotLength * 3 / 2,
-                        stroke: 'rgb(100,230,209)',
+                        stroke: this.newColor,
                         strokeWidth: 5,
                         cornerRadius: 5,
-                        rotation: this.points[0].rotation,
+                        rotation: this.curAngle,
                         lineCap: 'round',
                         lineJoin: 'round'
                     };
                     //
                     this.interimLine = {
-                            x: 0,
-                            y: 0,
-                            points: [this.points[0].x, this.points[0].y, this.curX + this.nextX, this.curY + this.nextY],
-                            stroke: 'rgb(100,230,209)',
-                            strokeWidth: 4,
-                            lineCap: 'round',
-                            lineJoin: 'round'
-                        };
+                        x: 0,
+                        y: 0,
+                        points: [this.curX, this.curY, this.curX + this.nextX, this.curY + this.nextY],
+                        stroke: this.newColor,
+                        strokeWidth: 4,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    };
                 }
                 //
                 x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
                 y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
                 //
                 console.log("X1: " + x1 + ", Y1: " + y1);
-                //
-                this.lines.pop();
-                //
-                this.lines.push({
+                /*
+                this.directionLine = {
                     x: 0,
                     y: 0,
                     points: [this.curX, this.curY, this.curX + x1 * 3, this.curY - y1 * 3],
                     stroke: 'orange',
                     strokeWidth: 4,
                     lineCap: 'round'
-                });
-                //
+                };
+                */
             break;
             case MovementOptions.TURN:
-                var x1 = 0;
-                var y1 = 0;
-                var op = 0;
-                var ax = 0;
-                var ay = 0;
-                if (this.curAngle > 0){
-                    x1 = this.curY / Math.tan((90 - this.curAngle) * Math.PI / 180);
-                    //
-                    if((this.curX + x1) > this.fieldDim){
-                        y1 = (this.fieldDim - this.curX) * Math.tan((90 - this.curAngle) * Math.PI / 180);
-                        console.log("Angle line--X: " + this.fieldDim + ", Y: " + (this.curY - y1));
-                        ax = this.fieldDim;
-                        ay = this.curY - y1;
-                    }else{
-                        console.log("Angle line--X: " + (this.curX + x1) + ", Y: 0");
-                        ax = this.curX + x1;
-                        ay = 0;
-                    }
-                }else{
-                    x1 = this.curY / Math.tan((90 - this.curAngle) * Math.PI / -180);
-                    //
-                    if(this.curX - x1 > 0){
-                        y1 = this.curX * Math.tan((90 - this.curAngle) * Math.PI / -180);
-                        console.log("Angle line--X: 0, Y: " + (this.curY - y1));
-                        ax = 0;
-                        ay = this.curY - y1;
-                    }else{
-                        console.log("Angle line--X: " + (this.curX - x1) + ", Y: 0");
-                        ax = this.curX - x1;
-                        ay = 0;
-                    }
-                }
+                var x1 = (this.fieldDim * 2) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var y1 = (this.fieldDim * 2) * Math.sin((90 - this.curAngle) * Math.PI / 180);
                 //
-                this.lines.pop();
-                //
-                this.lines.push({
+                this.directionLine = {
                     x: 0,
                     y: 0,
-                    points: [this.curX, this.curY, ax, ay],
+                    points: [this.curX, this.curY, this.curX + x1, this.curY - y1],
                     stroke: 'orange',
                     strokeWidth: 4,
                     lineCap: 'round'
-                })
+                };
+                //
+                if(this.interimFloat){
+                    //
+                    if(mousePos.x > this.curX){
+                        this.nextAngle = (90 - (Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI));
+                    }else{
+                        this.nextAngle = -180 + (90 - (Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI));
+                    }
+                    console.log("nextAngle: " + this.nextAngle);
+                    //
+                    var x2 = (this.fieldDim * 2) * Math.cos((90 - this.nextAngle) * Math.PI / 180);
+                    var y2 = (this.fieldDim * 2) * Math.sin((90 - this.nextAngle) * Math.PI / 180);
+                    //
+                    this.interimLine = {
+                        x: 0,
+                        y: 0,
+                        points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
+                        stroke: this.newColor,
+                        strokeWidth: 4,
+                        dash: [20, 20],
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    };
+                    //
+                    var a1 = Math.round(this.nextAngle / 5) * 5 - this.curAngle;
+                    //
+                    if(Math.abs(a1) > 180){
+                        if((a1) > 0){
+                            a1 = a1 - 360;
+                        }else{
+                            a1 = a1 + 360;
+                        }
+                    }
+                    this.angle = a1;
+                    //
+                    this.interimPoint = {
+                        x: this.curX,
+                        y: this.curY,
+                        width: this.robotWidth * 3,
+                        height: this.robotLength * 3,
+                        offsetX: this.robotWidth * 3 / 2,
+                        offsetY: this.robotLength * 3 / 2,
+                        stroke: this.newColor,
+                        strokeWidth: 5,
+                        cornerRadius: 5,
+                        rotation: this.nextAngle,
+                        dash: [20, 20],
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }
+                    //
+                    var a2 = this.nextAngle - this.curAngle;
+                    if(Math.abs(a2) > 180){
+                        if((a2) > 0){
+                            a2 = a2 - 360;
+                        }else{
+                            a2 = a2 + 360;
+                        }
+                    }
+                    //
+                    if(a2 > 0){
+                        this.interimArc = {
+                            x: this.curX,
+                            y: this.curY,
+                            innerRadius: 70,
+                            outerRadius: 70,
+                            angle: a2,
+                            rotation: this.curAngle - 90,
+                            stroke: this.newColor,
+                            strokeWidth: 4,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        }
+                    }else{
+                        this.interimArc = {
+                            x: this.curX,
+                            y: this.curY,
+                            innerRadius: 70,
+                            outerRadius: 70,
+                            angle: -a2,
+                            rotation: this.nextAngle - 90,
+                            stroke: this.newColor,
+                            strokeWidth: 4,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        }
+                    }
+                    //
+                }else{
+                    var x2 = (this.fieldDim * 2) * Math.cos((90 - this.nextAngle) * Math.PI / 180);
+                    var y2 = (this.fieldDim * 2) * Math.sin((90 - this.nextAngle) * Math.PI / 180);
+                    //
+                    this.interimLine = {
+                        x: 0,
+                        y: 0,
+                        points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
+                        stroke: this.newColor,
+                        strokeWidth: 4,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    };
+                    //
+                    this.interimPoint = {
+                        x: this.curX,
+                        y: this.curY,
+                        width: this.robotWidth * 3,
+                        height: this.robotLength * 3,
+                        offsetX: this.robotWidth * 3 / 2,
+                        offsetY: this.robotLength * 3 / 2,
+                        stroke: this.newColor,
+                        strokeWidth: 5,
+                        cornerRadius: 5,
+                        rotation: this.nextAngle,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }
+                }
+                //
             break;
             case MovementOptions.ARC:
-            
+                //
             break;
             case MovementOptions.STRAFE:
-            
+                //
             break;
         }
     }
+  },
+  created(){
+    var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+    var y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+    //
+    this.directionLine = {
+        x: 0,
+        y: 0,
+        points: [this.curX, this.curY, this.curX + x1 * 3, this.curY - y1 * 3],
+        stroke: 'orange',
+        strokeWidth: 4,
+        lineCap: 'round'
+    };
+    //
+    this.points.push({
+        //
+        x: this.topRight.x,
+        y: this.topRight.y,
+        rotation: this.topRight.rotation,
+        width: this.robotWidth * 3,
+        height: this.robotLength * 3,
+        offsetX: this.robotWidth * 3 / 2,
+        offsetY: this.robotLength * 3 / 2,
+        stroke: '#32cd32',
+        strokeWidth: 5,
+        cornerRadius: 5
+    });
+    //
+    this.getStepPoint();
+    /*
+    var l2 = this.distance * 3;
+    var x2 = l2 * Math.cos(this.curAngle * Math.PI / 180);
+    var y2 = l2 * Math.sin(this.curAngle * Math.PI / 180);
+    //
+    this.nextX = x2;
+    this.nextY = y2 * -1;
+    //
+    this.interimPoint = {
+        //
+        x: this.curX + x2,
+        y: this.curY - y2,
+        width: this.robotWidth * 3,
+        height: this.robotLength * 3,
+        offsetX: this.robotWidth * 3 / 2,
+        offsetY: this.robotLength * 3 / 2,
+        stroke: this.newColor,
+        strokeWidth: 5,
+        cornerRadius: 5,
+        rotation: this.points[0].rotation,
+        lineCap: 'round',
+        lineJoin: 'round'
+    };
+    //
+    this.interimLine = {
+        x: 0,
+        y: 0,
+        points: [this.points[0].x, this.points[0].y, this.curX + x2, this.curY - y2],
+        stroke: this.newColor,
+        strokeWidth: 4,
+        lineCap: 'round',
+        lineJoin: 'round'
+    };
+    //
+    this.interimFloat = false;*/
+    //
   },
   data: () => ({
     presets: ["Gear ratio: 20", "Gear ratio: 40", "Gear ratio: 60", "Custom"],
@@ -493,34 +965,38 @@ export default {
     turn: MovementOptions.TURN,
     arc: MovementOptions.ARC,
     strafe: MovementOptions.STRAFE,
-    angle: 0,
+    angle: 45,
     direction: "right",
-    distance: 10,
+    distance: 0,
     speed: 0,
     pxperinch: 3,
     robotWidth: 16,
     robotLength: 18,
+    newColor: 'white',
     opencustoms: false,
     stepInProgress: true,
     interimPoint: null,
     interimLine: null,
     interimArc: null,
+    directionLine: null,
     field: require('@/assets/Pictures/field2.jpg'),
     fieldDim: 423,
-    curX: 161,
+    curX: 268,
     curY: 159,
     nextX: 0,
     nextY: 0,
-    curAngle: -45,
+    curAngle: 45,
+    nextAngle: 0,
     interimFloat: true,
+    clickAssist: false,
     topLeft: {
         x:161,
         y:159,
         rotation: -45
     },
     topRight: {
-        x:256,
-        y:143,
+        x:268,
+        y:159,
         rotation:45
     },
     bottomLeft: {
@@ -528,22 +1004,25 @@ export default {
         y:260,
         rotation: -135
     },
-    points: [{
-        x:161,
-        y:159,
+    points: [/*{
+        x:160,
+        y:260,
         width:48,
         height:54,
         fill:'',
-        stroke: 'black',
+        stroke: '#1e53b0',
         strokeWidth: 5,
         cornerRadius: 5,
-        rotation: -45,
+        rotation: 45,
         offsetX: 24,
         offsetY: 27
-    }],
+    }*/],
+    arcs: [],
     lines: [{
         points: [147, 240, 200, 200]
-    }]
+    }],
+    stepColors: ['#9d00ff', '#b700ff', '#cc00ff', '#ff00ff', '#ff00dd', '#ff00ff', '#cc00ff', '#b700ff'],
+    currentColor: 0
   })
 };
 </script>

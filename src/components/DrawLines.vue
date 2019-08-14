@@ -1,10 +1,8 @@
 <template>
     <div>
         <v-stage ref="field" :config="configKonva">
-            <v-layer>
+            <v-layer @click="someoneClicked" @mousemove="updateMouse" >
                 <v-image 
-                        @click="someoneClicked" 
-                        @mousemove="updateMouse"
                         :config="{
                         image: image,
                         width:imageWidth,
@@ -25,11 +23,20 @@
                 <div v-if="interimArc">
                     <v-arc :config="interimArc"></v-arc>
                 </div>
+                <div v-if="directionLine">
+                    <v-line :config="directionLine"></v-line>
+                </div>
                 <div
                     v-for="(line, index) in lines"
                     :key="index"
                 >
                     <v-line :config="line"></v-line>
+                </div>
+                <div
+                    v-for="(arc, index) in arcs"
+                    :key="index"
+                >
+                    <v-arc :config="arc"></v-arc>
                 </div>
             </v-layer>
         </v-stage>
@@ -47,7 +54,9 @@ export default {
         'lines',
         'interimPoint',
         'interimLine',
-        'interimArc'
+        'interimArc',
+        'directionLine',
+        'arcs'
     ],
     data () {
         return{
