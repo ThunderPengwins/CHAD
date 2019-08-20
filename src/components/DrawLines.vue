@@ -1,7 +1,7 @@
 <template>
     <div>
-        <v-stage ref="field" :config="configKonva">
-            <v-layer @click="someoneClicked" @mousemove="updateMouse" >
+        <v-stage ref="field" :config="configKonva" @click="someoneClicked" @mousemove="updateMouse">
+            <v-layer>
                 <v-image 
                         :config="{
                         image: image,
@@ -23,9 +23,6 @@
                 <div v-if="interimArc">
                     <v-arc :config="interimArc"></v-arc>
                 </div>
-                <div v-if="directionLine">
-                    <v-line :config="directionLine"></v-line>
-                </div>
                 <div
                     v-for="(line, index) in lines"
                     :key="index"
@@ -37,6 +34,11 @@
                     :key="index"
                 >
                     <v-arc :config="arc"></v-arc>
+                </div>
+            </v-layer>
+            <v-layer>
+                <div v-if="directionLine">
+                    <v-line :config="directionLine"></v-line>
                 </div>
             </v-layer>
         </v-stage>
