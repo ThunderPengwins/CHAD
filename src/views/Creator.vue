@@ -909,116 +909,130 @@ export default {
             break;
             case MovementOptions.ARC:
                 //
-                var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
-                var y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
-                //
-                this.directionLine = {
-                    x: 0,
-                    y: 0,
-                    points: [this.curX /*+ this.nextX*/, this.curY /*+ this.nextY*/, this.curX/* + this.nextX*/ + x1 * 3, this.curY/* + this.nextY*/ - y1 * 3],
-                    stroke: 'orange',
-                    strokeWidth: 4,
-                    lineCap: 'round'
-                };
-                //
-                this.interimLine = null;
-                this.interimPoint = {
-                    x: this.mousePos.x,
-                    y: this.mousePos.y,
-                    width: this.robotWidth * 3,
-                    height: this.robotLength * 3,
-                    offsetX: this.robotWidth * 3 / 2,
-                    offsetY: this.robotLength * 3 / 2,
-                    stroke: this.newColor,
-                    strokeWidth: 5,
-                    cornerRadius: 5,
-                    rotation: this.nextAngle,
-                    lineCap: 'round',
-                    lineJoin: 'round'
-                }
-                //
-                var d1 = Math.sqrt(Math.pow(mousePos.x - this.curX, 2) + Math.pow(this.curY - mousePos.y, 2));
-                var a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
-                var r = (d1 * Math.sin((90 - ((90 - a1) - this.curAngle)) * Math.PI / 180)) / Math.sin(2 * ((90 - a1) - this.curAngle) * Math.PI / 180);
-                var x1 = r * Math.cos(-1 * this.curAngle * Math.PI / 180);
-                var y1 = r * Math.sin(-1 * this.curAngle * Math.PI / 180);
-                var perp = (mousePos.x - this.curX) * Math.tan(this.curAngle * Math.PI / 180) + this.curY;
-                var par = (this.curY - mousePos.y) / Math.tan((90 - this.curAngle) * Math.PI / 180) + this.curX;
-                if(a1 > (90 - this.curAngle)){
-                    a1 = a1 - 180;
-                }
-                console.log("D1: " + d1 + ", A1: " + a1 + ", R: " + r + ", X1: " + x1 + ", Y1: " + y1 + ", Perp: " + perp + ", Par: " + par);
-                //
-                var start = this.curAngle - 90;
-                //
-                if(mousePos.x < par){
-                    start = this.curAngle + 90;
-                }
-                //
-                if(mousePos.x < this.curX){
-                    x1 = x1 * -1;
-                    y1 = y1 * -1;
-                }
-                //
-                if(r < 0){
-                    r = r * -1;
-                }
-                //
-                var a2 = ((90 - a1) - this.curAngle) * 2;
-                if(a2 > 360){
-                    a2 -= 360;
-                }
-                //
-                var curA = this.curAngle;
-                /*if(curA < -90){
-                    curA += 180;
-                }*/
-                //
-                if((mousePos.y > perp && mousePos.x > par) || (mousePos.x < par && mousePos.y < perp)){
-                    this.interimArc = {
-                        x: this.curX + x1,
-                        y: this.curY - y1,
-                        innerRadius: r,
-                        outerRadius: r,
-                        angle: (2 * (90 + a1 + this.curA)),
-                        rotation: (start) + (360 - (2 * (90 + a1 + this.curA))) - 90,
-                        stroke: this.newColor,
+                if(this.interimFloat){
+                    var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                    var y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                    //
+                    this.directionLine = {
+                        x: 0,
+                        y: 0,
+                        points: [this.curX /*+ this.nextX*/, this.curY /*+ this.nextY*/, this.curX/* + this.nextX*/ + x1 * 3, this.curY/* + this.nextY*/ - y1 * 3],
+                        stroke: 'orange',
                         strokeWidth: 4,
+                        lineCap: 'round'
+                    };
+                    //
+                    this.interimLine = null;
+                    //
+                    var curA = this.curAngle;
+                    console.log("curA: " + curA);
+                    if(curA < -90){
+                        curA += 180;
+                    }else if(curA > 90){
+                        curA -= 180;
+                    }
+                    //
+                    var d1 = Math.sqrt(Math.pow(mousePos.x - this.curX, 2) + Math.pow(this.curY - mousePos.y, 2));
+                    var a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
+                    var r = (d1 * Math.sin((90 - ((90 - a1) - curA)) * Math.PI / 180)) / Math.sin(2 * ((90 - a1) - curA) * Math.PI / 180);
+                    var x1 = r * Math.cos(-1 * curA * Math.PI / 180);
+                    var y1 = r * Math.sin(-1 * curA * Math.PI / 180);
+                    var perp = (mousePos.x - this.curX) * Math.tan(curA * Math.PI / 180) + this.curY;
+                    var par = (this.curY - mousePos.y) / Math.tan((90 - curA) * Math.PI / 180) + this.curX;
+                    if(a1 > (90 - curA)){
+                        a1 = a1 - 180;
+                    }
+                    //
+                    var start = curA - 90;
+                    //
+                    if(mousePos.x < par){
+                        start = curA + 90;
+                    }
+                    //
+                    if(mousePos.x < this.curX){
+                        x1 = x1 * -1;
+                        y1 = y1 * -1;
+                    }
+                    //
+                    if(r < 0){
+                        r = r * -1;
+                    }
+                    //
+                    var a2 = ((90 - a1) - curA) * 2;
+                    if(a2 > 360){
+                        a2 = a2 - 360;
+                    }
+                    //
+                    console.log("D1: " + d1 + ", A1: " + a1 + ", R: " + r + ", X1: " + x1 + ", Y1: " + y1 + ", Perp: " + perp + ", Par: " + par);
+                    //
+                    if((mousePos.y > perp && mousePos.x > par) || (mousePos.x < par && mousePos.y < perp)){
+                        this.interimArc = {
+                            x: this.curX + x1,
+                            y: this.curY - y1,
+                            innerRadius: r,
+                            outerRadius: r,
+                            angle: (2 * (90 + a1 + curA)),
+                            rotation: (start) + (360 - (2 * (90 + a1 + curA))) - 90,
+                            stroke: this.newColor,
+                            dash: [20, 20],
+                            strokeWidth: 4,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        };
+                        console.log("Angle: " + (2 * (90 + a1 + curA)));
+                        console.log("Rotation: " + ((start) + (360 - (2 * (90 + a1 + curA)))));
+                    }else if(mousePos.y < perp){
+                        this.interimArc = {
+                            x: this.curX + x1,
+                            y: this.curY - y1,
+                            innerRadius: r,
+                            outerRadius: r,
+                            angle: a2,
+                            rotation: curA - 180,
+                            stroke: this.newColor,
+                            dash: [20, 20],
+                            strokeWidth: 4,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        };
+                        console.log("first");
+                    }else{
+                        this.interimArc = {
+                            x: this.curX + x1,
+                            y: this.curY - y1,
+                            innerRadius: r,
+                            outerRadius: r,
+                            angle: a2,
+                            rotation: curA,
+                            dash: [20, 20],
+                            stroke: this.newColor,
+                            strokeWidth: 4,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        };
+                        console.log("Fourth");
+                    }
+                    //
+                    this.interimPoint = {
+                        x: mousePos.x,
+                        y: mousePos.y,
+                        width: this.robotWidth * 3,
+                        height: this.robotLength * 3,
+                        offsetX: this.robotWidth * 3 / 2,
+                        offsetY: this.robotLength * 3 / 2,
+                        stroke: this.newColor,
+                        strokeWidth: 5,
+                        cornerRadius: 5,
+                        rotation: 90 - (a1 * 2) + curA,
+                        dash: [20, 20],
                         lineCap: 'round',
                         lineJoin: 'round'
-                    };
-                    console.log("Angle: " + (2 * (90 + a1 + this.curA)));
-                    console.log("Rotation: " + ((start) + (360 - (2 * (90 + a1 + this.curA)))));
-                }else if(mousePos.y < perp){
-                    this.interimArc = {
-                        x: this.curX + x1,
-                        y: this.curY - y1,
-                        innerRadius: r,
-                        outerRadius: r,
-                        angle: a2,
-                        rotation: this.curA - 180,
-                        stroke: this.newColor,
-                        strokeWidth: 4,
-                        lineCap: 'round',
-                        lineJoin: 'round'
-                    };
-                }else{
-                    this.interimArc = {
-                        x: this.curX + x1,
-                        y: this.curY - y1,
-                        innerRadius: r,
-                        outerRadius: r,
-                        angle: a2,
-                        rotation: curA,
-                        stroke: this.newColor,
-                        strokeWidth: 4,
-                        lineCap: 'round',
-                        lineJoin: 'round'
-                    };
-                    console.log("Fourth");
-                }
-                //
+                    }
+                    //
                 console.log("I'm running!");
+                }else{
+                    //
+                }
                 //
             break;
             case MovementOptions.STRAFE:
@@ -1147,7 +1161,7 @@ export default {
     curY: 159,
     nextX: 0,
     nextY: 0,
-    curAngle: 45,
+    curAngle: 120,
     nextAngle: 0,
     interimFloat: true,
     clickAssist: false,
