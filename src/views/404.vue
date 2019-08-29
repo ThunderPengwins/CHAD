@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1 class="words">
+    <h1 v-bind:title="explain" class="words">
         Uh oh. You've got yourself a 404.
     </h1>
     <p class="words">Things may look bad, but don't panic. Click this cat meme to go home:</p>
@@ -14,7 +14,10 @@ export default {
         goHome: function(){
             this.$router.push('/');
         }
-    }
+    },
+    data: () => ({
+        explain: "That means the page you're looking for doesn't exist"
+    })
 }
 </script>
 

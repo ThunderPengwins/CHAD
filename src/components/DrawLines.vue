@@ -14,15 +14,6 @@
                 >
                     <v-rect :config="point"></v-rect>
                 </div>
-                <div v-if="interimPoint">
-                    <v-rect :config="interimPoint"></v-rect>
-                </div>
-                <div v-if="interimLine">
-                    <v-line :config="interimLine"></v-line>
-                </div>
-                <div v-if="interimArc">
-                    <v-arc :config="interimArc"></v-arc>
-                </div>
                 <div
                     v-for="(line, index) in lines"
                     :key="index"
@@ -34,6 +25,17 @@
                     :key="index"
                 >
                     <v-arc :config="arc"></v-arc>
+                </div>
+            </v-layer>
+            <v-layer>
+                <div v-if="interimPoint">
+                    <v-rect :config="interimPoint"></v-rect>
+                </div>
+                <div v-if="interimLine">
+                    <v-line :config="interimLine"></v-line>
+                </div>
+                <div v-if="interimArc">
+                    <v-arc :config="interimArc"></v-arc>
                 </div>
             </v-layer>
             <v-layer>

@@ -148,6 +148,54 @@ export default {
 </script>
 
 <style>
+ol.lst-kix_eyoxed600bm5-0.start {
+    counter-reset: lst-ctn-kix_eyoxed600bm5-0 0;
+}
+
+ol.lst-kix_eyoxed600bm5-1.start {
+    counter-reset: lst-ctn-kix_eyoxed600bm5-1 0;
+}
+
+ol.lst-kix_eyoxed600bm5-1 {
+    list-style-type: none;
+}
+
+.c0 {
+    margin-left: 36pt;
+    padding-top: 0pt;
+    padding-left: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.15;
+    orphans: 2;
+    widows: 2;
+    text-align: left;
+}
+
+.c1 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-family: "Arial";
+    font-style: normal;
+}
+
+.c4 {
+    margin-left: 72pt;
+    padding-top: 0pt;
+    padding-left: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.15;
+    orphans: 2;
+    widows: 2;
+    text-align: left;
+}
+
+.c6 {
+    font-weight: 700;
+}
+
 #top{
     height: 5%;
     width: 100%;
