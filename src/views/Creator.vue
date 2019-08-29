@@ -9,7 +9,7 @@
         <!-- #region General Inputs -->
             <div class="tooltip" id="pos-name">
                 <input placeholder="Autonomous name" id="in-name" class="colors"/>
-                <span class="tooltiptext">Naming Info<br/><hr/><p class="hover-info">This is the name that will appear in your driver station app.</p></span>
+                <span class="tooltiptext">Naming Info!<br/><hr/><p class="hover-info">This is the name that will appear in your driver station app.</p></span>
             </div>
             <div class="tooltip" id="pos-num">
                 <input type="number" value="1" placeholder="Movement bias" id="in-num" class="colors"/>
@@ -88,19 +88,22 @@
                     <div v-if="($store.getters.isCurrentStepTurn || $store.getters.isCurrentStepArc)" sm12>
                         <p class="label">Angle:</p>
                         <input type="number" v-model="angle" @change="getStepPoint" placeholder="angle" step="5" min="-360" max="360" class="colors" id="in-dist"/>
-                        <div class="amount">label</div>
+                        <div class="amount">°</div>
                     </div>
                     <div v-if="($store.getters.isCurrentStepStrafe)" sm12>
                         <p class="label">Direction:</p>
                         <input v-model="direction" placeholder="direction" step="1" min="1" max="4" class="colors" id="in-dist"/>
+                        <div class="amount">&nbsp;</div>
                     </div>
                     <div v-if="($store.getters.isCurrentStepMove || $store.getters.isCurrentStepArc || $store.getters.isCurrentStepStrafe)" sm12>
                         <p class="label">Distance:</p>
                         <input type="number" v-model="distance" @change="getStepPoint" placeholder="distance" step="0.2" class="colors" id="in-dist"/>
+                        <div class="amount">"</div>
                     </div>
                     <div sm12>
                         <p class="label">Speed:</p>
                         <input type="number" v-model="speed" placeholder="speed" step="0.05" min="-1" max="1" class="colors" id="in-dist"/>
+                        <div class="amount">%</div>
                     </div>
                     <div sm4>
                         <v-btn v-on:click="confirmStep()">Done</v-btn>
@@ -118,13 +121,13 @@
                             </h3>
                         </div> 
                         <!-- #region Steps -->
-                        <div sm12>
+                        <div row wrap>
                             <div v-if="step.type==drive">
-                                <v-layout row wrap>
-                                    <v-flex sm6>
+                                <v-layout>
+                                    <v-flex sm5>
                                         Distance: {{step.params.distance}}
                                     </v-flex>
-                                    <v-flex sm6>
+                                    <v-flex sm5>
                                         Speed: {{step.params.speed}}
                                     </v-flex>
                                 </v-layout> 
@@ -166,6 +169,9 @@
                                 </v-layout> 
                             </div>
                         </div>
+                        <div sm2 id="trash" v-if="(step.stepNumber + 1) == $store.getters.getTheSteps.length">
+                            <v-btn icon flat color="red" v-on:click="deleteStep(step)"><v-icon>delete</v-icon></v-btn>
+                        </div>
                         <!-- #endregion -->
                     <!--</v-card-title>-->
                 </div>
@@ -197,6 +203,18 @@ export default {
       //
       this.getStepPoint();
       //
+    },
+    deleteStep: function(step){
+        //
+        this.$store.commit("removeLastStep");
+        //
+        switch (step.type) {
+            case MovementOptions.DRIVE:
+                this.lines.pop();
+                this.points.pop();
+            break;
+        }
+        //
     },
     setGenerateVisible: function(){
         this.$store.commit("setGenerateVisible");
@@ -891,15 +909,41 @@ export default {
             break;
             case MovementOptions.ARC:
                 //
-                console.log("Running from the start!");
+                var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                var y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                //
+                this.directionLine = {
+                    x: 0,
+                    y: 0,
+                    points: [this.curX /*+ this.nextX*/, this.curY /*+ this.nextY*/, this.curX/* + this.nextX*/ + x1 * 3, this.curY/* + this.nextY*/ - y1 * 3],
+                    stroke: 'orange',
+                    strokeWidth: 4,
+                    lineCap: 'round'
+                };
+                //
+                this.interimLine = null;
+                this.interimPoint = {
+                    x: this.mousePos.x,
+                    y: this.mousePos.y,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: this.newColor,
+                    strokeWidth: 5,
+                    cornerRadius: 5,
+                    rotation: this.nextAngle,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                }
                 //
                 var d1 = Math.sqrt(Math.pow(mousePos.x - this.curX, 2) + Math.pow(this.curY - mousePos.y, 2));
                 var a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
                 var r = (d1 * Math.sin((90 - ((90 - a1) - this.curAngle)) * Math.PI / 180)) / Math.sin(2 * ((90 - a1) - this.curAngle) * Math.PI / 180);
                 var x1 = r * Math.cos(-1 * this.curAngle * Math.PI / 180);
                 var y1 = r * Math.sin(-1 * this.curAngle * Math.PI / 180);
-                var perp = (mousePos.x - this.curX) * Math.tan(this.curAngle * Math.PI / -180) * -1 + this.curY;
-                var par = (this.curY - mousePos.y) * Math.tan((90 - this.curAngle) * Math.PI / 180) + this.curX;
+                var perp = (mousePos.x - this.curX) * Math.tan(this.curAngle * Math.PI / 180) + this.curY;
+                var par = (this.curY - mousePos.y) / Math.tan((90 - this.curAngle) * Math.PI / 180) + this.curX;
                 if(a1 > (90 - this.curAngle)){
                     a1 = a1 - 180;
                 }
@@ -908,37 +952,70 @@ export default {
                 var start = this.curAngle - 90;
                 //
                 if(mousePos.x < par){
-                    start = this.curAngle;
+                    start = this.curAngle + 90;
                 }
                 //
-                if(mousePos.y > perp || mousePos.x < par){
+                if(mousePos.x < this.curX){
+                    x1 = x1 * -1;
+                    y1 = y1 * -1;
+                }
+                //
+                if(r < 0){
+                    r = r * -1;
+                }
+                //
+                var a2 = ((90 - a1) - this.curAngle) * 2;
+                if(a2 > 360){
+                    a2 -= 360;
+                }
+                //
+                var curA = this.curAngle;
+                /*if(curA < -90){
+                    curA += 180;
+                }*/
+                //
+                if((mousePos.y > perp && mousePos.x > par) || (mousePos.x < par && mousePos.y < perp)){
                     this.interimArc = {
                         x: this.curX + x1,
                         y: this.curY - y1,
                         innerRadius: r,
                         outerRadius: r,
-                        angle: (2 * (90 + a1 + this.curAngle)),
-                        rotation: (start) + (360 - (2 * (90 + a1 + this.curAngle))) - 90,
+                        angle: (2 * (90 + a1 + this.curA)),
+                        rotation: (start) + (360 - (2 * (90 + a1 + this.curA))) - 90,
                         stroke: this.newColor,
                         strokeWidth: 4,
                         lineCap: 'round',
                         lineJoin: 'round'
                     };
-                    console.log("Angle: " + (2 * (90 + a1 + this.curAngle)));
-                    console.log("Rotation: " + ((start) + (360 - (2 * (90 + a1 + this.curAngle)))));
+                    console.log("Angle: " + (2 * (90 + a1 + this.curA)));
+                    console.log("Rotation: " + ((start) + (360 - (2 * (90 + a1 + this.curA)))));
+                }else if(mousePos.y < perp){
+                    this.interimArc = {
+                        x: this.curX + x1,
+                        y: this.curY - y1,
+                        innerRadius: r,
+                        outerRadius: r,
+                        angle: a2,
+                        rotation: this.curA - 180,
+                        stroke: this.newColor,
+                        strokeWidth: 4,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    };
                 }else{
                     this.interimArc = {
                         x: this.curX + x1,
                         y: this.curY - y1,
                         innerRadius: r,
                         outerRadius: r,
-                        angle: ((90 - a1) - this.curAngle) * 2,
-                        rotation: this.curAngle - 180,
+                        angle: a2,
+                        rotation: curA,
                         stroke: this.newColor,
                         strokeWidth: 4,
                         lineCap: 'round',
                         lineJoin: 'round'
                     };
+                    console.log("Fourth");
                 }
                 //
                 console.log("I'm running!");
@@ -1137,6 +1214,12 @@ export default {
   top: 3%;
 }
 
+.trash{
+    position: absolute;
+    top: 30px;
+    background-color: yellow;
+}
+
 .chassischoice {
   font-family: "Montserrat", sans-serif;
   color: white;
@@ -1217,15 +1300,24 @@ export default {
   padding-left: 4px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  float: left;
+  left: 5%;
+  top: -10px;
+  position: relative;
+  margin-right: 5%;
+  margin-bottom: 3%;
 }
 
 .amount{
     background-color: white;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
-    width: 10%;
+    width: 5%;
+    top: -10px;
+    position: relative;
     text-align: right;
     padding-right: 4px;
+    float: left;
 }
 
 .dropdown{

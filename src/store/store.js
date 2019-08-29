@@ -32,6 +32,9 @@ export const store = new Vuex.Store({
     },
     setFirstChassis(state){
       state.firstChassis = true;
+    },
+    removeLastStep(state){
+      state.listOfSteps.pop();
     }
   },
   getters: {

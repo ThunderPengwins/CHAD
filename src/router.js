@@ -13,7 +13,7 @@ export default new Router({
       component: Home
     },
     {
-      path: '/about',
+      path: '/surprise',
       name: 'about',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
@@ -34,6 +34,11 @@ export default new Router({
       path: '/generate',
       name: 'generate',
       component: () => import('./views/Generate.vue')
+    },
+    {
+      path: '*',
+      name: 'not-found',
+      component: () => import('./views/404.vue')
     }
   ]
 })
