@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import VueCarousel from '@chenfengyuan/vue-carousel'
 import './plugins/vuetify';
 import App from './App.vue'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
@@ -11,6 +12,7 @@ import VueKonva from 'vue-konva'
 
 Vue.use(VueKonva);
 Vue.config.productionTip = false
+Vue.component(VueCarousel.name, VueCarousel)
 
 new Vue({
   router,

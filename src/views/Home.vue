@@ -1,15 +1,13 @@
 <template>
-    <div id="app">
+  <div id="app">
     <div class="top">
         <img src="@/assets/Pictures/chadLogo.jpg" alt="Logo" class="logo">
     </div>
     <div class="topbkgd">
       <v-carousel  hide-controls height="100%" class="carol">
-        <v-carousel-item
-      v-for="(item,i) in items"
-      :key="i"
-      :src="item.src"
-    ></v-carousel-item>
+        <v-carousel-item v-for="(item,i) in items" :key="i" :src="item.src">
+          <v-img contain :src="item"></v-img>
+        </v-carousel-item>
     </v-carousel>
     </div>
     <h1 class="desc">Select Chassis:</h1>
@@ -37,6 +35,8 @@
 </template>
 
 <script>
+var file1 = require('@/assets/slideshow/p1.jpg')
+
 import { MovementOptions } from "@/store/steps";
 export default {
   name: 'Home',
@@ -62,7 +62,7 @@ export default {
       return {
         items: [
           {
-            src: 'https://static.techspot.com/images2/news/bigimage/2018/07/2018-07-10-image-35.jpg'
+            src: file1
           },
           {
             src: 'https://www.brookings.edu/wp-content/uploads/2017/11/metro_20171121_tech-empowers-tech-polarizes-mark-muro.jpg'

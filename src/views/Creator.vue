@@ -196,12 +196,7 @@ export default {
       this.$store.commit("setCurrentStep", step);
       //
       this.interimFloat = false;
-      /*
-      if(step == MovementOptions.DRIVE){
-          //this.interimArc = null;
-          console.log("test");
-      }
-      */
+      //
       this.getStepPoint();
       //
     },
@@ -233,16 +228,12 @@ export default {
                 this.getDrive();
             break;
             case MovementOptions.TURN:
-                //console.log("Start");
                 this.arcs.pop();
                 this.points.pop();
-                console.log("Point 1");
                 this.curAngle = this.points[this.points.length - 1].rotation;
                 this.angle = 45;
-                console.log("Point 2");
                 this.nextAngle = this.curAngle + this.angle;
                 this.points.pop();
-                console.log("Point 3");
                 this.points.push({
                     x: this.curX,
                     y: this.curY,
@@ -255,10 +246,8 @@ export default {
                     strokeWidth: 5,
                     cornerRadius: 5
                 });
-                console.log("Point 4");
                 this.$store.commit("setCurrentStep", MovementOptions.TURN);
                 this.getTurn();
-                console.log("Finished");
             break;
         }
         //
@@ -305,10 +294,8 @@ export default {
     startChange: function(event){
         if(event.target.value=="top left"){
             this.startingPos = this.topLeft;
-            console.log("top left");
         }else if(event.target.value=="top right"){
             this.startingPos = this.topRight;
-            console.log("top right");
         }
         this.deleteSteps();
         //
@@ -395,11 +382,7 @@ export default {
                 this.nextX = x2;
                 this.nextY = y2 * -1;
                 //
-                console.log("x2: " + x2 + ", y2: " + y2);
-                //
                 this.getDrive();
-                //
-                console.log("You made it!");
                 //
                 this.interimFloat = false;
                 //
@@ -478,15 +461,15 @@ export default {
                 //
                 this.distance = 30;
                 //
-                var l2 = this.distance * 3;
-                var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
-                var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                l2 = this.distance * 3;
+                x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
                 //
                 this.nextX = x2;
                 this.nextY = y2 * -1;
                 //
-                var x1 = (this.fieldDim * 2) * Math.cos((90 - this.curAngle) * Math.PI / 180);
-                var y1 = (this.fieldDim * 2) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                x1 = (this.fieldDim * 2) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                y1 = (this.fieldDim * 2) * Math.sin((90 - this.curAngle) * Math.PI / 180);
                 //
                 this.directionLine = {
                     x: 0,
@@ -614,12 +597,12 @@ export default {
                         this.nextY = y2 * -1;
                         //
                     }else{
-                        var l1 = Math.sqrt(Math.pow(this.curY - mousePos.y, 2) + Math.pow(mousePos.x - this.curX, 2));
-                        var a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
-                        var a2 = 90 - this.curAngle - a1;
-                        var l2 = l1 * Math.cos(a2 * Math.PI / 180);
-                        var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
-                        var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                        l1 = Math.sqrt(Math.pow(this.curY - mousePos.y, 2) + Math.pow(mousePos.x - this.curX, 2));
+                        a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
+                        a2 = 90 - this.curAngle - a1;
+                        l2 = l1 * Math.cos(a2 * Math.PI / 180);
+                        x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                        y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
                         //
                         this.interimPoint = {
                             //
@@ -668,8 +651,8 @@ export default {
                 //
             break;
             case MovementOptions.TURN:
-                var x1 = (this.fieldDim * 2) * Math.cos((90 - this.curAngle) * Math.PI / 180);
-                var y1 = (this.fieldDim * 2) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                x1 = (this.fieldDim * 2) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                y1 = (this.fieldDim * 2) * Math.sin((90 - this.curAngle) * Math.PI / 180);
                 //
                 this.directionLine = {
                     x: 0,
@@ -687,10 +670,9 @@ export default {
                     }else{
                         this.nextAngle = -180 + (90 - (Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI));
                     }
-                    console.log("nextAngle: " + this.nextAngle);
                     //
-                    var x2 = (this.fieldDim * 2) * Math.cos((90 - this.nextAngle) * Math.PI / 180);
-                    var y2 = (this.fieldDim * 2) * Math.sin((90 - this.nextAngle) * Math.PI / 180);
+                    x2 = (this.fieldDim * 2) * Math.cos((90 - this.nextAngle) * Math.PI / 180);
+                    y2 = (this.fieldDim * 2) * Math.sin((90 - this.nextAngle) * Math.PI / 180);
                     //
                     this.interimLine = {
                         x: 0,
@@ -703,7 +685,7 @@ export default {
                         lineJoin: 'round'
                     };
                     //
-                    var a1 = Math.round(this.nextAngle / 5) * 5 - this.curAngle;
+                    a1 = Math.round(this.nextAngle / 5) * 5 - this.curAngle;
                     //
                     if(Math.abs(a1) > 180){
                         if((a1) > 0){
@@ -730,7 +712,7 @@ export default {
                         lineJoin: 'round'
                     }
                     //
-                    var a2 = this.nextAngle - this.curAngle;
+                    a2 = this.nextAngle - this.curAngle;
                     if(Math.abs(a2) > 180){
                         if((a2) > 0){
                             a2 = a2 - 360;
@@ -775,8 +757,8 @@ export default {
             case MovementOptions.ARC:
                 //
                 if(this.interimFloat){
-                    var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
-                    var y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                    x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                    y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
                     //
                     this.directionLine = {
                         x: 0,
@@ -798,10 +780,10 @@ export default {
                     }
                     //
                     var d1 = Math.sqrt(Math.pow(mousePos.x - this.curX, 2) + Math.pow(this.curY - mousePos.y, 2));
-                    var a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
+                    a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
                     var r = (d1 * Math.sin((90 - ((90 - a1) - curA)) * Math.PI / 180)) / Math.sin(2 * ((90 - a1) - curA) * Math.PI / 180);
-                    var x1 = r * Math.cos(-1 * curA * Math.PI / 180);
-                    var y1 = r * Math.sin(-1 * curA * Math.PI / 180);
+                    x1 = r * Math.cos(-1 * curA * Math.PI / 180);
+                    y1 = r * Math.sin(-1 * curA * Math.PI / 180);
                     var perp = (mousePos.x - this.curX) * Math.tan(curA * Math.PI / 180) + this.curY;
                     var par = (this.curY - mousePos.y) / Math.tan((90 - curA) * Math.PI / 180) + this.curX;
                     if(a1 > (90 - curA)){
@@ -823,7 +805,7 @@ export default {
                         r = r * -1;
                     }
                     //
-                    var a2 = ((90 - a1) - curA) * 2;
+                    a2 = ((90 - a1) - curA) * 2;
                     if(a2 > 360){
                         a2 = a2 - 360;
                     }
@@ -894,7 +876,6 @@ export default {
                         lineJoin: 'round'
                     }
                     //
-                console.log("I'm running!");
                 }else{
                     //
                 }
@@ -1026,7 +1007,6 @@ export default {
                 lineCap: 'round',
                 lineJoin: 'round'
             }
-            console.log("Rotation: " + (this.curAngle + this.nextAngle - 90));
         }
         //
         this.interimFloat = false;
@@ -1063,8 +1043,6 @@ export default {
     //
     if(this.$store.getters.chassis == null){
         this.$router.push('/');
-    }else{
-        console.log("Chassis: " + this.$store.getters.chassis);
     }
     //
     var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
