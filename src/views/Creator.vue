@@ -24,7 +24,7 @@
                 <span class="tooltiptext">CPI Info<br/><hr/><p class="hover-info">Determines rotation of wheels. Presets assume 4.125 inch wheel diameter and 28 counts per rotation motor. Select custom to bypass this.</p></span>
             </div>
             <div class="tooltip" id="pos-start">
-                <select class="dropdown">
+                <select @change="startChange($event)" class="dropdown">
                     <option disabled selected>Starting Side</option>
                     <option v-for="(start, index) in starts" v-bind:key="index">{{start}}</option>
                 </select>
@@ -170,7 +170,8 @@
                             </div>
                         </div>
                         <div sm2 id="trash" v-if="(step.stepNumber + 1) == $store.getters.getTheSteps.length">
-                            <v-btn icon flat color="red" v-on:click="deleteStep(step)"><v-icon>delete</v-icon></v-btn>
+                            <v-btn icon flat color="black" v-on:click="deleteStep(step)"><v-icon>delete</v-icon></v-btn>
+                            <v-btn icon flat color="red" v-on:click="deleteSteps(step)"><v-icon>clear</v-icon></v-btn>
                         </div>
                         <!-- #endregion -->
                     <!--</v-card-title>-->
@@ -228,14 +229,20 @@ export default {
                     strokeWidth: 5,
                     cornerRadius: 5
                 });
+                this.$store.commit("setCurrentStep", MovementOptions.DRIVE);
                 this.getDrive();
             break;
             case MovementOptions.TURN:
+                //console.log("Start");
                 this.arcs.pop();
                 this.points.pop();
+                console.log("Point 1");
                 this.curAngle = this.points[this.points.length - 1].rotation;
                 this.angle = 45;
+                console.log("Point 2");
+                this.nextAngle = this.curAngle + this.angle;
                 this.points.pop();
+                console.log("Point 3");
                 this.points.push({
                     x: this.curX,
                     y: this.curY,
@@ -248,11 +255,40 @@ export default {
                     strokeWidth: 5,
                     cornerRadius: 5
                 });
-                //this.$store.commit("setCurrentStep", turn);
-                //this.getTurn();
-                this.getDrive();
+                console.log("Point 4");
+                this.$store.commit("setCurrentStep", MovementOptions.TURN);
+                this.getTurn();
+                console.log("Finished");
             break;
         }
+        //
+    },
+    deleteSteps: function(step){
+        //
+        this.$store.commit("nukeIt");
+        this.points = [];
+        this.lines = [];
+        this.arcs = [];
+        //
+        this.points.push({
+            //
+            x: this.startingPos.x,
+            y: this.startingPos.y,
+            rotation: this.startingPos.rotation,
+            width: this.robotWidth * 3,
+            height: this.robotLength * 3,
+            offsetX: this.robotWidth * 3 / 2,
+            offsetY: this.robotLength * 3 / 2,
+            stroke: '#32cd32',
+            strokeWidth: 5,
+            cornerRadius: 5
+        });
+        //
+        this.curX = this.startingPos.x;
+        this.curY = this.startingPos.y;
+        this.curAngle = this.startingPos.rotation;
+        //
+        this.getStepPoint();
         //
     },
     setGenerateVisible: function(){
@@ -265,6 +301,17 @@ export default {
         }else{
             this.opencustoms = false;
         }
+    },
+    startChange: function(event){
+        if(event.target.value=="top left"){
+            this.startingPos = this.topLeft;
+            console.log("top left");
+        }else if(event.target.value=="top right"){
+            this.startingPos = this.topRight;
+            console.log("top right");
+        }
+        this.deleteSteps();
+        //
     },
     confirmStep: function() {
         var params;
@@ -1013,6 +1060,13 @@ export default {
     }
   },
   created(){
+    //
+    if(this.$store.getters.chassis == null){
+        this.$router.push('/');
+    }else{
+        console.log("Chassis: " + this.$store.getters.chassis);
+    }
+    //
     var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
     var y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
     //
@@ -1040,42 +1094,6 @@ export default {
     });
     //
     this.getStepPoint();
-    /*
-    var l2 = this.distance * 3;
-    var x2 = l2 * Math.cos(this.curAngle * Math.PI / 180);
-    var y2 = l2 * Math.sin(this.curAngle * Math.PI / 180);
-    //
-    this.nextX = x2;
-    this.nextY = y2 * -1;
-    //
-    this.interimPoint = {
-        //
-        x: this.curX + x2,
-        y: this.curY - y2,
-        width: this.robotWidth * 3,
-        height: this.robotLength * 3,
-        offsetX: this.robotWidth * 3 / 2,
-        offsetY: this.robotLength * 3 / 2,
-        stroke: this.newColor,
-        strokeWidth: 5,
-        cornerRadius: 5,
-        rotation: this.points[0].rotation,
-        lineCap: 'round',
-        lineJoin: 'round'
-    };
-    //
-    this.interimLine = {
-        x: 0,
-        y: 0,
-        points: [this.points[0].x, this.points[0].y, this.curX + x2, this.curY - y2],
-        stroke: this.newColor,
-        strokeWidth: 4,
-        lineCap: 'round',
-        lineJoin: 'round'
-    };
-    //
-    this.interimFloat = false;*/
-    //
   },
   data: () => ({
     presets: ["Gear ratio: 20", "Gear ratio: 40", "Gear ratio: 60", "Custom"],
@@ -1109,6 +1127,7 @@ export default {
     nextAngle: 0,
     interimFloat: true,
     clickAssist: false,
+    startingPos: {},
     topLeft: {
         x:161,
         y:159,
@@ -1117,7 +1136,7 @@ export default {
     topRight: {
         x:268,
         y:159,
-        rotation:45
+        rotation: 45
     },
     bottomLeft: {
         x:160,

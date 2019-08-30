@@ -35,6 +35,9 @@ export const store = new Vuex.Store({
     },
     removeLastStep(state){
       state.listOfSteps.pop();
+    },
+    nukeIt(state){
+      state.listOfSteps = [];
     }
   },
   getters: {
