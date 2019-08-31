@@ -24,7 +24,7 @@
                 <span class="tooltiptext">CPI Info<br/><hr/><p class="hover-info">Determines rotation of wheels. Presets assume 4.125 inch wheel diameter and 28 counts per rotation motor. Select custom to bypass this.</p></span>
             </div>
             <div class="tooltip" id="pos-start">
-                <select @change="startChange($event)" class="dropdown">
+                <select  v-model="starpos" @change="startChange($event)" class="dropdown">
                     <option disabled selected>Starting Side</option>
                     <option v-for="(start, index) in starts" v-bind:key="index">{{start}}</option>
                 </select>
@@ -90,11 +90,6 @@
                         <input type="number" v-model="angle" @change="getStepPoint" placeholder="angle" step="5" min="-360" max="360" class="colors" id="in-dist"/>
                         <div class="amount">°</div>
                     </div>
-                    <div v-if="($store.getters.isCurrentStepStrafe)" sm12>
-                        <p class="label">Direction:</p>
-                        <input v-model="direction" placeholder="direction" step="1" min="1" max="4" class="colors" id="in-dist"/>
-                        <div class="amount">&nbsp;</div>
-                    </div>
                     <div v-if="($store.getters.isCurrentStepMove || $store.getters.isCurrentStepArc || $store.getters.isCurrentStepStrafe)" sm12>
                         <p class="label">Distance:</p>
                         <input type="number" v-model="distance" @change="getStepPoint" placeholder="distance" step="0.2" class="colors" id="in-dist"/>
@@ -158,9 +153,6 @@
                             <div v-if="step.type==strafe">
                                 <v-layout row wrap>
                                     <v-flex sm4>
-                                        Direction: {{step.params.direction}}
-                                    </v-flex>
-                                    <v-flex sm4>
                                         Distance: {{step.params.distance}}
                                     </v-flex>
                                     <v-flex sm4>
@@ -191,7 +183,7 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="popup-button" flat @click="deleteWarning = false">No</v-btn>
+          <v-btn class="popup-button" flat @click="falseAlarm()">No</v-btn>
           <v-btn class="popup-button" flat @click="confirmDelete()">Yes</v-btn>
         </v-card-actions>
       </v-card>
@@ -290,6 +282,28 @@ export default {
                 this.getArc();
                 //
             break;
+            case MovementOptions.STRAFE:
+                this.lines.pop();
+                this.points.pop();
+                this.curX = this.points[this.points.length - 1].x;
+                this.curY = this.points[this.points.length - 1].y;
+                this.distance = 30;
+                this.points.pop();
+                this.points.push({
+                    x: this.curX,
+                    y: this.curY,
+                    rotation: this.curAngle,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: '#32cd32',
+                    strokeWidth: 5,
+                    cornerRadius: 5
+                });
+                this.$store.commit("setCurrentStep", MovementOptions.STRAFE);
+                this.getStrafe();
+            break;
         }
         //
     },
@@ -305,7 +319,19 @@ export default {
         this.deleteWarning = false;
         //
         if(!this.sideChosen){
-            //
+            if(this.starpos=="top left"){
+                this.startingPos = this.topLeft;
+            }else if(this.starpos=="top right"){
+                this.startingPos = this.topRight;
+            }else if(this.starpos=="bottom left"){
+                this.startingPos = this.bottomLeft;
+            }else if(this.starpos=="bottom right"){
+                this.startingPos = this.bottomRight;
+            }else{
+                this.customStart();
+            }
+            this.sideChosen = true;
+            this.laststarpos = this.starpos;
         }
         //
         this.$store.commit("nukeIt");
@@ -332,6 +358,17 @@ export default {
         this.curAngle = this.startingPos.rotation;
         //
         this.getStepPoint();
+        //
+    },
+    falseAlarm: function(){
+        //
+        this.deleteWarning = false;
+        //
+        if(!this.sideChosen){
+            console.log(this.laststarpos);
+            this.starpos = this.laststarpos;
+            this.sideChosen = true;
+        }
         //
     },
     setGenerateVisible: function(){
@@ -363,6 +400,7 @@ export default {
                 this.customStart();
             }
             this.confirmDelete();
+            this.laststarpos = this.starpos;
         }
         //
     },
@@ -557,6 +595,8 @@ export default {
                 //
                 this.getTurn();
                 //
+                this.interimFloat = false;
+                //
             break;
             case MovementOptions.ARC:
                 params = {
@@ -718,28 +758,92 @@ export default {
                 this.curAngle = nang;
                 //
                 this.getArc();
+                //
+                this.interimFloat = false;
             break;
             case MovementOptions.STRAFE:
-            params = {
-                direction: this.$data.direction,
-                distance: this.$data.distance,
-                speed: this.$data.speed
-            };
+                params = {
+                    direction: this.$data.direction,
+                    distance: this.$data.distance,
+                    speed: this.$data.speed
+                };
+                //
+                this.lines.push({
+                    x: 0,
+                    y: 0,
+                    points: [this.curX, this.curY, this.curX + this.nextAx, this.curY + this.nextAy],
+                    stroke: this.stepColors[this.currentColor],
+                    strokeWidth: 4,
+                    lineCap: 'round'
+                });
+                //
+                this.points.pop();
+                //#endregion
+                //
+                this.points.push({
+                    //
+                    x: this.curX,
+                    y: this.curY,
+                    rotation: this.curAngle,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: this.stepColors[this.currentColor],
+                    strokeWidth: 5,
+                    cornerRadius: 5
+                });
+                //
+                if(this.currentColor > this.stepColors.length - 2){
+                    this.currentColor = 0;
+                }else{
+                    this.currentColor++;
+                }
+                //
+                mx = this.distance * 3 * Math.cos((180 - this.curAngle) * Math.PI / 180);
+                my = this.distance * 3 * Math.sin((180 - this.curAngle) * Math.PI / 180);
+                //
+                this.curX = this.curX - mx;
+                this.curY = this.curY + my;
+                //
+                this.points.push({
+                    //
+                    x: this.curX,
+                    y: this.curY,
+                    rotation: this.curAngle,
+                    width: this.robotWidth * 3,
+                    height: this.robotLength * 3,
+                    offsetX: this.robotWidth * 3 / 2,
+                    offsetY: this.robotLength * 3 / 2,
+                    stroke: '#32cd32',
+                    strokeWidth: 5,
+                    cornerRadius: 5
+                });
+                //
+                this.distance = 30;
+                //
+                l2 = this.distance * 3;
+                x2 = l2 * Math.cos((180 - this.curAngle) * Math.PI / 180);
+                y2 = l2 * Math.sin((180 - this.curAngle) * Math.PI / 180);
+                //
+                this.nextAx = x2;
+                this.nextAy = y2 * -1;
+                //
+                this.getStrafe();
+                //
+                this.interimFloat = false;
+                //
             break;
         }
       this.$store.commit("confirmStep", params);
       //
     },
     setInterimFloat: function(mousePos){
-        //
-        //if(!this.clickAssist){
-            if(this.interimFloat){
-                this.interimFloat = false;
-            }else{
-                this.interimFloat = true;
-            }
-            //this.clickAssist = true;
-        //}
+        if(this.interimFloat){
+            this.interimFloat = false;
+        }else{
+            this.interimFloat = true;
+        }
         //
         this.setStepPoint(mousePos);
     },
@@ -763,6 +867,8 @@ export default {
                     //
                 break;
                 case MovementOptions.STRAFE:
+                    //
+                    this.getStrafe();
                     //
                 break;
             }
@@ -1134,6 +1240,108 @@ export default {
                 break;
                 case MovementOptions.STRAFE:
                     //
+                    x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                    y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                    //
+                    this.directionLine = {
+                        x: 0,
+                        y: 0,
+                        points: [this.curX /*+ this.nextX*/, this.curY /*+ this.nextY*/, this.curX/* + this.nextX*/ + x1 * 3, this.curY/* + this.nextY*/ - y1 * 3],
+                        stroke: 'orange',
+                        strokeWidth: 4,
+                        lineCap: 'round'
+                    };
+                    //
+                    if(this.interimFloat){
+                        //Fix Click Assist
+                        if(mousePos.x > this.curX){
+                            l1 = Math.sqrt(Math.pow(this.curY - mousePos.y, 2) + Math.pow(mousePos.x - this.curX, 2));
+                            a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
+                            a2 = 180 - this.curAngle - a1;
+                            l2 = l1 * Math.cos(a2 * Math.PI / 180);
+                            x2 = l2 * Math.cos((180 - this.curAngle) * Math.PI / 180);
+                            y2 = l2 * Math.sin((180 - this.curAngle) * Math.PI / 180);
+                            console.log("L2 components--Y: " + (Math.pow(this.curY - mousePos.y, 2)) + ", X: " + (Math.pow(mousePos.x - this.curX, 2)));
+                            console.log("New position--L1: " + l1 + ", A1: " + a1 + ", A2: " + a2 + ", L2: " + l2 + ", X2: " + x2 + ", Y2: " + y2);
+                            //
+                            this.interimPoint = {
+                                //
+                                x: this.curX + x2,
+                                y: this.curY - y2,
+                                width: this.robotWidth * 3,
+                                height: this.robotLength * 3,
+                                offsetX: this.robotWidth * 3 / 2,
+                                offsetY: this.robotLength * 3 / 2,
+                                stroke: this.newColor,
+                                strokeWidth: 5,
+                                dash: [20, 20],
+                                cornerRadius: 5,
+                                rotation: this.curAngle,
+                                lineCap: 'round',
+                                lineJoin: 'round'
+                            };
+                            //
+                            this.interimLine = {
+                                x: 0,
+                                y: 0,
+                                points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
+                                stroke: this.newColor,
+                                strokeWidth: 4,
+                                dash: [20, 20],
+                                lineCap: 'round',
+                                lineJoin: 'round'
+                            };
+                            //
+                            this.nextAx = x2;
+                            this.nextAy = y2 * -1;
+                            //
+                        }else{
+                            l1 = Math.sqrt(Math.pow(this.curY - mousePos.y, 2) + Math.pow(mousePos.x - this.curX, 2));
+                            a1 = Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
+                            a2 = 180 - this.curAngle - a1;
+                            l2 = l1 * Math.cos(a2 * Math.PI / 180);
+                            x2 = l2 * Math.cos((180 - this.curAngle) * Math.PI / 180);
+                            y2 = l2 * Math.sin((180 - this.curAngle) * Math.PI / 180);
+                            //
+                            this.interimPoint = {
+                                //
+                                x: this.curX - x2,
+                                y: this.curY + y2,
+                                width: this.robotWidth * 3,
+                                height: this.robotLength * 3,
+                                offsetX: this.robotWidth * 3 / 2,
+                                offsetY: this.robotLength * 3 / 2,
+                                stroke: this.newColor,
+                                strokeWidth: 5,
+                                dash: [20, 20],
+                                cornerRadius: 5,
+                                rotation: this.curAngle,
+                                lineCap: 'round',
+                                lineJoin: 'round'
+                            };
+                            //
+                            this.interimLine = {
+                                x: 0,
+                                y: 0,
+                                points: [this.curX, this.curY, this.curX - x2, this.curY + y2],
+                                stroke: this.newColor,
+                                strokeWidth: 4,
+                                dash: [20, 20],
+                                lineCap: 'round',
+                                lineJoin: 'round'
+                            };
+                            l2 = l2 * -1;
+                            //
+                            this.nextAx = x2 * -1;
+                            this.nextAy = y2;
+                            //
+                        }
+                        //
+                        this.distance = Math.round((l2 / 3) * 5) / -5;
+                        //
+                    }else{
+                        this.getStrafe();
+                    }
                 break;
             }
         }
@@ -1406,6 +1614,60 @@ export default {
         console.log("Ay: " + this.nextAy + " , Ax: " + this.nextAx);
         //
     },
+    getStrafe: function(){
+        var x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+        var y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+        //
+        this.directionLine = {
+            x: 0,
+            y: 0,
+            points: [this.curX /*+ this.nextX*/, this.curY /*+ this.nextY*/, this.curX/* + this.nextX*/ + x1 * 3, this.curY/* + this.nextY*/ - y1 * 3],
+            stroke: 'orange',
+            strokeWidth: 4,
+            lineCap: 'round'
+        };
+        //
+        this.interimArc = {
+            stroke: ''
+        };
+        //
+        var l2 = this.distance * 3;
+        var x2 = l2 * Math.cos((180 - this.curAngle) * Math.PI / 180);
+        var y2 = l2 * Math.sin((180 - this.curAngle) * Math.PI / 180);
+        x2 = x2 * -1;
+        y2= y2 * -1;
+        //
+        this.nextAx = x2;
+        this.nextAy = y2 * -1;
+        //
+        this.interimPoint = {
+            //
+            x: this.curX + x2,
+            y: this.curY - y2,
+            width: this.robotWidth * 3,
+            height: this.robotLength * 3,
+            offsetX: this.robotWidth * 3 / 2,
+            offsetY: this.robotLength * 3 / 2,
+            stroke: this.newColor,
+            strokeWidth: 5,
+            cornerRadius: 5,
+            rotation: this.curAngle,
+            lineCap: 'round',
+            lineJoin: 'round'
+        };
+        //
+        this.interimLine = {
+            x: 0,
+            y: 0,
+            points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
+            stroke: this.newColor,
+            strokeWidth: 4,
+            lineCap: 'round',
+            lineJoin: 'round'
+        };
+        //
+        this.interimFloat = false;
+    },
     interimSet: function(){
          this.interimPoint = {
             //
@@ -1476,6 +1738,8 @@ export default {
     interimFloat: true,
     clickAssist: false,
     startingPos: {},
+    starpos: 'Starting Side',
+    laststarpos: 'Staring Side',
     sideChosen: false,
     deleteWarning: false,
     inputAlert: true,
