@@ -1,5 +1,5 @@
 <template>
-<div class="bkgd">
+<div class="bkgd"><textarea></textarea>
 </div>
 </template>
 
