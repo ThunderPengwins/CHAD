@@ -14,7 +14,7 @@
     <div class="bottom">
      <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'traction', baton:$store.getters.chassis != 'traction'}" v-on:click="chassisChanged('traction')"><img src="@/assets/Pictures/TractionA.png" alt="traction" class="chaspic"/></v-btn>
      <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'omni wheel', baton:$store.getters.chassis != 'omni wheel'}" v-on:click="chassisChanged('omni wheel')"><img src="@/assets/Pictures/OmniA.png" alt="omni" class="chaspic"/></v-btn>
-     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')"><img src="@/assets/Pictures/Meccanum.png" alt="meccanum" class="chaspic"/></v-btn>
+     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')">Meccanum<!--<img src="@/assets/Pictures/Meccanum.png" alt="meccanum" class="chaspic"/>--></v-btn>
      <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'holonomic', baton:$store.getters.chassis != 'holonomic'}" v-on:click="chassisChanged('holonomic')" outline>Holonomic</v-btn>
     </div>
     <v-dialog v-model="openWarning" width="500">
@@ -42,13 +42,17 @@ export default {
   name: 'Home',
   methods: {
     chassisChanged: function(chassis){
-      if (this.$store.getters.getFirstChassis){
-        this.chassis = chassis;
-        this.openWarning = true;
+      if(chassis == "traction" || chassis == "omni wheel"){
+        if (this.$store.getters.getFirstChassis){
+          this.chassis = chassis;
+          this.openWarning = true;
+        }else{
+          this.$store.commit("setFirstChassis");
+          this.$store.commit('changeChassis', chassis);
+          this.$router.push('/Creator');
+        }
       }else{
-        this.$store.commit("setFirstChassis");
-        this.$store.commit('changeChassis', chassis);
-        this.$router.push('/Creator');
+        alert("This chassis hasn't been fine tuned yet. We hope to get this done in the next few weeks.");
       }
     },
     bunnyOctopus: function(){
@@ -167,7 +171,7 @@ export default {
   width: 10%;
   position: absolute;
   left: 4%;
-  top: 1%;
+  top: 0.7em;
 }
 
 .popup-button{

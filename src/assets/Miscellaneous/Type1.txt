@@ -50,7 +50,6 @@ public class {name} extends LinearOpMode {
         waitForStartify();
         //
         {code}
-        //
     }
     //
     /*

@@ -8,11 +8,11 @@
     <div class="interface">
         <!-- #region General Inputs -->
             <div class="tooltip" id="pos-name">
-                <input placeholder="Autonomous name" id="in-name" class="colors"/>
+                <input v-model="name" placeholder="Autonomous name" id="in-name" class="colors"/>
                 <span class="tooltiptext">Naming Info!<br/><hr/><p class="hover-info">This is the name that will appear in your driver station app.</p></span>
             </div>
             <div class="tooltip" id="pos-num">
-                <input type="number" value="1" placeholder="Movement bias" id="in-num" class="colors"/>
+                <input v-model="bias" type="number" step="0.1" value="1" placeholder="Movement bias" id="in-num" class="colors"/>
                 <span class="tooltiptext">Bias Info<br/><hr/><p class="hover-info">Set to one as default. This value can be used to counteract friction and other factors.</p></span>
             </div>
             <p class="chassischoice">Chassis: {{ $store.getters.chassis }}</p>
@@ -198,17 +198,54 @@
 import { MovementOptions } from "@/store/steps";
 import DrawLines from "@/components/DrawLines";
 import type1 from '!raw-loader!@/assets/Miscellaneous/Type1.txt';
+import type2 from '!raw-loader!@/assets/Miscellaneous/Type2.txt';
 export default {
   name: "Creator",
   components: { DrawLines },
   methods: {
     readTextFile: function(){
       //
-      var trac = type1;
+      var trac;
+      if(this.$store.getters.chassis == 'traction'){
+        trac = type1;
+      }else if(this.$store.getters.chassis == 'omni wheel'){
+        trac = type2
+      }
+      if(this.name == null){
+        this.name = "myAuto";
+      }
+      trac = trac.replace("{name}", this.name);
+      trac = trac.replace("{name}", this.name);
       trac = trac.replace("{width}", this.robotWidth);
       trac = trac.replace("{cpr}", this.cpr);
       trac = trac.replace("{gearratio}", this.gearratio);
       trac = trac.replace("{diameter}", this.diameter);
+      trac = trac.replace("{bias}", this.bias);
+      //
+      var steps = this.$store.getters.getTheSteps;
+      var buildCode = "";
+      for(var i = 0; i < steps.length; i++){
+        var line = "";
+        if (i > 0){
+          line = "\n\t";
+        }
+        if(steps[i].type == MovementOptions.DRIVE){
+          line += "moveToPosition(" + steps[i].params.distance + ", " + steps[i].params.speed + ");";
+        }else if(steps[i].type == MovementOptions.TURN){
+          var speedDirection = steps[i].params.speed;
+          if(steps[i].params.angle < 0){
+            speedDirection *= -1;
+          }
+          line += "turnWithGyro(" + Math.abs(steps[i].params.angle) + ", " + speedDirection + ");";
+        }else if(steps[i].type == MovementOptions.ARC){
+          line += "arc(" + steps[i].params.angle + ", " + steps[i].params.distance + ", " + steps[i].params.speed + ");";
+        }//else{
+          //line += "strafeToPosition(" + steps[i].params...
+        //}
+        line += "\n\t//"
+        buildCode += line;
+      }
+      trac = trac.replace("{code}", buildCode);
       //
       this.$store.commit("setGenCode", trac);
       //
@@ -387,6 +424,9 @@ export default {
       //
     },
     setGenerateVisible: function() {
+      //
+      this.readTextFile();
+      //
       this.$store.commit("setGenerateVisible");
       this.$router.push("/Generate");
     },
@@ -395,7 +435,13 @@ export default {
         this.opencustoms = true;
       } else {
         this.opencustoms = false;
-        //set things
+        if(event.target.value == "Gear ratio: 20"){
+          this.gearratio = 20;
+        }else if(event.target.value == "Gear ratio: 40"){
+          this.gearratio = 40;
+        }else{
+          this.gearratio = 60;
+        }
       }
     },
     startChange: function(event) {
@@ -438,7 +484,7 @@ export default {
       //
     },
     confirmStep: function() {
-      if(sideChosen){
+      if(this.sideChosen){
       var params;
       switch (this.$store.getters.currentStep) {
         case MovementOptions.DRIVE:
@@ -828,7 +874,6 @@ export default {
           break;
         case MovementOptions.STRAFE:
           params = {
-            direction: this.$data.direction,
             distance: this.$data.distance,
             speed: this.$data.speed
           };
@@ -1252,22 +1297,13 @@ export default {
           case MovementOptions.ARC:
             //
             if (this.interimFloat) {
-              x1 =
-                (this.robotLength / 2 + 5) *
-                Math.cos((90 - this.curAngle) * Math.PI / 180);
-              y1 =
-                (this.robotLength / 2 + 5) *
-                Math.sin((90 - this.curAngle) * Math.PI / 180);
+              x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+              y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
               //
               this.directionLine = {
                 x: 0,
                 y: 0,
-                points: [
-                  this.curX /*+ this.nextX*/,
-                  this.curY /*+ this.nextY*/,
-                  this.curX /* + this.nextX*/ + x1 * 3,
-                  this.curY /* + this.nextY*/ - y1 * 3
-                ],
+                points: [this.curX, this.curY, this.curX + x1 * 3, this.curY - y1 * 3],
                 stroke: "orange",
                 strokeWidth: 4,
                 lineCap: "round"
@@ -1327,23 +1363,6 @@ export default {
               if (a2 > 360) {
                 a2 = a2 - 360;
               }
-              //
-              console.log(
-                "D1: " +
-                  d1 +
-                  ", A1: " +
-                  a1 +
-                  ", R: " +
-                  r +
-                  ", X1: " +
-                  x1 +
-                  ", Y1: " +
-                  y1 +
-                  ", Perp: " +
-                  perp +
-                  ", Par: " +
-                  par
-              );
               //
               if (
                 (mousePos.y > perp && mousePos.x > par) ||
@@ -1434,7 +1453,6 @@ export default {
               //
             } else {
               //
-              console.log("It should show it.");
               this.getArc();
               //
             }
@@ -1485,20 +1503,6 @@ export default {
                     Math.pow(this.curY - mousePos.y, 2) +
                     ", X: " +
                     Math.pow(mousePos.x - this.curX, 2)
-                );
-                console.log(
-                  "New position--L1: " +
-                    l1 +
-                    ", A1: " +
-                    a1 +
-                    ", A2: " +
-                    a2 +
-                    ", L2: " +
-                    l2 +
-                    ", X2: " +
-                    x2 +
-                    ", Y2: " +
-                    y2
                 );
                 //
                 this.interimPoint = {
@@ -2016,7 +2020,6 @@ export default {
       this.$router.push("/");
     }
     //
-    this.readTextFile();
   },
   data: () => ({
     presets: ["Gear ratio: 20", "Gear ratio: 40", "Gear ratio: 60", "Custom"],
@@ -2038,6 +2041,8 @@ export default {
     cpr: 28,
     gearratio: 40,
     diameter: 4.125,
+    bias: 1,
+    name: null,
     stepInProgress: true,
     interimPoint: null,
     interimLine: null,

@@ -43,7 +43,6 @@ public class {name} extends LinearOpMode {
         right.setDirection(DcMotorSimple.Direction.REVERSE);//If your robot goes backward, switch this from right to left
         //
         {code}
-        //
     }
     //
     /*
