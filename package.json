@@ -11,6 +11,7 @@
     "@chenfengyuan/vue-carousel": "^1.0.2",
     "konva": "^3.4.1",
     "material-design-icons-iconfont": "^3.0.3",
+    "raw-loader": "^3.1.0",
     "roboto-fontface": "*",
     "vue": "^2.6.10",
     "vue-carousel": "^0.18.0",

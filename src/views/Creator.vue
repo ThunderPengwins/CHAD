@@ -19,14 +19,14 @@
             <div class="tooltip" id="pos-preset">
                 <select @change="cpichange($event)" class="dropdown">
                     <option disabled selected value="">CPI Presets</option>
-                    <option text-xs-center v-for="(preset, index) in presets" v-bind:key="index">{{preset}}</option>
+                    <option text-xs-center v-for="(preset, index) in presets" v-bind:key="index + 'cpi_presets'">{{preset}}</option>
                 </select>
                 <span class="tooltiptext">CPI Info<br/><hr/><p class="hover-info">Determines rotation of wheels. Presets assume 4.125 inch wheel diameter and 28 counts per rotation motor. Select custom to bypass this.</p></span>
             </div>
             <div class="tooltip" id="pos-start">
                 <select  v-model="starpos" @change="startChange($event)" class="dropdown">
                     <option disabled selected>Starting Side</option>
-                    <option v-for="(start, index) in starts" v-bind:key="index">{{start}}</option>
+                    <option v-for="(start, index) in starts" v-bind:key="index + 'starting_side'">{{start}}</option>
                 </select>
                 <span class="tooltiptext">Side Info<br/><hr/><p class="hover-info">Used for the field display. This won't affect the code.</p></span>
             </div>
@@ -40,9 +40,9 @@
                 <v-card>
                     <v-card-title class="headline popup" primary-title>Custom Inputs</v-card-title>
                     <v-card-text class="popup-text">
-                        Gear Ratio: <input type="number" placeholder="Gearratio" value="40" class="popup-inputs"/><br/>
-                        Motor CPR: <input type="number" placeholder="cpr" value="28" class="popup-inputs"/><br/>
-                        Wheel Diameter: <input type="number" placeholder="diameter" value="4.125" class="popup-inputs"/>
+                        Gear Ratio: <input v-model="gearratio" type="number" placeholder="Gearratio" value="40" class="popup-inputs"/><br/>
+                        Motor CPR: <input v-model="cpr" type="number" placeholder="cpr" value="28" class="popup-inputs"/><br/>
+                        Wheel Diameter: <input v-model="diameter" type="number" placeholder="diameter" value="4.125" class="popup-inputs"/>
                     </v-card-text>
                     <v-divider></v-divider>
                     <v-card-actions>
@@ -111,7 +111,7 @@
         <!-- #endregion -->
         <!-- #region Step List -->
             <div id="listofsteps">
-                <div id="autostep" v-for="step in $store.getters.getTheSteps" v-bind:key="step.stepNumber">
+                <div id="autostep" v-for="step in $store.getters.getTheSteps" v-bind:key="step.stepNumber + 'list'">
                     <!--<v-card-title primary-title>-->
                         <div id="step-title" sm12>
                             <h3>
@@ -197,10 +197,22 @@
 <script>
 import { MovementOptions } from "@/store/steps";
 import DrawLines from "@/components/DrawLines";
+import type1 from '!raw-loader!@/assets/Miscellaneous/Type1.txt';
 export default {
   name: "Creator",
   components: { DrawLines },
   methods: {
+    readTextFile: function(){
+      //
+      var trac = type1;
+      trac = trac.replace("{width}", this.robotWidth);
+      trac = trac.replace("{cpr}", this.cpr);
+      trac = trac.replace("{gearratio}", this.gearratio);
+      trac = trac.replace("{diameter}", this.diameter);
+      //
+      this.$store.commit("setGenCode", trac);
+      //
+    },
     newStep: function(step) {
       this.$store.commit("setCurrentStep", step);
       //
@@ -383,6 +395,7 @@ export default {
         this.opencustoms = true;
       } else {
         this.opencustoms = false;
+        //set things
       }
     },
     startChange: function(event) {
@@ -425,6 +438,7 @@ export default {
       //
     },
     confirmStep: function() {
+      if(sideChosen){
       var params;
       switch (this.$store.getters.currentStep) {
         case MovementOptions.DRIVE:
@@ -894,6 +908,7 @@ export default {
           break;
       }
       this.$store.commit("confirmStep", params);
+      }
       //
     },
     setInterimFloat: function(mousePos) {
@@ -1831,21 +1846,7 @@ export default {
       }
       //
       console.log(
-        "D1: " +
-          d1 +
-          ", A1: " +
-          a1 +
-          ", R: " +
-          r +
-          ", X1: " +
-          x1 +
-          ", Y1: " +
-          y1 +
-          ", Perp: " +
-          perp +
-          ", Par: " +
-          par
-      );
+        "D1: " + d1 + ", A1: " + a1 + ", R: " + r + ", X1: " + x1 + ", Y1: " + y1 + ", Perp: " + perp + ", Par: " + par);
       //
       if (
         (this.nextAy > perp && this.nextAx > par) ||
@@ -2015,6 +2016,7 @@ export default {
       this.$router.push("/");
     }
     //
+    this.readTextFile();
   },
   data: () => ({
     presets: ["Gear ratio: 20", "Gear ratio: 40", "Gear ratio: 60", "Custom"],
@@ -2033,6 +2035,9 @@ export default {
     robotLength: 18,
     newColor: "white",
     opencustoms: false,
+    cpr: 28,
+    gearratio: 40,
+    diameter: 4.125,
     stepInProgress: true,
     interimPoint: null,
     interimLine: null,

@@ -1,11 +1,12 @@
 <template>
-<div class="bkgd"><textarea></textarea>
+<div class="bkgd">
+    <v-textarea auto-grow id="text" v-model="$store.getters.getGenCode"></v-textarea>
 </div>
 </template>
 
 <script>
 export default {
-    name: "Generate",
+    name: "Generate"
 }
 </script>
 
@@ -23,6 +24,9 @@ export default {
 
 #bkgd{
     margin: 0%;
+}
+
+.text{
 }
 
 </style>

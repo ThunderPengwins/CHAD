@@ -10,19 +10,19 @@
                     }"/>
                 <div
                     v-for="(point, index) in points"
-                    :key="index"
+                    :key="index + 'points'"
                 >
                     <v-rect :config="point"></v-rect>
                 </div>
                 <div
                     v-for="(line, index) in lines"
-                    :key="index"
+                    :key="index + 'lines'"
                 >
                     <v-line :config="line"></v-line>
                 </div>
                 <div
                     v-for="(arc, index) in arcs"
-                    :key="index"
+                    :key="index + 'arcs'"
                 >
                     <v-arc :config="arc"></v-arc>
                 </div>

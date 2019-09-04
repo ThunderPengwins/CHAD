@@ -10,7 +10,8 @@ export const store = new Vuex.Store({
     currentStep: MovementOptions.DRIVE,
     listOfSteps: [],
     generateClicked: false,
-    firstChassis: false
+    firstChassis: false,
+    genCode: null
   },
   mutations: {
     changeChassis(state, chassis) {
@@ -38,6 +39,9 @@ export const store = new Vuex.Store({
     },
     nukeIt(state){
       state.listOfSteps = [];
+    },
+    setGenCode(state, code){
+      state.genCode = code;
     }
   },
   getters: {
@@ -50,6 +54,7 @@ export const store = new Vuex.Store({
     isCurrentStepStrafe: state => state.currentStep==MovementOptions.STRAFE,
     getTheSteps: state => state.listOfSteps,
     getGenerateVisibility: state => state.generateClicked,
-    getFirstChassis: state => state.firstChassis
+    getFirstChassis: state => state.firstChassis,
+    getGenCode: state => state.genCode
   }
 })
