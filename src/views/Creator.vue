@@ -241,7 +241,7 @@ export default {
         bias += ".0";
       }
       trac = trac.replace("{bias}", bias);
-      cali = cali.replace("{diameter}", diam);
+      cali = cali.replace("{bias}", bias);
       //
       var steps = this.$store.getters.getTheSteps;
       var buildCode = "";
