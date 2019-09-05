@@ -199,6 +199,8 @@ import { MovementOptions } from "@/store/steps";
 import DrawLines from "@/components/DrawLines";
 import type1 from '!raw-loader!@/assets/Miscellaneous/Type1.txt';
 import type2 from '!raw-loader!@/assets/Miscellaneous/Type2.txt';
+import calibrateTW from '!raw-loader!@/assets/Miscellaneous/CalibrateTW.txt';
+import calibrateFW from '!raw-loader!@/assets/Miscellaneous/CalibrateFW.txt';
 export default {
   name: "Creator",
   components: { DrawLines },
@@ -206,21 +208,40 @@ export default {
     readTextFile: function(){
       //
       var trac;
+      var cali;
       if(this.$store.getters.chassis == 'traction'){
         trac = type1;
+        cali = calibrateFW;
       }else if(this.$store.getters.chassis == 'omni wheel'){
-        trac = type2
+        trac = type2;
+        cali = calibrateTW;
       }
       if(this.name == null){
         this.name = "myAuto";
       }
       trac = trac.replace("{name}", this.name);
       trac = trac.replace("{name}", this.name);
-      trac = trac.replace("{width}", this.robotWidth);
-      trac = trac.replace("{cpr}", this.cpr);
-      trac = trac.replace("{gearratio}", this.gearratio);
-      trac = trac.replace("{diameter}", this.diameter);
-      trac = trac.replace("{bias}", this.bias);
+      var width = this.robotWidth;
+      if(Number.isInteger(width)){
+        width +=".0";
+      }
+      trac = trac.replace("{width}", width);
+      trac = trac.replace("{cpr}", Math.round(this.cpr));
+      cali = cali.replace("{cpr}", Math.round(this.cpr))
+      trac = trac.replace("{gearratio}", Math.round(this.gearratio));
+      cali = cali.replace("{gearratio}", Math.round(this.gearratio));
+      var diam = this.diameter;
+      if(Number.isInteger(diam)){
+        diam += ".0";
+      }
+      trac = trac.replace("{diameter}", diam);
+      cali = cali.replace("{diameter}", diam);
+      var bias = this.bias;
+      if(Number.isInteger(bias)){
+        bias += ".0";
+      }
+      trac = trac.replace("{bias}", bias);
+      cali = cali.replace("{diameter}", diam);
       //
       var steps = this.$store.getters.getTheSteps;
       var buildCode = "";
@@ -238,7 +259,19 @@ export default {
           }
           line += "turnWithGyro(" + Math.abs(steps[i].params.angle) + ", " + speedDirection + ");";
         }else if(steps[i].type == MovementOptions.ARC){
-          line += "arc(" + steps[i].params.angle + ", " + steps[i].params.distance + ", " + steps[i].params.speed + ");";
+          var angy = steps[i].params.angle;
+          if(Number.isInteger(angy)){
+            angy += ".0";
+          }
+          var disy = steps[i].params.distance;
+          if(Number.isInteger(disy)){
+            disy = disy + ".0";
+          }
+          var spd = steps[i].params.speed;
+          if(Number.isInteger(spd)){//fix this
+            spd += ".0";
+          }
+          line += "arc(" + angy + ", " + disy + ", " + spd + ");";
         }//else{
           //line += "strafeToPosition(" + steps[i].params...
         //}
@@ -248,6 +281,7 @@ export default {
       trac = trac.replace("{code}", buildCode);
       //
       this.$store.commit("setGenCode", trac);
+      this.$store.commit("setGenCali", cali);
       //
     },
     newStep: function(step) {
@@ -387,6 +421,7 @@ export default {
       }
       //
       this.$store.commit("nukeIt");
+      this.$store.commit("setGenCode", null);
       this.points = [];
       this.lines = [];
       this.arcs = [];
@@ -1449,7 +1484,7 @@ export default {
               } else if (ang > 180) {
                 ang -= 360;
               }
-              this.angle = Math.round(ang / 5) * 5;
+              this.angle = Math.round(ang * 2) / 2;
               //
             } else {
               //

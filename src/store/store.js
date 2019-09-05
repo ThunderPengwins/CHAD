@@ -11,7 +11,8 @@ export const store = new Vuex.Store({
     listOfSteps: [],
     generateClicked: false,
     firstChassis: false,
-    genCode: null
+    genCode: null,
+    genCali: null
   },
   mutations: {
     changeChassis(state, chassis) {
@@ -39,9 +40,13 @@ export const store = new Vuex.Store({
     },
     nukeIt(state){
       state.listOfSteps = [];
+      state.generateClicked = false;
     },
     setGenCode(state, code){
       state.genCode = code;
+    },
+    setGenCali(state, code){
+      state.genCali = code;
     }
   },
   getters: {
@@ -55,6 +60,7 @@ export const store = new Vuex.Store({
     getTheSteps: state => state.listOfSteps,
     getGenerateVisibility: state => state.generateClicked,
     getFirstChassis: state => state.firstChassis,
-    getGenCode: state => state.genCode
+    getGenCode: state => state.genCode,
+    getGenCali: state => state.genCali
   }
 })

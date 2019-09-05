@@ -5,8 +5,14 @@
     </div>
     <h1 class="header">Congratulations! Here's your generated code, courtesy of the Thunder Pengwins:</h1>
     <v-btn class="copier" @click="copyStringToClipboard($store.getters.getGenCode)">Copy to Clipboard</v-btn>
-    <pre id="text">{{$store.getters.getGenCode}}</pre>
-    <div id="buffer"/>
+    <v-btn sm2 id="scroll" @click="scrollDown()"><v-icon>arrow_downward</v-icon></v-btn>
+    <pre id="code">{{$store.getters.getGenCode}}</pre>
+    <h1 ic="caltext">Calibration file:</h1>
+    <v-btn class="copier" @click="copyStringToClipboard($store.getters.getGenCali)">Copy to Clipboard</v-btn>
+    <v-btn id="scroll" @click="scrollDown()"><v-icon>arrow_downward</v-icon></v-btn>
+     <v-btn sm2 id="scroll" @click="scrollUp('top')"><v-icon>arrow_upward</v-icon></v-btn>
+    <pre id="cali">{{$store.getters.getGenCali}}</pre>
+    <v-btn sm2 id="bottom" @click="scrollUp('bottom')"><v-icon>arrow_upward</v-icon></v-btn>
 </div>
 </template>
 
@@ -29,6 +35,30 @@ export default {
         document.execCommand('copy');
         // Remove temporary element
         document.body.removeChild(el);
+        },
+        scrollDown: function(){
+            //
+            var height = 50 * this.$store.getters.getTheSteps.length + 7500;
+            //
+            window.scrollBy(0, height);
+        },
+        scrollUp: function(pos){
+            //
+            if(pos == "bottom"){
+                window.scrollBy(0, -2000);
+            }else{
+                window.scrollBy(0, -10000);
+            }
+            //
+            
+        },
+        checkKey: function(key) {
+            if (key == '38') {//up arrow
+                this.scrollUp();
+            }
+            else if (key == '40') {//down arrow
+                this.scrollDown();
+            }
         }
     },
     created() {
@@ -37,6 +67,9 @@ export default {
       this.$router.push("/");
     }
     //
+    /*window.addEventListener('keydown', function(e) {
+        this.checkKey(e.keyCode);
+    });*/
   }
 }
 //v-model="$store.getters.getGenCode"
@@ -59,11 +92,6 @@ export default {
     margin: 0%;
 }
 
-.buffer{
-    height: 200px;
-    position: relative;
-}
-
 pre {
     background: #f4f4f4;
     border: 1px solid #ddd;
@@ -73,23 +101,33 @@ pre {
     font-family: monospace;
     font-size: 15px;
     line-height: 1.6;
-    margin-bottom: 10.6em;
     max-width: 90%;
     overflow: auto;
     padding: 1em 1.5em;
+    margin-bottom: 5.6em;
     display: block;
     word-wrap: break-word;
     text-align: left;
     left: 5%;
-    top: 70px;
+    top: 0px;
     position: relative;
     border-radius: 5px;
 }
 
-.copier{
+#cali{
+    margin-bottom: 1em;
+    top: 0%;
 }
 
-.header{
+#caltext{
+    margin-bottom: 0px;
+}
+
+#bottom{
+    margin-bottom: 10.6em
+}
+
+h1{
   text-align: center;
   margin: 50px;
   font-family: 'Montserrat', sans-serif;

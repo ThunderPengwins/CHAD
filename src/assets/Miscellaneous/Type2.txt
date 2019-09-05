@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.chad;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -18,12 +18,12 @@ public class {name} extends LinearOpMode {
     //
     DcMotor left;
     DcMotor right;
-    //28 * 20 / (2ppi * 4.125)
+    //Calculate encoder conversion
     Double width = {width}; //inches
     Integer cpr = {cpr}; //counts per rotation
     Integer gearratio = {gearratio};
     Double diameter = {diameter};
-    Double cpi = (cpr * gearratio)/(Math.PI * diameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
+    Double cpi = (cpr * gearratio)/(Math.PI * diameter); //counts per inch -> counts per rotation / circumference
     Double bias = {bias};
     Double arcBias = 0.0;//Not recommended
     //
@@ -41,6 +41,8 @@ public class {name} extends LinearOpMode {
         left = hardwareMap.dcMotor.get("left");
         right = hardwareMap.dcMotor.get("right");
         right.setDirection(DcMotorSimple.Direction.REVERSE);//If your robot goes backward, switch this from right to left
+        //
+        waitForStartify();
         //
         {code}
     }
