@@ -111,13 +111,22 @@
         <!-- #endregion -->
         <!-- #region Step List -->
             <div id="listofsteps">
-                <div id="autostep" v-for="step in $store.getters.getTheSteps" v-bind:key="step.stepNumber + 'list'">
+                 <div sm2 id="trash" v-if="$store.getters.getTheSteps.length > 0">
+                            <v-btn icon flat color="black" v-on:click="deleteStep()"><v-icon>delete</v-icon></v-btn>
+                            <v-btn icon flat color="red" v-on:click="deleteSteps()"><v-icon>clear</v-icon></v-btn>
+                </div>
+                <div id="autostep" v-for="step in $store.getters.getTheSteps.slice().reverse()" v-bind:key="step.stepNumber + 'list'">
                     <!--<v-card-title primary-title>-->
-                        <div id="step-title" sm12>
+                        <v-layout  row wrap  id="step-title" sm12>
+                          <v-flex sm1>
+                            {{step.stepNumber}}
+                          </v-flex>
+                          <v-flex sm11>
                             <h3>
                                 {{step.type}}
                             </h3>
-                        </div> 
+                          </v-flex>
+                        </v-layout> 
                         <!-- #region Steps -->
                         <div row wrap>
                             <div v-if="step.type==drive">
@@ -163,10 +172,6 @@
                                     </v-flex>
                                 </v-layout> 
                             </div>
-                        </div>
-                        <div sm2 id="trash" v-if="(step.stepNumber + 1) == $store.getters.getTheSteps.length">
-                            <v-btn icon flat color="black" v-on:click="deleteStep(step)"><v-icon>delete</v-icon></v-btn>
-                            <v-btn icon flat color="red" v-on:click="deleteSteps(step)"><v-icon>clear</v-icon></v-btn>
                         </div>
                         <!-- #endregion -->
                     <!--</v-card-title>-->
@@ -258,8 +263,9 @@ export default {
       this.getStepPoint();
       //
     },
-    deleteStep: function(step) {
+    deleteStep: function() {
       //
+      var step = this.$store.getters.getTheSteps[this.$store.getters.getTheSteps.length - 1];
       this.$store.commit("removeLastStep");
       //
       switch (step.type) {
@@ -359,7 +365,7 @@ export default {
       }
       //
     },
-    deleteSteps: function(step) {
+    deleteSteps: function() {
       if (this.$store.getters.getTheSteps.length >= 1) {
         this.deleteWarning = true;
       } else {
@@ -2395,6 +2401,10 @@ hr {
 .tooltip {
   display: inline-block;
   border-bottom: 1px dotted black;
+}
+
+.stepNumber {
+  display: inline-block;
 }
 
 .tooltip .tooltiptext {
