@@ -40,7 +40,7 @@
                             <li>When you are satisfied with the step, <strong>click done</strong> and the step will appear on the right hand side in the steps list, and the visual representation will change color on the field.</li>
                             <li><strong>Repeat steps 7-9</strong> until you have finished your autonomous.</li>
                             <li><strong>Click the large generate button</strong> on the bottom of the page. This should open a new section in the bottom navigation. The code will appear on the screen, able to be copied into your code. The generated code will be available until you click restart on the Creator page or change chassis on the homepage.</li>
-                            <li><strong>Create a class</strong> in your TeamCode folder of the ftc_app, and copy and paste the code into your class. The name of the class should match what you named your autonomous.</li>
+                            <li><strong>Create a class</strong> in your TeamCode folder of the ftc_app, and copy and paste the code into your class. The name of the class should match what you named your autonomous. If you haven't already, it's reacommended to run the calibration program, details below in "Calibration."</li>
                         </ol>
                         IMPORTANT: Refreshing the page, changing chassis or restarting your autonomous will permanently delete your autonomous design.
                     </v-card-text>
@@ -48,18 +48,63 @@
             </v-expansion-panel-content>
             <v-expansion-panel-content>
                 <template v-slot:header>
-                    <div>Chassis Properties<!--<img src="https://www.dollartree.com/ccstore/v1/images/?source=/file/v8200564444066591050/products/174788.jpg&height=475&width=475" class="balloon"/>--></div>
+                    <div class="head">Chassis Properties<!--<img src="https://www.dollartree.com/ccstore/v1/images/?source=/file/v8200564444066591050/products/174788.jpg&height=475&width=475" class="balloon"/>--></div>
                 </template>
                 <v-card>
-                    <v-card-text>I am a Balloon</v-card-text>
+                    <v-card-text>
+                        There are four chassis that are compatible with this website. The details and corresponding capabilities of each are as follows:
+                        <ul>
+                            <li>Traction Chassis - four rubber traction wheels</li>
+                            <ul>
+                                <li>Four motors</li>
+                            </ul>
+                            <li>Omni Chassis - two omni wheels and two traction wheels</li>
+                            <ul>
+                                <li>Arc with encoders</li>
+                                <li>Two motors (used)</li>
+                            </ul>
+                            <li>Mecanum Chassis - four mecanum wheels</li>
+                            <ul>
+                                <li>Strafe with encoders</li>
+                                <li>Four motors</li>
+                            </ul>
+                            <li>Holonomic Chassis - four omni wheels</li>
+                            <ul>
+                                <li>Strafe with encoders</li>
+                                <li>Four motors</li>
+                            </ul>
+                        </ul>
+                        Every chassis can:
+                        <ul>
+                            <li>Drive forward/backward with encoders</li>
+                            <li>Turn with the IMU Integrated Gyro</li>
+                        </ul>
+                        Every chassis must have:
+                        <ul>
+                            <li>REV Expansion Hub</li>
+                            <li>Encoders for all motors</li>
+                        </ul>
+                    </v-card-text>
                 </v-card>
             </v-expansion-panel-content>
             <v-expansion-panel-content>
                 <template v-slot:header>
-                    <div>Calibration<!--<img src="https://www.dollartree.com/ccstore/v1/images/?source=/file/v8200564444066591050/products/174788.jpg&height=475&width=475" class="balloon"/>--></div>
+                    <div class="head">Calibration<!--<img src="https://www.dollartree.com/ccstore/v1/images/?source=/file/v8200564444066591050/products/174788.jpg&height=475&width=475" class="balloon"/>--></div>
                 </template>
                 <v-card>
-                    <v-card-text>I am a Balloon</v-card-text>
+                    <v-card-text>
+                        The first time you use a CHAD autonomous with your robot, it’s best to calibrate the bias for friction and slippage. Full instructions for calibration are below.
+                        <ol>
+                            <li>Upon generating your code, scroll to the bottom to find the smaller text field with the calibration program. Click the button above it to <strong>copy it.</strong></li>
+                            <li>Go into android studio, and <strong>make a new class</strong> under TeamCode>src>main>java>org.firstinspires.ftc.teamcode. Make sure to call it “Calibrate.”</li>
+                            <li>Select all of the starting code and delete it. Then <strong>paste the copied calibrate code</strong> into the empty file.</li>
+                            <li>Take note of the motors present in the code, and <strong>add a configuration</strong> in your phone with the names of the motors. Depending on how many motors you have, the names may be “left” and “right” or “frontleft,” “frontright,” “backleft,” and “backright.”</li>
+                            <li>Upload your FTC_app to your Robot Controller, and <strong>run the Calibrate program.</strong></li>
+                            <li><strong>Measure</strong> how far your robot travels. If it travels 20 inches, you are done calibrating. If it an inch or more away from 20 inches, you may want to set the bias to (how far it traveled)/20 and reupload the code.</li>
+                            <li><strong>Repeat step six</strong> until your robot travels 20 inches, or you’ve determined it never will. If it never will, refer to troubleshooting below.</li>
+                            <li><strong>Change the bias</strong> of every CHAD program for your robot to whatever it is in the calibration program. Next time you use the website, enter the same number in the bias input to speed up the process.</li>
+                        </ol>
+                    </v-card-text>
                 </v-card>
             </v-expansion-panel-content>
             <v-expansion-panel-content>
@@ -86,7 +131,7 @@
 </template>
 
 <script>
-var disqus_config = function () {
+/*var disqus_config = function () {
 this.page.url = ftcchad.com;  // Replace PAGE_URL with your page's canonical URL variable
 this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
 };
@@ -96,7 +141,7 @@ var d = document, s = d.createElement('script');
 s.src = 'https://EXAMPLE.disqus.com/embed.js';
 s.setAttribute('data-timestamp', +new Date());
 (d.head || d.body).appendChild(s);
-})();
+})();*/
 
 export default {
     name: "TipsNInfo",
@@ -151,6 +196,7 @@ li{
 .panel{
     border-radius: 5px;
     scroll-behavior: auto;
+    margin-bottom: 6.6em;
 }
 
 .balloon{

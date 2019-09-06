@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.chad;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -20,12 +20,12 @@ public class {name} extends LinearOpMode {
     DcMotor frontright;
     DcMotor backleft;
     DcMotor backright;
-    //
+    //Calculate encoder conversion
     Double width = {width}; //inches
     Integer cpr = {cpr}; //counts per rotation
     Integer gearratio = {gearratio};
     Double diameter = {diameter};
-    Double cpi = (cpr * gearratio)/(Math.PI * diameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
+    Double cpi = (cpr * gearratio)/(Math.PI * diameter); //counts per inch -> counts per rotation / circumference
     Double bias = {bias};
     Double arcBias = 0.0;//Not recommended
     //
