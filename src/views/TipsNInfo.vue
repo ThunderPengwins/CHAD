@@ -89,7 +89,7 @@
             </v-expansion-panel-content>
             <v-expansion-panel-content>
                 <template v-slot:header>
-                    <div class="head">Calibration<!--<img src="https://www.dollartree.com/ccstore/v1/images/?source=/file/v8200564444066591050/products/174788.jpg&height=475&width=475" class="balloon"/>--></div>
+                    <div class="head">Calibration</div>
                 </template>
                 <v-card>
                     <v-card-text>
@@ -109,7 +109,7 @@
             </v-expansion-panel-content>
             <v-expansion-panel-content>
                 <template v-slot:header>
-                    <div>Adjusting Generated Code<!--<img src="https://www.dollartree.com/ccstore/v1/images/?source=/file/v8200564444066591050/products/174788.jpg&height=475&width=475" class="balloon"/>--></div>
+                    <div>Adjusting Generated Code</div>
                 </template>
                 <v-card>
                     <v-card-text>Coming soon!</v-card-text>
@@ -117,10 +117,18 @@
             </v-expansion-panel-content>
             <v-expansion-panel-content>
                 <template v-slot:header>
-                    <div>Beginner's Tutorial<!--<img src="https://www.dollartree.com/ccstore/v1/images/?source=/file/v8200564444066591050/products/174788.jpg&height=475&width=475" class="balloon"/>--></div>
+                    <div>Beginner's Tutorial</div>
                 </template>
                 <v-card>
                     <v-card-text>Coming soon!</v-card-text>
+                </v-card>
+            </v-expansion-panel-content>
+            <v-expansion-panel-content>
+                <template v-slot:header>
+                    <div class="head">Contact us</div>
+                </template>
+                <v-card>
+                    <v-card-text>You can reach us at thunderpengwinroboticsteam@gmail.com. You can also visit our website, <a class="link" href="https://sites.google.com/view/thunderpengwins/home" target="_blank">thunderpengwins.com</a>, to learn more our team.</v-card-text>
                 </v-card>
             </v-expansion-panel-content>
         </v-expansion-panel>
@@ -154,6 +162,10 @@ export default {
 .head{
 	font-family:'Century Gothic','Futura','Didact Gothic',san-serif;
     font-weight: 700;
+}
+
+.link{
+    color: rgb(100,230,209);
 }
 
 li{
