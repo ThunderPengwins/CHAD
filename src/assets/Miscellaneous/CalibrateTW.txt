@@ -25,6 +25,8 @@ public class Calibrate extends LinearOpMode {
         right = hardwareMap.dcMotor.get("right");
         right.setDirection(DcMotorSimple.Direction.REVERSE);//If your robot goes backward, switch this from right to left
         //
+        waitForStartify();
+        //
         moveToPosition(20, .2);//Don't change this line, unless you want to calibrate with different speeds
         //
     }

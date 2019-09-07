@@ -228,7 +228,7 @@ export default {
       trac = trac.replace("{name}", this.name);
       var width = this.robotWidth;
       if(Number.isInteger(width)){
-        width +=".0";
+        width += ".0";
       }
       trac = trac.replace("{width}", width);
       trac = trac.replace("{cpr}", Math.round(this.cpr));

@@ -12,10 +12,10 @@
     </div>
     <h1 class="desc">Select Chassis:</h1>
     <div class="bottom">
-     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'traction', baton:$store.getters.chassis != 'traction'}" v-on:click="chassisChanged('traction')"><img src="@/assets/Pictures/TractionA.png" alt="traction" class="chaspic"/></v-btn>
-     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'omni wheel', baton:$store.getters.chassis != 'omni wheel'}" v-on:click="chassisChanged('omni wheel')"><img src="@/assets/Pictures/OmniA.png" alt="omni" class="chaspic"/></v-btn>
-     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')">Meccanum<!--<img src="@/assets/Pictures/Meccanum.png" alt="meccanum" class="chaspic"/>--></v-btn>
-     <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'holonomic', baton:$store.getters.chassis != 'holonomic'}" v-on:click="chassisChanged('holonomic')" outline>Holonomic</v-btn>
+     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'traction', baton:$store.getters.chassis != 'traction'}" v-on:click="chassisChanged('traction')"><img src="@/assets/Pictures/TractionB.png" alt="traction" class="chaspic"/></v-btn>
+     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'omni wheel', baton:$store.getters.chassis != 'omni wheel'}" v-on:click="chassisChanged('omni wheel')"><img src="@/assets/Pictures/OmniB.png" alt="omni" class="chaspic"/></v-btn>
+     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')"><img src="@/assets/Pictures/MeccanumB.png" alt="meccanum" class="chaspic"/></v-btn>
+     <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'holonomic', baton:$store.getters.chassis != 'holonomic'}" v-on:click="chassisChanged('holonomic')" outline><img src="@/assets/Pictures/Holonomic.png" alt="holonomic" class="chaspic"/></v-btn>
     </div>
     <v-dialog v-model="openWarning" width="500">
       <v-card>
