@@ -296,6 +296,12 @@ export default {
       //
       this.$store.commit("removeLastStep");
       //
+      if(this.currentColor > 0){
+        this.currentColor--;
+      }else{
+        this.currentColor = this.stepColors.length - 3;
+      }
+      //
       switch (step.type) {
         case MovementOptions.DRIVE:
           this.lines.pop();
@@ -393,7 +399,7 @@ export default {
       }
       //
     },
-    deleteSteps: function(step) {
+    deleteSteps: function() {
       if (this.$store.getters.getTheSteps.length >= 1) {
         this.deleteWarning = true;
       } else {
@@ -404,19 +410,21 @@ export default {
       //
       this.deleteWarning = false;
       //
-      if (!this.sideChosen) {
-        if (this.starpos == "top left") {
-          this.startingPos = this.topLeft;
-        } else if (this.starpos == "top right") {
-          this.startingPos = this.topRight;
-        } else if (this.starpos == "bottom left") {
-          this.startingPos = this.bottomLeft;
-        } else if (this.starpos == "bottom right") {
-          this.startingPos = this.bottomRight;
-        } else {
-          this.customStart();
+      if (this.sideChosen != 3) {
+        if (this.starpos == "left") {
+          this.startingPos.x = (this.robotLength * 3 / 2 + 5);
+          this.startingPos.y = this.fieldDim / 4;
+          this.startingPos.rotation = 90;
+          this.curAngle = 90;
+        } else if (this.starpos == "right") {
+          this.startingPos.x = this.fieldDim - (this.robotLength * 3 / 2) - 5;
+          this.startingPos.y = this.fieldDim / 4;
+          this.startingPos.rotation = -90;
+          this.curAngle = -90;
         }
-        this.sideChosen = true;
+        if(this.sideChosen == 0){
+          this.sideChosen = 1;
+        }
         this.laststarpos = this.starpos;
       }
       //
@@ -425,20 +433,38 @@ export default {
       this.points = [];
       this.lines = [];
       this.arcs = [];
+      this.interimLine = null;
+      this.directionLine = null;
       //
-      this.points.push({
-        //
-        x: this.startingPos.x,
-        y: this.startingPos.y,
-        rotation: this.startingPos.rotation,
-        width: this.robotWidth * 3,
-        height: this.robotLength * 3,
-        offsetX: this.robotWidth * 3 / 2,
-        offsetY: this.robotLength * 3 / 2,
-        stroke: "#32cd32",
-        strokeWidth: 5,
-        cornerRadius: 5
-      });
+      if(this.sideChosen == 3){
+        this.points.push({
+          //
+          x: this.startingPos.x,
+          y: this.startingPos.y,
+          rotation: this.startingPos.rotation,
+          width: this.robotWidth * 3,
+          height: this.robotLength * 3,
+          offsetX: this.robotWidth * 3 / 2,
+          offsetY: this.robotLength * 3 / 2,
+          stroke: "#32cd32",
+          strokeWidth: 5,
+          cornerRadius: 5
+        });
+      }else{
+        this.interimPoint = {
+          x: this.startingPos.x,
+          y: this.startingPos.y,
+          rotation: this.startingPos.rotation,
+          width: this.robotWidth * 3,
+          height: this.robotLength * 3,
+          offsetX: this.robotWidth * 3 / 2,
+          offsetY: this.robotLength * 3 / 2,
+          stroke: this.newColor,
+          dash: [20, 20],
+          strokeWidth: 5,
+          cornerRadius: 5
+        }
+      }
       //
       this.curX = this.startingPos.x;
       this.curY = this.startingPos.y;
@@ -451,10 +477,10 @@ export default {
       //
       this.deleteWarning = false;
       //
-      if (!this.sideChosen) {
+      if (this.sideChosen == 0) {
         console.log(this.laststarpos);
         this.starpos = this.laststarpos;
-        this.sideChosen = true;
+        this.sideChosen == 3;
       }
       //
     },
@@ -479,25 +505,13 @@ export default {
         }
       }
     },
-    startChange: function(event) {
+    startChange: function() {
       if (this.$store.getters.getTheSteps.length >= 1) {
-        this.sideChosen = false;
+        this.sideChosen = 0;
         this.deleteWarning = true;
       } else {
-        this.sideChosen = true;
-        if (event.target.value == "top left") {
-          this.startingPos = this.topLeft;
-        } else if (event.target.value == "top right") {
-          this.startingPos = this.topRight;
-        } else if (event.target.value == "bottom left") {
-          this.startingPos = this.bottomLeft;
-        } else if (event.target.value == "bottom right") {
-          this.startingPos = this.bottomRight;
-        } else {
-          this.customStart();
-        }
+        this.sideChosen = 1;
         this.confirmDelete();
-        this.laststarpos = this.starpos;
       }
       //
     },
@@ -518,8 +532,103 @@ export default {
       //while !mouse clicked
       //
     },
+    generateGradient: function(){
+      /*gradient() {
+        let colors = "linear-gradient(45deg";
+        this.colors.forEach(function(e) {
+          colors += "," + e.hex;
+        });
+        colors += ")";
+        return colors;
+      }*/
+    },
+    blend_colors: function(color1, color2, percentage){
+      // check input
+      color1 = color1 || '#000000';
+      color2 = color2 || '#ffffff';
+      percentage = percentage || 0.5;
+      //
+      // output to canvas for proof
+      //var cvs = document.createElement('canvas');
+      //cvs.setAttribute("type", "hidden");
+      /*var ctx = cvs.getContext('2d');
+      cvs.width = 90;
+      cvs.height = 25;
+      document.body.appendChild(cvs);
+      // color1 on the left
+      ctx.fillStyle = color1;
+      ctx.fillRect(0, 0, 30, 25);
+      // color2 on the right
+      ctx.fillStyle = color2;
+      ctx.fillRect(60, 0, 30, 25);*/
+      // 2: check to see if we need to convert 3 char hex to 6 char hex, else slice off hash
+      //      the three character hex is just a representation of the 6 hex where each character is repeated
+      //      ie: #060 => #006600 (green)
+      if (color1.length == 4){
+          color1 = color1[1] + color1[1] + color1[2] + color1[2] + color1[3] + color1[3];
+      }else{
+          color1 = color1.substring(1);
+      }
+      if (color2.length == 4){
+          color2 = color2[1] + color2[1] + color2[2] + color2[2] + color2[3] + color2[3];
+      }else{
+          color2 = color2.substring(1);
+      }
+      //
+      console.log('valid: c1 => ' + color1 + ', c2 => ' + color2);
+      // 3: we have valid input, convert colors to rgb
+      color1 = [parseInt(color1[0] + color1[1], 16), parseInt(color1[2] + color1[3], 16), parseInt(color1[4] + color1[5], 16)];
+      color2 = [parseInt(color2[0] + color2[1], 16), parseInt(color2[2] + color2[3], 16), parseInt(color2[4] + color2[5], 16)];
+      //
+      console.log('hex -> rgba: c1 => [' + color1.join(', ') + '], c2 => [' + color2.join(', ') + ']');
+      // 4: blend
+      var color3 = [ 
+          (1 - percentage) * color1[0] + percentage * color2[0], 
+          (1 - percentage) * color1[1] + percentage * color2[1], 
+          (1 - percentage) * color1[2] + percentage * color2[2]
+      ];
+      //
+      console.log('c3 => [' + color3.join(', ') + ']');
+      //
+      // 5: convert to hex
+      color3 = '#' + this.int_to_hex(color3[0]) + this.int_to_hex(color3[1]) + this.int_to_hex(color3[2]);
+      //
+      console.log(color3);
+      //
+      // color3 in the middle
+      //ctx.fillStyle = color3;
+      //ctx.fillRect(30, 0, 30, 25);
+      // return hex
+      return color3;
+    },
+    int_to_hex: function(num){
+      /*
+        convert a Number to a two character hex string
+        must round, or we will end up with more digits than expected (2)
+        note: can also result in single digit, which will need to be padded with a 0 to the left
+        @param: num         => the number to conver to hex
+        @returns: string    => the hex representation of the provided number
+      */
+      var hex = Math.round(num).toString(16);
+      if (hex.length == 1)
+          hex = '0' + hex;
+      return hex;
+    },
+    createGradient: function(color1, color2, steps, cx, cy, nx, ny){
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      //
+      var gradient = ctx.createLinearGradient(cx, cy, nx, ny);
+      gradient.addColorStop(0.00, color1);
+      for(var i = 0; i < steps - 1; i++){
+        gradient.addColorStop((i + 1) / 5, this.blend_colors(color1, color2, (i + 1)/ steps));
+        console.log("Stuff" + this.blend_colors(color1, color2, (i + 1) / steps));
+      }
+      gradient.addColorStop(1.00, color2);
+      return gradient;
+    },
     confirmStep: function() {
-      if(this.sideChosen){
+      if(this.sideChosen == 3){
       var params;
       switch (this.$store.getters.currentStep) {
         case MovementOptions.DRIVE:
@@ -528,6 +637,8 @@ export default {
             speed: this.$data.speed
           };
           //#region
+          //
+          var grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, this.curX, this.curY, this.curX + this.nextX, this.curY + this.nextY);
           //
           this.lines.push({
             x: 0,
@@ -538,7 +649,7 @@ export default {
               this.curX + this.nextX,
               this.curY + this.nextY
             ],
-            stroke: this.stepColors[this.currentColor],
+            stroke: grad,
             strokeWidth: 4,
             lineCap: "round"
           });
@@ -579,12 +690,6 @@ export default {
             strokeWidth: 5,
             cornerRadius: 5
           });
-          //
-          if (this.currentColor > this.stepColors.length - 2) {
-            this.currentColor = 0;
-          } else {
-            this.currentColor++;
-          }
           //
           var mx =
             this.distance * 3 * Math.cos((90 - this.curAngle) * Math.PI / 180);
@@ -628,6 +733,17 @@ export default {
             speed: this.$data.speed
           };
           //
+          x1 = 50 * Math.sin(this.curAngle * Math.PI / 180) + this.curX;
+          y1 = -50 * Math.cos(this.curAngle * Math.PI / 180) + this.curY;
+          x2 = 50 * Math.sin((this.curAngle + this.angle) * Math.PI / 180) + this.curX;
+          y2 = -50 * Math.cos((this.curAngle + this.angle) * Math.PI / 180) + this.curY;
+          //
+          console.log("gradient cords:");
+          console.log("x1: " + x1 + ", y1: " + y1);
+          console.log("x2: " + x2 + ", y2: " + y2);
+          //
+          grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 3], 1, x1, y1, x2, y2);
+          //
           if (this.angle > 0) {
             this.arcs.push({
               x: this.curX,
@@ -636,7 +752,10 @@ export default {
               outerRadius: 50,
               angle: this.angle,
               rotation: this.curAngle - 90,
-              stroke: this.stepColors[this.currentColor],
+              stroke: grad,
+              //fillLinearGradientStartPoint: { x: x1, y: y1 },
+              //fillLinearGradientEndPoint: { x: x2, y: y2 },
+              //fillLinearGradientColorStops: [0, 'red', 1, 'yellow'],
               strokeWidth: 4,
               lineCap: "round",
               lineJoin: "round"
@@ -649,7 +768,7 @@ export default {
               outerRadius: 50,
               angle: -this.angle,
               rotation: this.nextAngle - 90,
-              stroke: this.stepColors[this.currentColor],
+              stroke: grad,
               strokeWidth: 4,
               lineCap: "round",
               lineJoin: "round"
@@ -670,12 +789,6 @@ export default {
             strokeWidth: 5,
             cornerRadius: 5
           });
-          //
-          if (this.currentColor > this.stepColors.length - 2) {
-            this.currentColor = 0;
-          } else {
-            this.currentColor++;
-          }
           //
           this.points.push({
             x: this.curX,
@@ -819,6 +932,8 @@ export default {
             a2 = a2 - 360;
           }
           //
+          grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, this.curX, this.curY, this.nextAx, this.nextAy);
+          //
           if (
             (this.nextAy > perp && this.nextAx > par) ||
             (this.nextAx < par && this.nextAy < perp)
@@ -830,7 +945,7 @@ export default {
               outerRadius: r,
               angle: 2 * (90 + a1 + curA),
               rotation: start + (360 - 2 * (90 + a1 + curA)) - 90,
-              stroke: this.stepColors[this.currentColor],
+              stroke: grad,
               strokeWidth: 4,
               lineCap: "round",
               lineJoin: "round"
@@ -843,7 +958,7 @@ export default {
               outerRadius: r,
               angle: a2,
               rotation: curA - 180,
-              stroke: this.stepColors[this.currentColor],
+              stroke: grad,
               strokeWidth: 4,
               lineCap: "round",
               lineJoin: "round"
@@ -856,7 +971,7 @@ export default {
               outerRadius: r,
               angle: a2,
               rotation: curA,
-              stroke: this.stepColors[this.currentColor],
+              stroke: grad,
               strokeWidth: 4,
               lineCap: "round",
               lineJoin: "round"
@@ -877,12 +992,6 @@ export default {
             lineCap: "round",
             lineJoin: "round"
           });
-          //
-          if (this.currentColor > this.stepColors.length - 2) {
-            this.currentColor = 0;
-          } else {
-            this.currentColor++;
-          }
           //
           this.distance = 30;
           this.angle = 45;
@@ -987,22 +1096,82 @@ export default {
           //
           break;
       }
+      //
+      if (this.currentColor > this.stepColors.length - 3) {
+        this.currentColor = 0;
+      } else {
+        this.currentColor++;
+      }
       this.$store.commit("confirmStep", params);
       }
       //
     },
     setInterimFloat: function(mousePos) {
-      if (this.interimFloat) {
-        this.interimFloat = false;
-      } else {
-        this.interimFloat = true;
+      if(this.sideChosen == 1 || this.sideChosen == 2){
+        this.startingPos.y = this.curY;
+        this.startingPos.rotation = this.curAngle;
+        if(this.sideChosen == 1){
+          console.log("On the inside.");
+          this.interimPoint = {
+            x: this.startingPos.x,
+            y: this.startingPos.y,
+            width: this.robotWidth * 3,
+            height: this.robotLength * 3,
+            offsetX: this.robotWidth * 3 / 2,
+            offsetY: this.robotLength * 3 / 2,
+            stroke: this.newColor,
+            strokeWidth: 5,
+            cornerRadius: 5,
+            rotation: this.curAngle,
+            lineCap: "round"
+          };
+          //
+          var ix = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+          var iy = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+          //
+          this.directionLine = {
+            x: 0,
+            y: 0,
+            points: [
+              this.curX,
+              this.curY,
+              this.curX + ix * 3,
+              this.curY - iy * 3
+            ],
+            stroke: "orange",
+            strokeWidth: 4,
+            lineCap: "round"
+          };
+        }else if(this.sideChosen == 2){
+          this.points.push({
+            x: this.startingPos.x,
+            y: this.startingPos.y,
+            width: this.robotWidth * 3,
+            height: this.robotLength * 3,
+            offsetX: this.robotWidth * 3 / 2,
+            offsetY: this.robotLength * 3 / 2,
+            stroke: "#32cd32",
+            strokeWidth: 5,
+            cornerRadius: 5,
+            rotation: this.startingPos.rotation,
+            lineCap: "round",
+            lineJoin: "round"
+          });
+        }
+        this.sideChosen++;
+      }else{
+        if (this.interimFloat) {
+          this.interimFloat = false;
+        } else {
+          this.interimFloat = true;
+        }
       }
       //
       this.setStepPoint(mousePos);
     },
     getStepPoint: function() {
       //
-      if (this.sideChosen) {
+      if (this.sideChosen == 3) {
         switch (this.$store.getters.currentStep) {
           case MovementOptions.DRIVE:
             //
@@ -1030,7 +1199,7 @@ export default {
     setStepPoint: function(mousePos) {
       console.log("Click location--X: " + mousePos.x + ",Y: " + mousePos.y);
       //
-      if (this.sideChosen) {
+      if (this.sideChosen == 3) {
         switch (this.$store.getters.currentStep) {
           case MovementOptions.DRIVE:
             //
@@ -1638,6 +1807,67 @@ export default {
             }
             break;
         }
+      }else if(this.sideChosen == 1){
+        //
+        this.curX = this.startingPos.x;
+        this.curY = mousePos.y;
+        this.interimPoint = {
+          x: this.startingPos.x,
+          y: mousePos.y,
+          width: this.robotWidth * 3,
+          height: this.robotLength * 3,
+          offsetX: this.robotWidth * 3 / 2,
+          offsetY: this.robotLength * 3 / 2,
+          stroke: this.newColor,
+          strokeWidth: 5,
+          cornerRadius: 5,
+          dash: [20, 20],
+          rotation: this.startingPos.rotation,
+          lineCap: "round",
+          lineJoin: "round"
+        };
+        //
+      }else if(this.sideChosen == 2){
+        if (mousePos.x > this.curX) {
+          a1 = 90 - Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
+        } else {
+          a1 = -180 + (90 - Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI);
+        }
+        //
+        this.curAngle = Math.round(a1 / 90) * 90;
+        //
+        this.interimPoint = {
+          x: this.startingPos.x,
+          y: this.startingPos.y,
+          width: this.robotWidth * 3,
+          height: this.robotLength * 3,
+          offsetX: this.robotWidth * 3 / 2,
+          offsetY: this.robotLength * 3 / 2,
+          stroke: this.newColor,
+          strokeWidth: 5,
+          cornerRadius: 5,
+          rotation: this.curAngle,
+          lineCap: "round",
+          lineJoin: "round"
+        };
+        //
+        x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+        y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+        //
+        this.directionLine = {
+          x: 0,
+          y: 0,
+          points: [
+            this.curX,
+            this.curY,
+            this.curX + x1 * 3,
+            this.curY - y1 * 3
+          ],
+          stroke: "orange",
+          strokeWidth: 4,
+          lineCap: "round"
+        };
+        //
       }
     },
     getDrive: function() {
@@ -2058,7 +2288,7 @@ export default {
   },
   data: () => ({
     presets: ["Gear ratio: 20", "Gear ratio: 40", "Gear ratio: 60", "Custom"],
-    starts: ["top left", "top right", "bottom left", "bottom right", "Custom"],
+    starts: ["left", "right"],
     dialog: false,
     drive: MovementOptions.DRIVE,
     turn: MovementOptions.TURN,
@@ -2083,7 +2313,7 @@ export default {
     interimLine: null,
     interimArc: null,
     directionLine: null,
-    field: require("@/assets/Pictures/field2.jpg"),
+    field: require("@/assets/Pictures/skyField1.png"),
     fieldDim: 423,
     curX: 268,
     curY: 159,
@@ -2098,29 +2328,9 @@ export default {
     startingPos: {},
     starpos: "Starting Side",
     laststarpos: "Staring Side",
-    sideChosen: false,
+    chosen: 0,
     deleteWarning: false,
     inputAlert: true,
-    topLeft: {
-      x: 161,
-      y: 159,
-      rotation: -45
-    },
-    topRight: {
-      x: 268,
-      y: 159,
-      rotation: 45
-    },
-    bottomLeft: {
-      x: 163,
-      y: 263,
-      rotation: -135
-    },
-    bottomRight: {
-      x: 267,
-      y: 263,
-      rotation: 135
-    },
     points: [],
     arcs: [],
     lines: [
@@ -2129,14 +2339,14 @@ export default {
       }
     ],
     stepColors: [
-      "#9d00ff",
-      "#b700ff",
-      "#cc00ff",
+      "#ff0000",
+      "#ffa600",
+      "#fff700",
+      "#00ff55",
+      "#00ffff",
+      "#2b00ff",
       "#ff00ff",
-      "#ff00dd",
-      "#ff00ff",
-      "#cc00ff",
-      "#b700ff"
+      "#ff0000"
     ],
     currentColor: 0
   })
