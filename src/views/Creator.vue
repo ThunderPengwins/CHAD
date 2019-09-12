@@ -119,7 +119,7 @@
                     <!--<v-card-title primary-title>-->
                         <v-layout  row wrap  id="step-title" sm12>
                           <v-flex sm1>
-                            {{step.stepNumber}}
+                            {{step.stepNumber + 1}}
                           </v-flex>
                           <v-flex sm11>
                             <h3>
@@ -748,7 +748,7 @@ export default {
           console.log("x1: " + x1 + ", y1: " + y1);
           console.log("x2: " + x2 + ", y2: " + y2);
           //
-          grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 3], 1, x1, y1, x2, y2);
+          //grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, x1, y1, x2, y2);
           //
           if (this.angle > 0) {
             this.arcs.push({
@@ -758,10 +758,7 @@ export default {
               outerRadius: 50,
               angle: this.angle,
               rotation: this.curAngle - 90,
-              stroke: grad,
-              //fillLinearGradientStartPoint: { x: x1, y: y1 },
-              //fillLinearGradientEndPoint: { x: x2, y: y2 },
-              //fillLinearGradientColorStops: [0, 'red', 1, 'yellow'],
+              stroke: this.stepColors[this.currentColor + 1],
               strokeWidth: 4,
               lineCap: "round",
               lineJoin: "round"
@@ -774,7 +771,7 @@ export default {
               outerRadius: 50,
               angle: -this.angle,
               rotation: this.nextAngle - 90,
-              stroke: grad,
+              stroke: this.stepColors[this.currentColor + 1],
               strokeWidth: 4,
               lineCap: "round",
               lineJoin: "round"
@@ -938,7 +935,7 @@ export default {
             a2 = a2 - 360;
           }
           //
-          grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, this.curX, this.curY, this.nextAx, this.nextAy);
+          //grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, this.curX, this.curY, this.nextAx, this.nextAy);
           //
           if (
             (this.nextAy > perp && this.nextAx > par) ||
@@ -951,7 +948,7 @@ export default {
               outerRadius: r,
               angle: 2 * (90 + a1 + curA),
               rotation: start + (360 - 2 * (90 + a1 + curA)) - 90,
-              stroke: grad,
+              stroke: this.stepColors[this.currentColor + 1],
               strokeWidth: 4,
               lineCap: "round",
               lineJoin: "round"
@@ -964,7 +961,7 @@ export default {
               outerRadius: r,
               angle: a2,
               rotation: curA - 180,
-              stroke: grad,
+              stroke: this.stepColors[this.currentColor + 1],
               strokeWidth: 4,
               lineCap: "round",
               lineJoin: "round"
@@ -977,7 +974,7 @@ export default {
               outerRadius: r,
               angle: a2,
               rotation: curA,
-              stroke: grad,
+              stroke: this.stepColors[this.currentColor + 1],
               strokeWidth: 4,
               lineCap: "round",
               lineJoin: "round"
@@ -1028,6 +1025,8 @@ export default {
             speed: this.$data.speed
           };
           //
+          grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, this.curX, this.curY, this.curX + this.nextAx, this.curY + this.nextAy);
+          //
           this.lines.push({
             x: 0,
             y: 0,
@@ -1037,7 +1036,7 @@ export default {
               this.curX + this.nextAx,
               this.curY + this.nextAy
             ],
-            stroke: this.stepColors[this.currentColor],
+            stroke: grad,
             strokeWidth: 4,
             lineCap: "round"
           });
