@@ -21,6 +21,11 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
+      path: '/balloon',
+      name: 'balloon',
+      component: () => import('./views/BalloonFacts.vue')
+    },
+    {
       path: '/creator',
       name: 'creator',
       component: () => import('./views/Creator.vue')
