@@ -204,6 +204,7 @@ import { MovementOptions } from "@/store/steps";
 import DrawLines from "@/components/DrawLines";
 import type1 from '!raw-loader!@/assets/Miscellaneous/Type1.txt';
 import type2 from '!raw-loader!@/assets/Miscellaneous/Type2.txt';
+import type3 from '!raw-loader!@/assets/Miscellaneous/Type3.txt';
 import calibrateTW from '!raw-loader!@/assets/Miscellaneous/CalibrateTW.txt';
 import calibrateFW from '!raw-loader!@/assets/Miscellaneous/CalibrateFW.txt';
 export default {
@@ -220,6 +221,9 @@ export default {
       }else if(this.$store.getters.chassis == 'omni wheel'){
         trac = type2;
         cali = calibrateTW;
+      }else if(this.$store.getters.chassis == 'meccanum'){
+        trac = type3;
+        cali = calibrateFW;
       }
       if(this.name == null){
         this.name = "myAuto";
@@ -277,9 +281,17 @@ export default {
             spd += ".0";
           }
           line += "arc(" + angy + ", " + disy + ", " + spd + ");";
-        }//else{
-          //line += "strafeToPosition(" + steps[i].params...
-        //}
+        }else{
+          var disy = steps[i].params.distance;
+          if(Number.isInteger(disy)){
+            disy = disy + ".0";
+          }
+          var spd = steps[i].params.speed;
+          if(Number.isInteger(spd)){//fix this
+            spd += ".0";
+          }
+          line += "strafeToPosition(" + disy + ", " + spd + ");";
+        }
         line += "\n\t//"
         buildCode += line;
       }
@@ -554,22 +566,6 @@ export default {
       color2 = color2 || '#ffffff';
       percentage = percentage || 0.5;
       //
-      // output to canvas for proof
-      //var cvs = document.createElement('canvas');
-      //cvs.setAttribute("type", "hidden");
-      /*var ctx = cvs.getContext('2d');
-      cvs.width = 90;
-      cvs.height = 25;
-      document.body.appendChild(cvs);
-      // color1 on the left
-      ctx.fillStyle = color1;
-      ctx.fillRect(0, 0, 30, 25);
-      // color2 on the right
-      ctx.fillStyle = color2;
-      ctx.fillRect(60, 0, 30, 25);*/
-      // 2: check to see if we need to convert 3 char hex to 6 char hex, else slice off hash
-      //      the three character hex is just a representation of the 6 hex where each character is repeated
-      //      ie: #060 => #006600 (green)
       if (color1.length == 4){
           color1 = color1[1] + color1[1] + color1[2] + color1[2] + color1[3] + color1[3];
       }else{
@@ -2288,6 +2284,9 @@ export default {
     //
     if (this.$store.getters.chassis == null) {
       this.$router.push("/");
+    }
+    if(this.$store.getters.chassis == 'meccanum'){
+      this.bias = 0.8;
     }
     //
   },

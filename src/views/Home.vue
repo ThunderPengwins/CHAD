@@ -42,7 +42,7 @@ export default {
   name: 'Home',
   methods: {
     chassisChanged: function(chassis){
-      if(chassis == "traction" || chassis == "omni wheel"){
+      if(chassis != 'holonomic'){
         if (this.$store.getters.getFirstChassis){
           this.chassis = chassis;
           this.openWarning = true;
