@@ -211,6 +211,9 @@ export default {
   name: "Creator",
   components: { DrawLines },
   methods: {
+    isWhole: function(inPut){
+      return (Math.round(inPut) == inPut);
+    },
     readTextFile: function(){
       //
       var trac;
@@ -231,7 +234,7 @@ export default {
       trac = trac.replace("{name}", this.name);
       trac = trac.replace("{name}", this.name);
       var width = this.robotWidth;
-      if(Number.isInteger(width)){
+      if(this.isWhole(width)){
         width += ".0";
       }
       trac = trac.replace("{width}", width);
@@ -240,13 +243,13 @@ export default {
       trac = trac.replace("{gearratio}", Math.round(this.gearratio));
       cali = cali.replace("{gearratio}", Math.round(this.gearratio));
       var diam = this.diameter;
-      if(Number.isInteger(diam)){
+      if(this.isWhole(diam)){
         diam += ".0";
       }
       trac = trac.replace("{diameter}", diam);
       cali = cali.replace("{diameter}", diam);
       var bias = this.bias;
-      if(Number.isInteger(bias)){
+      if(this.isWhole(bias)){
         bias += ".0";
       }
       trac = trac.replace("{bias}", bias);
@@ -269,25 +272,25 @@ export default {
           line += "turnWithGyro(" + Math.abs(steps[i].params.angle) + ", " + speedDirection + ");";
         }else if(steps[i].type == MovementOptions.ARC){
           var angy = steps[i].params.angle;
-          if(Number.isInteger(angy)){
+          if(this.isWhole(angy)){
             angy += ".0";
           }
           var disy = steps[i].params.distance;
-          if(Number.isInteger(disy)){
+          if(this.isWhole(disy)){
             disy = disy + ".0";
           }
           var spd = steps[i].params.speed;
-          if(Number.isInteger(spd)){//fix this
+          if(this.isWhole(spd)){//fix this
             spd += ".0";
           }
           line += "arc(" + angy + ", " + disy + ", " + spd + ");";
         }else{
           var disy = steps[i].params.distance;
-          if(Number.isInteger(disy)){
+          if(this.isWhole(disy)){
             disy = disy + ".0";
           }
           var spd = steps[i].params.speed;
-          if(Number.isInteger(spd)){//fix this
+          if(this.isWhole(spd)){//fix this
             spd += ".0";
           }
           line += "strafeToPosition(" + disy + ", " + spd + ");";
