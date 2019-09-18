@@ -13,8 +13,8 @@
                     <v-card-text>
                         To use this website, simply follow these steps:
                         <ol type="1">
-                            <li><strong>Select</strong> a chassis on the home page. This should redirect you to the Creator Page. More information about the chassis is listed in a section below.</li>
-                            <li><strong>Enter a name</strong> for your autonomous program. Try and enter a new name for every autonomous you start.</li>
+                            <li><strong>Select</strong> a chassis on the home page. This should redirect you to the Creator Page. More information about the chassis is listed in the section below.</li>
+                            <li><strong>Enter a name</strong> for your autonomous program. Try to enter a new name for every autonomous you start.</li>
                             <li>In the CPI Presets box, <strong>choose the number that matches your motor’s gear ratio.</strong> If you do not see your number, you have 3rd party encoders, your wheels have an atypical diameter, or you are using an external gear box, select “custom.”</li>
                             <ol type="a">
                                 <li>In custom, you will be asked for a CPR, gear ratio, and diameter</li>
@@ -99,8 +99,8 @@
                             <li>Go into android studio, and <strong>make a new class</strong> under TeamCode>src>main>java>org.firstinspires.ftc.teamcode. Make sure to call it “Calibrate.”</li>
                             <li>Select all of the starting code and delete it. Then <strong>paste the copied calibrate code</strong> into the empty file.</li>
                             <li>Take note of the motors present in the code, and <strong>add a configuration</strong> in your phone with the names of the motors. Depending on how many motors you have, the names may be “left” and “right” or “frontleft,” “frontright,” “backleft,” and “backright.”</li>
-                            <li>Upload your FTC_app to your Robot Controller, and <strong>run the Calibrate program.</strong></li>
-                            <li><strong>Measure</strong> how far your robot travels. If it travels 20 inches, you are done calibrating. If it an inch or more away from 20 inches, you may want to set the bias to (how far it traveled)/20 and reupload the code.</li>
+                            <li>Upload your ftc_app to your Robot Controller, and <strong>run the Calibrate program.</strong></li>
+                            <li><strong>Measure</strong> how far your robot travels. If it travels 20 inches, you are done calibrating. If it moves an inch or more away from 20 inches, you may want to set the bias to (how far it traveled)/20 and reupload the code.</li>
                             <li><strong>Repeat step six</strong> until your robot travels 20 inches, or you’ve determined it never will. If it never will, refer to troubleshooting below.</li>
                             <li><strong>Change the bias</strong> of every CHAD program for your robot to whatever it is in the calibration program. Next time you use the website, enter the same number in the bias input to speed up the process.</li>
                         </ol>

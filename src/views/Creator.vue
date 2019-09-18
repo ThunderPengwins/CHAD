@@ -111,9 +111,9 @@
         <!-- #endregion -->
         <!-- #region Step List -->
             <div id="listofsteps">
-                 <div sm2 id="trash" v-if="$store.getters.getTheSteps.length > 0">
-                            <v-btn icon flat color="black" v-on:click="deleteStep()"><v-icon>delete</v-icon></v-btn>
-                            <v-btn icon flat color="red" v-on:click="deleteSteps()"><v-icon>clear</v-icon></v-btn>
+                 <div sm2 white id="trash" v-if="$store.getters.getTheSteps.length > 0">
+                    <v-btn icon flat color="black" v-on:click="deleteStep()"><v-icon>delete</v-icon></v-btn>
+                    <v-btn icon flat color="red" v-on:click="deleteSteps()"><v-icon>clear</v-icon></v-btn>
                 </div>
                 <div id="autostep" v-for="step in $store.getters.getTheSteps.slice().reverse()" v-bind:key="step.stepNumber + 'list'">
                     <!--<v-card-title primary-title>-->
@@ -1053,12 +1053,6 @@ export default {
             strokeWidth: 5,
             cornerRadius: 5
           });
-          //
-          if (this.currentColor > this.stepColors.length - 2) {
-            this.currentColor = 0;
-          } else {
-            this.currentColor++;
-          }
           //
           mx =
             this.distance * 3 * Math.cos((180 - this.curAngle) * Math.PI / 180);
