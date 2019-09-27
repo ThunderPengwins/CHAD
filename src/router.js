@@ -26,6 +26,11 @@ export default new Router({
       component: () => import('./views/BalloonFacts.vue')
     },
     {
+      path: '/scorer',
+      name: 'scorer',
+      component: () => import('./views/Scorer.vue')
+    },
+    {
       path: '/creator',
       name: 'creator',
       component: () => import('./views/Creator.vue')
