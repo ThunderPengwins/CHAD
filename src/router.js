@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
+import sc from './scorer/index.htm'
 
 Vue.use(Router)
 
@@ -39,6 +40,11 @@ export default new Router({
       path: '/generate',
       name: 'generate',
       component: () => import('./views/Generate.vue')
+    },
+    {
+      path: '/score',
+      name: 'score',
+      component: {template: sc}
     },
     {
       path: '*',

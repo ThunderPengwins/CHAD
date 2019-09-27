@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@chenfengyuan/vue-carousel": "^1.0.2",
+    "html-loader": "^0.5.5",
     "konva": "^3.4.1",
     "material-design-icons-iconfont": "^3.0.3",
     "raw-loader": "^3.1.0",

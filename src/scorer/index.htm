@@ -1,0 +1,1385 @@
+<html>
+
+<link href="https://fonts.googleapis.com/css?family=Rubik" rel="stylesheet"/>
+
+<style>
+/*
+	Copyright (c) 2019 Steve Penrod and the KC Astromechs
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+*/
+
+	body {
+		scroll: none;
+		font-family: sans-serif;
+		font-size: 100%;  /* Fallback in case vw/vh isn't supported */
+	}
+
+	#red_score {
+		color: darkred;
+		font-size: 5vh;
+		font-family: Rubik;
+		font-weight: 800;
+		text-shadow: 0.2vmax 0.2vmax 0.2vmax rgba(150, 150, 150, 0.5);
+	}
+
+	#blue_score {
+		color: blue;
+		font-size: 5vh;
+		font-family: Rubik;
+		font-weight: 800;
+		text-shadow: 0.2vmax 0.2vmax 0.2vmax rgba(150, 150, 150, 0.5);
+	}
+
+	.counter {
+		font-size: 2.5vmax;
+		font-family: Rubik;
+		font-weight: 800;
+		text-shadow: 0.2vmax 0.2vmax 1vmax rgba(0, 0, 0, 0.8);
+		color: #cc0;
+	}
+
+
+	h1 {
+		width: 100%;
+		font-size: 5vh;
+		text-align: center;
+		margin-bottom: 0;
+		text-shadow: 0.2vmin 0.2vmin 0.4vmin #000;
+	}
+
+	#logo {
+		height: 5vh;
+	}
+
+	.skystone_color {
+		color: #105369;
+	}
+	.skystone_color_shadowed {
+		color: #105369;
+		text-shadow: 0.2vmin 0.2vmin 0.4vmin #A1C3D0;
+	}
+
+	#countdown {
+		font-size: 3vh;
+		color: #105369;
+		text-shadow: 0.2vmin 0.2vmin 0.4vmin #A1C3D0;
+		position: absolute;
+		padding-left: 1vh;
+		padding-top: 1.5vh;
+	}
+
+	.skystone_color_shadowed {
+		color: #105369;
+		text-shadow: 0.2vmin 0.2vmin 0.4vmin #A1C3D0;
+	}
+
+	#message {
+		position: relative;
+		top: -1vmin;
+		font-size: 3vmax;
+		width: 50vw;
+		color: gray;
+		text-shadow: 0.2vmin 0.2vmin 0.4vmin #A1C3D0;
+	}
+
+	h2 {
+		font-size: 3vh;
+		margin: 0.5vh;
+	}
+
+	.moveleft.ToMove {
+		height: 3vh;
+		width: 5vw;
+		background-image: url(MoveLeft-faint.png);
+		background-size: 100% 100%;
+	}
+	.moveleft.Moved {
+		height: 3vh;
+		width: 5vw;
+		background-image: url(MoveLeft.png);
+		background-size: 100% 100%;
+	}
+	.moveright.ToMove {
+		height: 3vh;
+		width: 5vw;
+		background-image: url(MoveRight-faint.png);
+		background-size: 100% 100%;
+	}
+	.moveright.Moved {
+		height: 3vh;
+		width: 5vw;
+		background-image: url(MoveRight.png);
+		background-size: 100% 100%;
+	}
+
+	#credits {
+		width: 100%;
+		text-align: center;
+		padding-top: 2vh;
+		font-size: 1.5vh;
+	}
+
+	#auto,
+	#teleop {
+		font-size: 4vh;
+		background-color: #4CAF50; /* Green */
+		border: none;
+		color: white;
+		padding: 1vh 2vw;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+	}
+
+	#blue_stone_count {
+		display: inline-block;
+	}
+
+	#iconRefresh {
+		color: black;
+		font-size: 6vh;
+		vertical-align: middle;
+		align: left;
+		padding: 0;
+		margin: 0;
+	}
+
+	#buttonRefresh,
+	#buttonPP {
+		background-color: #fff;
+		border-width: 1;
+	}
+	#iconPP {
+		color: black;
+		font-size: 6vh;
+		vertical-align: middle;
+		align: left;
+		padding: 0;
+		margin: 0;
+	}
+
+	.blue {
+		border-color: blue;
+	}
+	.red {
+		border-color: darkred;
+	}
+
+	.skybridge {
+		width: 25vw;
+		height: 1vh;
+		margin-top: 1vh;
+		position: absolute;
+		border-top: 0vh solid;
+		border-bottom: 0vh solid;
+	}
+
+	.blue_glow {
+		background: #1111FF;
+
+		/* Create glow effect */
+		-webkit-animation: neon_blue 1.5s ease-in-out infinite alternate;
+		-moz-animation: neon_blue 1.5s ease-in-out infinite alternate;
+		animation: neon_blue 1.5s ease-in-out infinite alternate;
+	}
+		@-webkit-keyframes neon_blue {
+		  from {
+			box-shadow: 0 0 5px #00F, 0 0 10px #CCF, 0 0 15px #CCF;
+		  }
+		  to {
+			box-shadow: 0 0 2px #00F, 0 0 5px #CCF, 0 0 8px #CCF, 0 0 10px #3311FF, 0 0 17px #3311FF, 0 0 20px #3311FF, 0 0 50px #3311FF;
+		  }
+		}
+		@-moz-keyframes neon_blue {
+		  from {
+			box-shadow: 0 0 5px #00F, 0 0 10px #CCF, 0 0 15px #CCF;
+		  }
+		  to {
+			box-shadow: 0 0 2px #00F, 0 0 5px #CCF, 0 0 8px #CCF, 0 0 10px #3311FF, 0 0 17px #3311FF, 0 0 20px #3311FF, 0 0 50px #3311FF;
+		  }
+		}
+		@keyframes neon_blue {
+		  from {
+			box-shadow: 0 0 5px #00F, 0 0 10px #CCF, 0 0 15px #CCF;
+		  }
+		  to {
+			box-shadow: 0 0 2px #00F, 0 0 5px #CCF, 0 0 8px #CCF, 0 0 10px #3311FF, 0 0 17px #3311FF, 0 0 20px #3311FF, 0 0 50px #3311FF;
+		  }
+		}
+
+	.red_glow {
+		background: #FF1111;
+
+		/* Create glow effect */
+		-webkit-animation: neon_red 1.5s ease-in-out infinite alternate;
+		-moz-animation: neon_red 1.5s ease-in-out infinite alternate;
+		animation: neon_red 1.5s ease-in-out infinite alternate;
+	}
+		@-webkit-keyframes neon_red {
+		  from {
+			box-shadow: 0 0 5px #f00, 0 0 10px #fcc, 0 0 15px #fcc;
+		  }
+		  to {
+			box-shadow: 0 0 2px #f00, 0 0 5px #fcc, 0 0 8px #fcc, 0 0 10px #FF1177, 0 0 17px #FF1177, 0 0 20px #FF1177, 0 0 50px #FF1177;
+		  }
+		}
+		@-moz-keyframes neon_red {
+		  from {
+			box-shadow: 0 0 5px #f00, 0 0 10px #fcc, 0 0 15px #fcc;
+		  }
+		  to {
+			box-shadow: 0 0 2px #f00, 0 0 5px #fcc, 0 0 8px #fcc, 0 0 10px #FF1177, 0 0 17px #FF1177, 0 0 20px #FF1177, 0 0 50px #FF1177;
+		  }
+		}
+		@keyframes neon_red {
+		  from {
+			box-shadow: 0 0 5px #f00, 0 0 10px #fcc, 0 0 15px #fcc;
+		  }
+		  to {
+			box-shadow: 0 0 2px #f00, 0 0 5px #fcc, 0 0 8px #fcc, 0 0 10px #FF1177, 0 0 17px #FF1177, 0 0 20px #FF1177, 0 0 50px #FF1177;
+		  }
+		}
+
+	table {
+		/* Disable text selection, preventing numbers from highlighting when double-clicked */
+		-webkit-touch-callout: none; /* iOS Safari */
+		-webkit-user-select: none;   /* Chrome/Safari/Opera */
+		-khtml-user-select: none;    /* Konqueror */
+		-moz-user-select: none;      /* Firefox */
+		-ms-user-select: none;       /* Internet Explorer/Edge */
+		user-select: none;           /* Non-prefixed version, currently supported by any browser but before IE9 */
+	}
+
+	/****************** Stone table *****************/
+
+	.foundation_container {
+		display: -webkit-box;
+		display: -moz-box;
+		display: -ms-flexbox;
+		display: -webkit-flex;
+		display: flex;
+
+		-webkit-flex-flow: row wrap;
+		justify-content: space-evenly;
+	}
+
+	.foundation {
+		display: inline-block;   /* stops tables from hard wrapping */
+		position: relative;
+		width: 18vmax;
+		border: 0.1vw solid;
+		padding: 0;
+		border-spacing: 0;
+		border-collapse: collapse;
+		z-index: 99;
+
+		text-align: center;
+		vertical-align: middle;
+		margin: auto;
+		margin-bottom: 20px;
+	}
+
+	.foundation td {
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
+		height: 4vmax;
+		width: 9vmax;
+		border: 0.1vw solid black;
+	}
+
+	.foundation td.filled {
+		background-image: url(Stone.png);
+		color: #000;
+	}
+
+	.foundation td.capped1 {
+		border-left-width: 5px;
+	}
+	.foundation td.capped2 {
+		border-right-width: 5px;
+	}
+
+
+	.foundation.blue td.empty {
+		background-image: url(BlueFoundation.png);
+	}
+
+	.foundation.red td.empty {
+		background-image: url(RedFoundation.png);
+	}
+
+	.parking {
+		width: 5vh;
+		height: 5vh;
+		border: 0.1vw solid;
+		border-color: black;
+	}
+
+	.cap {
+		position: relative;
+		top: -1vh;
+		width: 4vmax;
+		height: 4vmax;
+		border: 0;
+		background-image: url(cap.png);
+		background-size: 100% 100%;
+	}
+	.cap_holder {
+		width: 5vh;
+		height: 5vh;
+	}
+
+	#blue_parking_end_1 {
+		position: absolute;
+		width: 4vw;
+		height: 4vw;
+		top: -13vw;
+		left: 5.5vw;
+		border: 0.1vw solid;
+		border-color: black;
+	}
+	#blue_parking_end_2 {
+		position: absolute;
+		width: 4vw;
+		height: 4vw;
+		top: -8vw;
+		left: 0.5vw;
+		border: 0.1vw solid;
+		border-color: black;
+	}
+
+	#red_parking_end_1 {
+		position: absolute;
+		width: 4vw;
+		height: 4vw;
+		top: -13vw;
+		right: 6vw;
+		border: 0.1vw solid;
+		border-color: black;
+	}
+	#red_parking_end_2 {
+		position: absolute;
+		width: 4vw;
+		height: 4vw;
+		top: -8vw;
+		right: 1vw;
+		border: 0.1vw solid;
+		border-color: black;
+	}
+
+	.auto {
+		background-image: url(auto.png);
+		background-size: 100% 100%;
+	}
+	.key {
+		background-image: url(key.png);
+		background-size: 100% 100%;
+	}
+	.parked {
+		background-image: url(Parked.png);
+		background-size: 100% 100%;
+	}
+	.topark {
+		background-image: url(ToPark.png);
+		background-size: 100% 100%;
+	}
+
+	.corner_img {
+		width: 15vw;
+		height: 15vw;
+		position: relative;
+	}
+
+	.stone_counters {
+		background-color: #AAA;
+		margin-top: 5vh;
+		width: 15vw;
+	}
+
+	.stone_counters table {
+	  table-layout: fixed ;
+	  width: 100% ;
+	}
+	.stone_counters td {
+	  width: 25% ;
+	}
+
+	.circleIcon {
+		border: 0px;
+		height: 7vh;
+	}
+
+	/********************* Plus/minus button *********************/
+
+	.number-input {
+	  border: 1px solid #ddd;
+	  display: inline-flex;
+	}
+
+	.number-input.red {
+	}
+
+	.number-input,
+	.number-input * {
+	  box-sizing: border-box;
+	}
+
+	.number-input button {
+	  outline:none;
+	  -webkit-appearance: none;
+	  background-color: transparent;
+	  border: none;
+	  align-items: center;
+	  justify-content: center;
+	  width: 3rem;
+	  height: 3rem;
+	  cursor: pointer;
+	  margin: 0;
+	  position: relative;
+	}
+
+	.number-input button:before,
+	.number-input button:after {
+	  display: inline-block;
+	  position: absolute;
+	  content: '';
+	  width: 1rem;
+	  height: 2px;
+	  background-color: #212121;
+	  transform: translate(-50%, -50%);
+	}
+</style>
+
+<script>
+	var ACTIVE_COLOR = "#4CAF50";
+	var INACTIVE_COLOR = "#aaa";
+	var isAuto = true;
+	var editing = true;			// "Editing" is for when you aren't timing a match
+	var removing = false;		// for when picking up stones or caps
+	var bouncer = null;
+	var prevent_bounceTime = Date.now();
+
+	function elByID(id)
+	{
+		return document.getElementById(id);
+	}
+
+	function reset_park(id)
+	{
+		var el = elByID(id);
+
+		el.classList.add("ToPark");
+		el.classList.remove("Parked");
+	}
+	function reset_move(id)
+	{
+		var el = elByID(id);
+
+		el.classList.add("ToMove");
+		el.classList.remove("Moved");
+	}
+
+	function onAutoParkClick(ev)
+	{
+		event.preventDefault();     // prevents duplicate onclick if touchscreen
+
+		if (prevent_bounce("park"))
+			return;
+
+		if (!isAuto && !editing)
+		{
+			flashMessage("Only during Auto")
+			return;
+		}
+
+		var el = ev.target;
+		el.classList.toggle("ToPark");
+		el.classList.toggle("Parked");
+		calcScore();
+	}
+
+	function onEndParkClick(ev)
+	{
+		event.preventDefault();     // prevents duplicate onclick if touchscreen
+
+		if (prevent_bounce("park"))
+			return;
+
+		var el = ev.target;
+		el.classList.toggle("ToPark");
+		el.classList.toggle("Parked");
+		calcScore();
+	}
+
+	function flashMessage(msg)
+	{
+		showMessage(msg);
+		setTimeout(function() { showMessage(""); }, 1000);
+	}
+
+	function showMessage(msg)
+	{
+		if (!msg || msg == "")
+			msg = "&nbsp;"
+
+		elByID("message").innerHTML = msg;
+	}
+	
+	function onRemove(ev)
+	{
+		event.preventDefault();     // prevents duplicate onclick if touchscreen
+		if (prevent_bounce("remove"))
+			return;
+			
+		removing = !removing;
+
+		if (removing)
+		{
+			showMessage("Tap on the stone or cap to remove");
+			ev.target.style.borderRadius = "3vw";
+			ev.target.style.boxShadow = "0vw 0vw 3vw #0F0";
+		}
+		else
+		{
+			endRemove();
+			showMessage("Removal canceled");
+		}
+	}
+	function endRemove(ev)
+	{
+		// Update visualization
+		elByID("remove_btn").style.boxShadow = "";
+		showMessage("");
+		removing = false;
+	}
+
+	var cap = null;
+	function onCapClick(ev)
+	{
+		event.preventDefault();     // prevents duplicate onclick if touchscreen
+		if (prevent_bounce("capping"))
+			return;
+			
+		if (removing)
+		{
+			cap = ev.target;
+			
+			// Return cap
+			cap.style.position = null;
+			cap.style.top = null;
+			cap.style.left = null;
+			
+			// Uncapping a previously capped tower
+			if (cap.tower.classList.contains("capped2"))
+				cap.tower.classList.remove("capped2");
+			else if (cap.tower.classList.contains("capped1"))
+				cap.tower.classList.remove("capped1");
+			cap.tower = null;
+			cap = null;
+
+
+			endRemove();
+			return;
+		}
+
+		if (cap)
+		{
+			flashMessage("Cap cancelled");
+			cap = null;
+		}
+		else
+		{
+			showMessage("Tap the tower to cap");
+			cap = ev.target;
+		}
+	}
+
+	function findAncestor(el, selector, stopSelector)
+	{
+		if (!el)
+			return null;
+		if (el.matches(selector))
+			return el;
+		if (stopSelector && el.matches(stopSelector))
+			return null;
+		return findAncestor(el.parentElement, selector);
+	}
+
+	function prevent_bounce(name)
+	{
+		var now = Date.now();
+
+		if (name == bouncer && prevent_bounceTime && now-prevent_bounceTime < 250)
+			return true;	// can't click faster than once every 250ms
+
+		bouncer = name;
+		prevent_bounceTime = now;
+		return false;
+	}
+
+	function onSkyStoneClick(event)
+	{
+		var el = event.target;
+		event.preventDefault();     // prevents duplicate onclick if touchscreen
+
+		if (prevent_bounce("skyStone"))
+			return;
+			
+		if (!removing && !isAuto)
+		{
+			flashMessage("Only possible during Auto");
+			return;
+		}
+
+		var elTable = findAncestor(el, "table");
+		if (removing)
+		{
+			elTable.rows[1].cells[0].innerHTML = Math.max(0, Number(elTable.rows[1].cells[0].innerHTML) - 1);
+			endRemove();
+		}
+		else
+		{
+			elTable.rows[1].cells[0].innerHTML = (Number(elTable.rows[1].cells[0].innerHTML) + 1) % 3;
+		}
+		calcScore();
+	}
+
+	function onStoneClick(event, el, decrementing)
+	{
+		event.preventDefault();     // prevents duplicate onclick if touchscreen
+
+		if (prevent_bounce("stone"))
+			return;
+
+		var elTable = null;
+		var delta = 1;
+		if (decrementing)
+		{
+			elTable = elByID(decrementing);
+			delta = -1;
+		}
+		else
+		{
+			elTable = findAncestor(el, "table");
+			if (removing)
+			{
+				delta = -1;
+				endRemove();
+			}
+		}
+
+		if (isAuto)
+			elTable.rows[1].cells[0].innerHTML = "+"+Math.max(0, Number(elTable.rows[1].cells[0].innerHTML) + delta);
+		else
+			elTable.rows[1].cells[1].innerHTML = Math.max(0, Number(elTable.rows[1].cells[1].innerHTML) + delta);
+		calcScore();
+	}
+
+	function onFoundationClick(event)
+	{
+		var cell = event.target;
+		var elTable = findAncestor(cell, "table");
+		event.preventDefault();     // prevents duplicate onclick if touchscreen
+
+		if (prevent_bounce("Foundation"))
+			return;
+
+		r = cell.parentElement.rowIndex;
+		c = cell.cellIndex;
+
+		var cur = "" + elTable.rows[r].cells[c].innerHTML;
+		var cAuto = 0;
+		var cTeleop = 0;
+
+		if (cap)
+		{
+			showMessage("");
+
+			if (cap.tower)
+			{
+				// Uncapping a previously capped tower
+				if (cap.tower.classList.contains("capped2"))
+					cap.tower.classList.remove("capped2");
+				else if (cap.tower.classList.contains("capped1"))
+					cap.tower.classList.remove("capped1");
+			}
+			cap.tower = cell;
+
+
+			var xOfs = 0;
+			if (cell.classList.contains("capped1"))
+			{
+				cell.classList.add("capped2");
+				xOfs = cell.clientWidth/2;
+			}
+			else
+				cell.classList.add("capped1");
+
+			cap.style.position = "absolute";
+			cap.style.top = window.scrollY + cell.getBoundingClientRect().top;
+			cap.style.left = window.scrollX + cell.getBoundingClientRect().left + xOfs;
+			cap.style.zIndex = 99;
+			cap = null;
+			calcScore();
+			return;
+		}
+
+		if (cur.includes('+'))
+		{
+			var asplit = cur.replace("+","").split("&nbsp;&nbsp;&nbsp;&nbsp;");
+			cAuto = Number(asplit[0]);
+			cTeleop = Number(asplit[1]);
+		}
+		else
+			cTeleop = Number(cur);
+		if (isNaN(cTeleop))
+			cTeleop = 0;
+		if (isNaN(cAuto))
+			cAuto = 0;
+			
+		var delta = 1;
+		if (removing)
+		{
+			delta = -1;
+			endRemove();
+		}
+
+		if (isAuto)
+			cAuto = Math.max(0, cAuto+delta);
+		else
+			cTeleop = Math.max(0, cTeleop+delta);
+
+		if (cAuto)
+			v = "+"+cAuto+"&nbsp;&nbsp;&nbsp;&nbsp;"+cTeleop;
+		else if (cTeleop)
+			v = cTeleop;
+		else
+			v = "&nbsp;"
+		elTable.rows[r].cells[c].innerHTML = v;
+
+		if (cTeleop+cAuto > 0)
+		{
+			cell.classList.remove("empty");
+			cell.classList.add("filled");
+		}
+		else
+		{
+			cell.classList.add("empty");
+			cell.classList.remove("filled");
+		}
+
+		calcScore();
+	}
+
+	function onPlatformIn(ev)
+	{
+		event.preventDefault();     // prevents duplicate onclick if touchscreen
+
+		if (!isAuto && !editing)
+		{
+			flashMessage("Only during Auto")
+			return;
+		}
+
+		var el = ev.target;
+		el.classList.toggle("ToMove");
+		el.classList.toggle("Moved");
+		calcScore();
+	}
+	function onPlatformOut(ev)
+	{
+		event.preventDefault();     // prevents duplicate onclick if touchscreen
+
+		var el = ev.target;
+		el.classList.toggle("ToMove");
+		el.classList.toggle("Moved");
+		calcScore();
+	}
+
+	function reset()
+	{
+		elByID("blue_skystone_count").rows[1].cells[0].innerHTML = 0;
+		elByID("red_skystone_count").rows[1].cells[0].innerHTML = 0;
+		elByID("red_stone_count").rows[1].cells[0].innerHTML = "+0";
+		elByID("red_stone_count").rows[1].cells[1].innerHTML = 0;
+		elByID("blue_stone_count").rows[1].cells[0].innerHTML = "+0";
+		elByID("blue_stone_count").rows[1].cells[1].innerHTML = 0;
+
+		var redFoundation = elByID("red_foundation");
+		var blueFoundation = elByID("blue_foundation");
+		for (var c=0; c < 2; c++)
+			for (var r=0; r < 8; r++)
+			{
+				redFoundation.rows[r].cells[c].innerHTML = "&nbsp;";
+				redFoundation.rows[r].cells[c].className = "empty";
+
+				blueFoundation.rows[r].cells[c].innerHTML = "&nbsp;";
+				blueFoundation.rows[r].cells[c].className = "empty";
+			}
+
+		reset_park("red_parking_auto_1");
+		reset_park("red_parking_auto_2");
+		reset_park("blue_parking_auto_1");
+		reset_park("blue_parking_auto_2");
+		reset_park("blue_parking_end_1");
+		reset_park("blue_parking_end_2");
+		reset_park("red_parking_end_1");
+		reset_park("red_parking_end_2");
+
+		reset_move("blue_platform_in");
+		reset_move("blue_platform_out");
+		reset_move("red_platform_in");
+		reset_move("red_platform_out");
+	}
+
+	function hookup_Click(el, listener)
+	{
+		el.addEventListener('touchstart', function(e) { listener(e, e.target) } );
+		el.addEventListener('click', function(e) { listener(e, e.target) } );
+	}
+
+	function init()
+	{
+		var redFoundation = elByID("red_foundation");
+		var blueFoundation = elByID("blue_foundation");
+		for (var c=0; c < 2; c++)
+			for (var r=0; r < 8; r++)
+			{
+				hookup_Click(redFoundation.rows[r].cells[c], onFoundationClick);
+				hookup_Click(blueFoundation.rows[r].cells[c], onFoundationClick);
+			}
+		elByID("blue_foundation").addEventListener('touchstart', preventZoom);
+		elByID("red_foundation").addEventListener('touchstart', preventZoom);
+
+		hookup_Click(elByID("blue_parking_auto_1"), onAutoParkClick);
+		hookup_Click(elByID("blue_parking_auto_2"), onAutoParkClick);
+		hookup_Click(elByID("red_parking_auto_1"), onAutoParkClick);
+		hookup_Click(elByID("red_parking_auto_2"), onAutoParkClick);
+
+		hookup_Click(elByID("blue_cap_1"), onCapClick);
+		hookup_Click(elByID("blue_cap_2"), onCapClick);
+		hookup_Click(elByID("red_cap_1"), onCapClick);
+		hookup_Click(elByID("red_cap_2"), onCapClick);
+		
+		hookup_Click(elByID("remove_btn"), onRemove);
+
+		hookup_Click(elByID("red_skystone_count"), onSkyStoneClick);
+		hookup_Click(elByID("blue_skystone_count"), onSkyStoneClick);
+		hookup_Click(elByID("blue_stone_count"), onStoneClick);
+		hookup_Click(elByID("red_stone_count"), onStoneClick);
+
+		hookup_Click(elByID("blue_platform_in"), onPlatformIn);
+		hookup_Click(elByID("red_platform_in"), onPlatformIn);
+		hookup_Click(elByID("blue_platform_out"), onPlatformOut);
+		hookup_Click(elByID("red_platform_out"), onPlatformOut);
+
+		hookup_Click(elByID("blue_parking_end_1"), onEndParkClick);
+		hookup_Click(elByID("blue_parking_end_2"), onEndParkClick);
+		hookup_Click(elByID("red_parking_end_1"), onEndParkClick);
+		hookup_Click(elByID("red_parking_end_2"), onEndParkClick);
+
+		reset();
+		elByID("auto").style.backgroundColor = ACTIVE_COLOR;
+		elByID("teleop").style.backgroundColor = INACTIVE_COLOR
+
+		calcScore();
+	}
+
+	function preventZoom(e) {
+	  var t2 = e.timeStamp;
+	  var t1 = e.currentTarget.dataset.lastTouch || t2;
+	  var dt = t2 - t1;
+	  var fingers = e.touches.length;
+	  e.currentTarget.dataset.lastTouch = t2;
+
+	  if (!dt || dt > 500 || fingers > 1) return; // not double-tap
+
+	  e.preventDefault();
+	  e.target.click();
+	}
+
+	function onTeleOp()
+	{
+		isAuto = false;
+
+		elByID("auto").style.backgroundColor = INACTIVE_COLOR;
+		elByID("teleop").style.backgroundColor = ACTIVE_COLOR;
+	}
+
+	function onEndGame()
+	{
+		elByID("blue_platform_out").style.visibility = "visible";
+		elByID("blue_parking_end_1").style.visibility = "visible";
+		elByID("blue_parking_end_2").style.visibility = "visible";
+		elByID("red_platform_out").style.visibility = "visible";
+		elByID("red_parking_end_1").style.visibility = "visible";
+		elByID("red_parking_end_2").style.visibility = "visible";
+		elByID("blue_cap_1").style.visibility = "visible";
+		elByID("blue_cap_2").style.visibility = "visible";
+		elByID("red_cap_1").style.visibility = "visible";
+		elByID("red_cap_2").style.visibility = "visible";
+	}
+
+	function onAuto()
+	{
+		isAuto = true;
+
+		elByID("auto").style.backgroundColor = ACTIVE_COLOR;
+		elByID("teleop").style.backgroundColor = INACTIVE_COLOR
+	}
+
+	function calcScore()
+	{
+		var red=0;
+		var blue=0;
+
+		//////////////////////////////////////////////////////////////////////
+		// Score Autonomous
+		blue += elByID("blue_platform_in").classList.contains("Moved") ? 10 : 0;
+		red += elByID("red_platform_in").classList.contains("Moved") ? 10 : 0;
+
+		red += 10 * Number(elByID("red_skystone_count").rows[1].cells[0].innerHTML);
+		red += 2 * Number(elByID("red_stone_count").rows[1].cells[0].innerHTML);
+
+		blue += 10 * Number(elByID("blue_skystone_count").rows[1].cells[0].innerHTML);
+		blue += 2 * Number(elByID("blue_stone_count").rows[1].cells[0].innerHTML);
+
+		blue += elByID("blue_parking_auto_1").classList.contains("Parked") ? 5 : 0;
+		blue += elByID("blue_parking_auto_2").classList.contains("Parked") ? 5 : 0;
+		red += elByID("red_parking_auto_1").classList.contains("Parked") ? 5 : 0;
+		red += elByID("red_parking_auto_2").classList.contains("Parked") ? 5 : 0;
+
+		// Score teleop
+		red += 1 * Number(elByID("red_stone_count").rows[1].cells[1].innerHTML);
+		blue += 1 * Number(elByID("blue_stone_count").rows[1].cells[1].innerHTML);
+
+		// Score Endgame
+		blue += elByID("blue_platform_out").classList.contains("Moved") ? 15 : 0;
+		red += elByID("red_platform_out").classList.contains("Moved") ? 15 : 0;
+
+		blue += elByID("blue_parking_end_1").classList.contains("Parked") ? 5 : 0;
+		blue += elByID("blue_parking_end_2").classList.contains("Parked") ? 5 : 0;
+		red += elByID("red_parking_end_1").classList.contains("Parked") ? 5 : 0;
+		red += elByID("red_parking_end_2").classList.contains("Parked") ? 5 : 0;
+
+
+		var redFoundation = elByID("red_foundation");
+		var cTallest = 0;
+		for (var c=0; c < 2; c++)
+			for (var r=0; r < 8; r++)
+			{
+				var cell = redFoundation.rows[r].cells[c];
+				var cur = "" + cell.innerHTML;
+				var cAuto = 0;
+				var cTeleop = 0;
+
+				if (cur.includes('+'))
+				{
+					var asplit = cur.replace("+","").split("&nbsp;&nbsp;&nbsp;&nbsp;");
+					cAuto = Number(asplit[0]);
+					cTeleop = Number(asplit[1]);
+				}
+				else
+					cTeleop = Number(cur);
+				if (isNaN(cTeleop))
+					cTeleop = 0;
+				if (isNaN(cAuto))
+					cAuto = 0;
+
+				red += 4*cAuto;
+				red += 1*cTeleop;
+
+				if (cAuto+cTeleop > cTallest)
+					cTallest = cAuto+cTeleop;
+
+				if (cell.classList.contains("capped1"))
+				{
+					// Calc the cap score
+					red += 5 + cAuto+cTeleop;
+				}
+				if (cell.classList.contains("capped2"))
+				{
+					// Calc the cap score
+					red += 5 + cAuto+cTeleop;
+				}
+			}
+		red += 2*cTallest;
+
+		var blueFoundation = elByID("blue_foundation");
+		cTallest = 0;
+		for (var c=0; c < 2; c++)
+			for (var r=0; r < 8; r++)
+			{
+				var cell = blueFoundation.rows[r].cells[c];
+				var cur = "" + cell.innerHTML;
+				var cAuto = 0;
+				var cTeleop = 0;
+
+				if (cur.includes('+'))
+				{
+					var asplit = cur.replace("+","").split("&nbsp;&nbsp;&nbsp;&nbsp;");
+					cAuto = Number(asplit[0]);
+					cTeleop = Number(asplit[1]);
+				}
+				else
+					cTeleop = Number(cur);
+				if (isNaN(cTeleop))
+					cTeleop = 0;
+				if (isNaN(cAuto))
+					cAuto = 0;
+
+				blue += 4*cAuto;
+				blue += 1*cTeleop;
+
+				if (cAuto+cTeleop > cTallest)
+					cTallest = cAuto+cTeleop;
+
+				if (cell.classList.contains("capped1"))
+				{
+					// Calc the cap score
+					blue += 5 + cAuto+cTeleop;
+				}
+				if (cell.classList.contains("capped2"))
+				{
+					// Calc the cap score
+					blue += 5 + cAuto+cTeleop;
+				}
+			}
+		blue += 2*cTallest;
+
+		elByID("blue_score").innerHTML = blue;
+		elByID("red_score").innerHTML = red;
+	}
+
+
+	var timer = null;
+	var phase = 0;      // 0 = not started, 5 = finished
+						// 1 = auto (0:30), 2 = between (0:05), 3 = teleop (1:30), 4 = endgame (0:30)
+						// negative when paused
+	var timeStart = 0;
+	function onPlayPause()
+	{
+		var btn = elByID("iconPP");
+
+		if (btn.src.indexOf("play") > -1)
+		{
+			// Playing...
+			onAuto();
+
+			btn.src = "pause_circle_outline.svg";
+
+			if (phase == 0)
+			{
+				// Starting
+				phase += 1;
+				timeStart = new Date().getTime();
+
+				editing = false;
+
+				// Very first time, hide elements that you can't use in Auto
+				elByID("blue_platform_out").style.visibility = "hidden";
+				elByID("blue_parking_end_1").style.visibility = "hidden";
+				elByID("blue_parking_end_2").style.visibility = "hidden";
+				elByID("red_platform_out").style.visibility = "hidden";
+				elByID("red_parking_end_1").style.visibility = "hidden";
+				elByID("red_parking_end_2").style.visibility = "hidden";
+
+				elByID("blue_cap_1").style.visibility = "hidden";
+				elByID("blue_cap_2").style.visibility = "hidden";
+				elByID("red_cap_1").style.visibility = "hidden";
+				elByID("red_cap_2").style.visibility = "hidden";
+			}
+			else
+			{
+				// Unpausing
+				phase = -phase;
+				timeStart = new Date().getTime()-timeStart;
+			}
+			showMessage("");
+			timer = setInterval(onClockUpdate, 500);
+		}
+		else
+		{
+			// Pausing...
+			btn.src = "play_circle_outline.svg";
+			phase = -phase;
+			timeStart = new Date().getTime()-timeStart;
+			showMessage("Paused");
+		}
+	}
+
+	function onClockUpdate()
+	{
+		var lbl = elByID("countdown");
+		var elapsed;
+
+		if (phase < 0 || phase == 5)
+		{
+			// Paused
+			elapsed = timeStart;
+			if (lbl.style.color == "black")
+				lbl.style.color = "white";
+			else
+				lbl.style.color = "black";
+		}
+		else
+			elapsed = new Date().getTime()-timeStart;
+
+		var dur = 0;
+		var bonus = 0;
+		if (Math.abs(phase) == 1)
+		{
+			// Autonomous
+			dur = 30;
+			lbl.style.color="blue";
+		}
+		else if (Math.abs(phase) == 2)
+		{
+			// Transition
+			dur = 8;
+			lbl.style.color="red";
+		}
+		else if (Math.abs(phase) == 3)
+		{
+			// Teleop period
+			dur = 90;
+			bonus = 30;  // Show the 30 seconds for Endgame as part of teleop  count
+			lbl.style.color="blue";
+		}
+		else if (Math.abs(phase) == 4)
+		{
+			// EndGame period
+			dur = 30;
+			lbl.style.color="orange";
+		}
+		else if (Math.abs(phase) == 5)
+		{
+			// Game over!
+			lbl.innerHTML = "0:00";
+			elByID("buttonPP").style.visibility = "hidden";
+			return;
+		}
+		var remaining = Math.round((dur+bonus) - elapsed/1000);
+		var minutes = Math.floor(remaining/60);
+		var secs = remaining%60;
+		if (secs < 10)
+			secs = "0"+secs;
+		lbl.innerHTML = minutes+":"+secs;
+
+		if (remaining-bonus <= 0)
+		{
+			// Automatically move on to the next phase
+			phase += 1;
+			timeStart = new Date().getTime();
+
+			if (phase == 2)
+				elByID("auto").style.backgroundColor = INACTIVE_COLOR;
+			else if (phase == 3)
+				onTeleOp();
+			else if (phase == 4)
+				onEndGame();
+			else if (phase > 4)
+				editing = true;
+		}
+	}
+</script>
+
+<body onpageshow="init()">
+
+<table width="100%">
+
+<tr><td id="blue_score">0</td>
+	<td colspan=2><h1><img id="logo" class="logo_img" src="Logo.png"/><font  color="#FFC300">&nbsp;Scorer</font></td>
+	<td id="red_score" align="right">0</td></tr>
+
+<tr style="vertical-align:top">
+	<td width="15vw" style="background-color:fff" rowspan="2">
+		<table>
+			<tr><td><span style="position: relative;">
+						<img class="corner_img" src="Corner_blue.png"/>
+
+						<div id="blue_platform_in" class="moveleft" style="position: absolute; top: -11vw; left: 11.8vw"></div>
+						<div id="blue_platform_out" class="moveright" style="position: absolute; top: -1vw; left: 3vw" ></div>
+
+						<div id="blue_parking_end_1" class="parking"></div>
+						<div id="blue_parking_end_2" class="parking"></div>
+					</span>
+				</td></tr>
+
+		</table>
+
+		<table id="blue_skystone_count" class="stone_counters counter">
+			<tr><td><img width="100%" src="Skystone.png"/></td></tr>
+			<tr><td align="center">0</td></tr>
+		</table>
+		<table>
+		<tr><td>
+		<table id="blue_stone_count" class="stone_counters counter">
+			<tr><td colspan="2"><img id="blue_stone" width="100%" src="Stone.png"/></td></tr>
+			<tr><td align="center">+0</td><td align="center">0</td></tr>
+		</table>
+		</td>
+		<td valign="bottom">
+			<div class="number-input">
+				<button onclick="onStoneClick(event, this, 'blue_stone_count')"/>
+			</div></td>
+		</tr>
+		</table>
+	</td>
+	<td width="60vw" colspan="2">
+		<div class="foundation_container">
+			<table class="foundation blue counter" id="blue_foundation">
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+			</table>
+			<table class="foundation red counter" id="red_foundation">
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+				<tr><td/><td/></tr>
+			</table>
+		</div>
+	</td>
+	<td width="15vw" style="background-color:fff" rowspan="2" align="right" id="red_scorer">
+		<table>
+			<tr><td>
+				<span style="position: relative;">
+					<img class="corner_img" src="Corner_red.png"/>&nbsp;
+
+					<div id="red_platform_out" class="moveleft" style="position: absolute; top: -1vw; left: 7vw"></div>
+					<div id="red_platform_in" class="moveright" style="position: absolute; top: -11vw; left: -2vw"></div>
+					<div id="red_parking_end_1" class="parking"></div>
+					<div id="red_parking_end_2" class="parking"></div>
+				</span>
+			</td></tr>
+		</table>
+		<table id="red_skystone_count" class="stone_counters counter">
+			<tr><td><img width="100%" src="Skystone.png"/></td></tr>
+			<tr><td align="center">0</td></tr>
+		</table>
+
+		<table>
+			<tr><td valign="bottom">
+				<div class="number-input red">
+					<button onclick="onStoneClick(event, this, 'red_stone_count')"/>
+				</div>
+				</td>
+				<td>
+				<table id="red_stone_count" class="stone_counters counter">
+					<tr><td colspan="2"><img width="100%" src="Stone.png"/></td></tr>
+					<tr><td align="center">0</td><td align="center">0</td></tr>
+				</table>
+			</td></tr>
+		</table>
+	</td>
+</tr>
+
+<tr>
+	<td colspan="2" valign="top" align="center" width="60vw">
+		<span id="message">&nbsp;</span>
+	</td>
+</tr>
+
+<tr>
+	<td colspan="2" id="blue_skybridge">
+		<span class="skybridge blue_glow" style="left:1vw"></span>
+	</td>
+
+	<td colspan="2" id="red_skybridge">
+		<span class="skybridge red_glow" style="right:1vw"></span>
+	</td>
+</td>
+</tr>
+<tr>
+	<td colspan="4">
+		<table width="100%">
+			<tr>
+				<td align="right">
+					<div id="blue_parking_auto_1" class="parking"/>
+				</td>
+				<td width="1%">
+					<div id="blue_parking_auto_2" class="parking"/>
+				</td>
+
+				<td align="right">
+					<div class="cap_holder"><div id="blue_cap_1" class="cap"/></div>
+				</td>
+				<td width="1%">
+					<div class="cap_holder"><div id="blue_cap_2" class="cap"/></div>
+				</td>
+				
+				<td width="10%" align="center">
+					<img id="remove_btn" src="RemoveStone.png" style="width:5vmax;"/>
+				</td>
+
+				<td width="1%" align="right">
+					<div class="cap_holder"><div id="red_cap_1" class="cap"/></div>
+				</td>
+				<td>
+					<div class="cap_holder"><div id="red_cap_2" class="cap"/></div>
+				</td>
+
+				<td width="1%">
+					<div id="red_parking_auto_1" class="parking"/>
+				</td>
+				<td>
+					<div id="red_parking_auto_2" class="parking"/>
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>
+
+<tr>
+	<td>
+		<button id="buttonPP" onclick="onPlayPause()">
+			<img id="iconPP" class="circleIcon" src="play_circle_outline.svg"></img>
+		</button>
+	</td>
+	<td colspan=2 align="center" width="60vw" style="position: relative">
+		<button id="auto" onclick="onAuto()">Auto</button>
+		<button id="teleop" onclick="onTeleOp()">TeleOp</button>
+		<span id="countdown">&nbsp;</span>
+	</td>
+	<td align="right">
+		<button id="buttonRefresh" onclick="location.reload()">
+			<img id="iconRefresh" class="circleIcon" src="refresh.svg"></img>
+		</button>
+	</td>
+</tr>
+<tr><td colspan=4>
+		<div id="credits" class="skystone_color_shadowed">brought to you by #3409 - the Astromechs and #5227 - Galactech.  Report bugs, suggestions and submit PRs on <a href="https://github.com/KCAstromechs/Skystone_Scorer">Github</a>.</div>
+	<td></tr>
+</table>
+
+</body>
+</html>
