@@ -8,23 +8,23 @@
     <div class="interface">
         <!-- #region General Inputs -->
             <div class="tooltip" id="pos-name">
-                <input v-model="name" placeholder="Autonomous name" id="in-name" class="colors"/>
+                <input v-model="name" @change="nameChange($event)" placeholder="Autonomous name" id="in-name" class="colors"/>
                 <span class="tooltiptext">Naming Info!<br/><hr/><p class="hover-info">This is the name that will appear in your driver station app.</p></span>
             </div>
             <div class="tooltip" id="pos-num">
-                <input v-model="bias" type="number" step="0.1" value="1" placeholder="Movement bias" id="in-num" class="colors"/>
+                <input v-model="bias" @change="biasChange($event)" type="number" step="0.1" value="1" placeholder="Movement bias" id="in-num" class="colors"/>
                 <span class="tooltiptext">Bias Info<br/><hr/><p class="hover-info">Set to one as default. This value can be used to counteract friction and other factors.</p></span>
             </div>
             <p class="chassischoice">Chassis: {{ $store.getters.chassis }}</p>
             <div class="tooltip" id="pos-preset">
-                <select @change="cpichange($event)" class="dropdown">
-                    <option disabled selected value="">CPI Presets</option>
+                <select v-model="cpi" @change="cpichange($event)" class="dropdown">
+                    <option disabled selected>CPI Presets</option>
                     <option text-xs-center v-for="(preset, index) in presets" v-bind:key="index + 'cpi_presets'">{{preset}}</option>
                 </select>
                 <span class="tooltiptext">CPI Info<br/><hr/><p class="hover-info">Determines rotation of wheels. Presets assume 4.125 inch wheel diameter and 28 counts per rotation motor. Select custom to bypass this.</p></span>
             </div>
             <div class="tooltip" id="pos-start">
-                <select  v-model="starpos" @change="startChange($event)" class="dropdown">
+                <select v-model="starpos" @change="startChange($event)" class="dropdown">
                     <option disabled selected>Starting Side</option>
                     <option v-for="(start, index) in starts" v-bind:key="index + 'starting_side'">{{start}}</option>
                 </select>
@@ -47,7 +47,7 @@
                     <v-divider></v-divider>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn class="popup-button" flat @click="opencustoms = false">Done</v-btn>
+                        <v-btn class="popup-button" flat @click="finishcpi()">Done</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -430,6 +430,9 @@ export default {
     confirmDelete: function() {
       //
       this.deleteWarning = false;
+      console.log(this.starpos);
+      this.$store.commit("setSide", this.starpos);
+      console.log(this.$store.getters.getSide);
       //
       if (this.sideChosen != 3) {
         if (this.starpos == "left") {
@@ -513,6 +516,7 @@ export default {
       this.$router.push("/Generate");
     },
     cpichange: function(event) {
+      this.$store.commit("setCPIShow", event.target.value);
       if (event.target.value == "Custom") {
         this.opencustoms = true;
       } else {
@@ -524,7 +528,12 @@ export default {
         }else{
           this.gearratio = 60;
         }
+        this.$store.commit("setCPI", [this.cpr, this.gearratio, this.diameter]);
       }
+    },
+    finishcpi: function(){
+      this.opencustoms = false;
+      this.$store.commit("setCPI", [this.cpr, this.gearratio, this.diameter]);
     },
     startChange: function() {
       if (this.$store.getters.getTheSteps.length >= 1) {
@@ -539,10 +548,18 @@ export default {
     widthChange: function(event) {
       this.robotWidth = event.target.value;
       this.getStepPoint();
+      this.$store.commit("setWidth", this.robotWidth);
     },
     lengthChange: function(event) {
       this.robotLength = event.target.value;
       this.getStepPoint();
+      this.$store.commit("setLength", this.robotLength);
+    },
+    biasChange: function(event){
+      this.$store.commit("setBias", event.target.value);
+    },
+    nameChange: function(event){
+      this.$store.commit("setName", event.target.value);
     },
     customStart: function() {
       //
@@ -631,6 +648,13 @@ export default {
       }
       gradient.addColorStop(1.00, color2);
       return gradient;
+    },
+    recallStep: function() {
+      //
+      for(var i = 0; i < this.$store.getters.getTheSteps.length; i++){
+        //
+      }
+      //
     },
     confirmStep: function() {
       if(this.sideChosen == 3){
@@ -1195,7 +1219,6 @@ export default {
       }
     },
     setStepPoint: function(mousePos) {
-      console.log("Click location--X: " + mousePos.x + ",Y: " + mousePos.y);
       //
       if (this.sideChosen == 3) {
         switch (this.$store.getters.currentStep) {
@@ -1880,10 +1903,10 @@ export default {
         x: 0,
         y: 0,
         points: [
-          this.curX /*+ this.nextX*/,
-          this.curY /*+ this.nextY*/,
-          this.curX /* + this.nextX*/ + x1 * 3,
-          this.curY /* + this.nextY*/ - y1 * 3
+          this.curX,
+          this.curY,
+          this.curX + x1 * 3,
+          this.curY - y1 * 3
         ],
         stroke: "orange",
         strokeWidth: 4,
@@ -2282,9 +2305,28 @@ export default {
     if (this.$store.getters.chassis == null) {
       this.$router.push("/");
     }
-    if(this.$store.getters.chassis == 'meccanum'){
-      this.bias = 0.8;
+    if(this.$store.getters.getDBias){
+      if(this.$store.getters.chassis == 'meccanum'){
+        this.bias = 0.8;
+      }
+    }else{
+      this.bias = this.$store.getters.getBias;
     }
+    this.name = this.$store.getters.getName;
+    //
+    this.cpr = this.$store.getters.getCPI[0];
+    this.gearratio = this.$store.getters.getCPI[1];
+    this.diameter = this.$store.getters.getCPI[2];
+    if(this.$store.getters.getCPIShow != "CPI Presets"){
+      this.cpi = this.$store.getters.getCPIShow;
+    }
+    //
+    //console.log("")
+    this.starpos = this.$store.getters.getSide;
+    this.laststarpos = this.starpos;
+    //
+    this.robotWidth = this.$store.getters.getWidth;
+    this.robotLength = this.$store.getters.getLength;
     //
   },
   data: () => ({
@@ -2329,6 +2371,7 @@ export default {
     startingPos: {},
     starpos: "Starting Side",
     laststarpos: "Staring Side",
+    cpi: "CPI Presets",
     chosen: 0,
     deleteWarning: false,
     inputAlert: true,

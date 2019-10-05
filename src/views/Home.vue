@@ -59,6 +59,7 @@ export default {
       this.$router.push('/Creator');
       this.openWarning = false;
       this.$store.commit('changeChassis', this.chassis);
+      this.$store.commit("nukeIt");
       this.$store.commit("setCurrentStep", MovementOptions.DRIVE);
     }
   },

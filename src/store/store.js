@@ -12,7 +12,15 @@ export const store = new Vuex.Store({
     generateClicked: false,
     firstChassis: false,
     genCode: null,
-    genCali: null
+    genCali: null,
+    roboLength: 18,
+    roboWidth: 16,
+    bias: 1,
+    name: null,
+    dBias: true,
+    cpi: [28, 40, 4.125],
+    cpishow: "CPI Presets",
+    side: "Starting Side"
   },
   mutations: {
     changeChassis(state, chassis) {
@@ -21,6 +29,28 @@ export const store = new Vuex.Store({
     },
     setCurrentStep(state, step) {
       state.currentStep = step
+    },
+    setWidth(state, width){
+      state.roboWidth = width;
+    },
+    setLength(state, length){
+      state.roboLength = length;
+    },
+    setBias(state, bias){
+      state.bias = bias;
+      state.dBias = false;
+    },
+    setName(state, name){
+      state.name = name;
+    },
+    setCPI(state, cpi){
+      state.cpi = cpi;
+    },
+    setCPIShow(state, show){
+      state.cpishow = show;
+    },
+    setSide(state, side){
+      state.side = side;
     },
     confirmStep(state, params){
       state.listOfSteps.push({
@@ -41,6 +71,14 @@ export const store = new Vuex.Store({
     nukeIt(state){
       state.listOfSteps = [];
       state.generateClicked = false;
+      state.roboLength = 18;
+      state.roboWidth = 16;
+      state.bias = 1
+      state.dBias = true;
+      state.name = null;
+      state.cpi = [28, 40, 4.125];
+      state.side = null;
+      state.cpishow = "CPI Presets";
     },
     setGenCode(state, code){
       state.genCode = code;
@@ -61,6 +99,14 @@ export const store = new Vuex.Store({
     getGenerateVisibility: state => state.generateClicked,
     getFirstChassis: state => state.firstChassis,
     getGenCode: state => state.genCode,
-    getGenCali: state => state.genCali
+    getGenCali: state => state.genCali,
+    getWidth: state => state.roboWidth,
+    getLength: state => state.roboLength,
+    getBias: state => state.bias,
+    getName: state => state.name,
+    getDBias: state => state.dBias,
+    getCPI: state => state.cpi,
+    getCPIShow: state => state.cpishow,
+    getSide: state => state.side
   }
 })

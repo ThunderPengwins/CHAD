@@ -97,10 +97,10 @@
                         <ol>
                             <li>Upon generating your code, scroll to the bottom to find the smaller text field with the calibration program. Click the button above it to <strong>copy it.</strong></li>
                             <li>Go into android studio, and <strong>make a new class</strong> under TeamCode>src>main>java>org.firstinspires.ftc.teamcode. Make sure to call it “Calibrate.”</li>
-                            <li>Select all of the starting code and delete it. Then <strong>paste the copied calibrate code</strong> into the empty file.</li>
+                            <li>Select all of the starting code and delete it. Then <strong>paste the copied calibration code</strong> into the empty file.</li>
                             <li>Take note of the motors present in the code, and <strong>add a configuration</strong> in your phone with the names of the motors. Depending on how many motors you have, the names may be “left” and “right” or “frontleft,” “frontright,” “backleft,” and “backright.”</li>
-                            <li>Upload your ftc_app to your Robot Controller, and <strong>run the Calibrate program.</strong></li>
-                            <li><strong>Measure</strong> how far your robot travels. If it travels 20 inches, you are done calibrating. If it moves an inch or more away from 20 inches, you may want to set the bias to (how far it traveled)/20 and reupload the code.</li>
+                            <li>Upload your ftc_app to your Robot Controller by plugging it in and hitting the green play button, then <strong>run the Calibrate program</strong> with your robot.</li>
+                            <li><strong>Measure</strong> how far your robot travels. If it travels 20 inches, you are done calibrating. If it moves an inch or more away from 20 inches, you may want to set the bias to 20/(how far it traveled) and reupload the code.</li>
                             <li><strong>Repeat step six</strong> until your robot travels 20 inches, or you’ve determined it never will. If it never will, refer to troubleshooting below.</li>
                             <li><strong>Change the bias</strong> of every CHAD program for your robot to whatever it is in the calibration program. Next time you use the website, enter the same number in the bias input to speed up the process.</li>
                         </ol>
@@ -125,10 +125,18 @@
             </v-expansion-panel-content>
             <v-expansion-panel-content>
                 <template v-slot:header>
+                    <div>Troubleshooting</div>
+                </template>
+                <v-card>
+                    <v-card-text>Coming soon!</v-card-text>
+                </v-card>
+            </v-expansion-panel-content>
+            <v-expansion-panel-content>
+                <template v-slot:header>
                     <div class="head">Contact us</div>
                 </template>
                 <v-card>
-                    <v-card-text>You can reach us at thunderpengwinroboticsteam@gmail.com. You can also visit our website, <a class="link" href="https://sites.google.com/view/thunderpengwins/home" target="_blank">thunderpengwins.com</a>, to learn more our team.</v-card-text>
+                    <v-card-text>You can reach us at <strong>thunderpengwinroboticsteam@gmail.com</strong>. You can also visit our website, <a class="link" href="https://sites.google.com/view/thunderpengwins/home" target="_blank">thunderpengwins.com</a>, to learn more about our team.</v-card-text>
                 </v-card>
             </v-expansion-panel-content>
         </v-expansion-panel>
