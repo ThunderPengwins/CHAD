@@ -36,8 +36,6 @@ public class Calibrate extends LinearOpMode {
     To drive backward, simply make the inches input negative.
      */
     public void moveToPosition(double inches, double speed){
-        left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //
         if (inches < 5) {
             int move = (int) (Math.round(inches * conversion));
@@ -45,6 +43,9 @@ public class Calibrate extends LinearOpMode {
             left.setTargetPosition(left.getCurrentPosition() + move);
             right.setTargetPosition(right.getCurrentPosition() + move);
             //
+	    left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+	    //
             left.setPower(speed);
             right.setPower(speed);
             //
@@ -67,6 +68,9 @@ public class Calibrate extends LinearOpMode {
             left.setTargetPosition(movel2);
             right.setTargetPosition(mover2);
             //
+	    left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+	    //
             left.setPower(.1);
             right.setPower(.1);
             //
