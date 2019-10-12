@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="{name}", group="chad")
+@Autonomous (name="{name}", group="chad")
 public class {name} extends LinearOpMode {
     //
     DcMotor frontleft;
@@ -23,11 +23,10 @@ public class {name} extends LinearOpMode {
     //28 * 20 / (2ppi * 4.125)
     Double width = {width}; //inches
     Integer cpr = {cpr}; //counts per rotation
-    Integer gearratio = {gearratio};
+    double gearratio = {gearratio};
     Double diameter = {diameter};
     Double cpi = (cpr * gearratio)/(Math.PI * diameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
-    Double bias = {bias};//default 0.8
-    Double meccyBias = 0.9;//change to adjust only strafing movement
+    Double bias = {bias};
     //
     Double conversion = cpi * bias;
     Boolean exit = false;
@@ -210,7 +209,7 @@ public class {name} extends LinearOpMode {
      */
     public void strafeToPosition(double inches, double speed){
         //
-        int move = (int)(Math.round(inches * cpi * meccyBias));
+        int move = (int)(Math.round(inches * conversion));
         //
         backleft.setTargetPosition(backleft.getCurrentPosition() - move);
         frontleft.setTargetPosition(frontleft.getCurrentPosition() + move);
@@ -223,8 +222,8 @@ public class {name} extends LinearOpMode {
         backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //
         frontleft.setPower(speed);
-        backleft.setPower(speed);
-        frontright.setPower(speed);
+        backleft.setPower(-speed);
+        frontright.setPower(-speed);
         backright.setPower(speed);
         //
         while (frontleft.isBusy() && frontright.isBusy() && backleft.isBusy() && backright.isBusy()){}

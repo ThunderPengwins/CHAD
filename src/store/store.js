@@ -20,7 +20,8 @@ export const store = new Vuex.Store({
     dBias: true,
     cpi: [28, 40, 4.125],
     cpishow: "CPI Presets",
-    side: "Starting Side"
+    side: "Starting Side",
+    yside: null
   },
   mutations: {
     changeChassis(state, chassis) {
@@ -49,8 +50,9 @@ export const store = new Vuex.Store({
     setCPIShow(state, show){
       state.cpishow = show;
     },
-    setSide(state, side){
+    setSide(state, [side, yside]){
       state.side = side;
+      state.yside = yside;
     },
     confirmStep(state, params){
       state.listOfSteps.push({
@@ -107,6 +109,7 @@ export const store = new Vuex.Store({
     getDBias: state => state.dBias,
     getCPI: state => state.cpi,
     getCPIShow: state => state.cpishow,
-    getSide: state => state.side
+    getSide: state => state.side,
+    getYSide: state => state.yside
   }
 })

@@ -205,6 +205,7 @@ import DrawLines from "@/components/DrawLines";
 import type1 from '!raw-loader!@/assets/Miscellaneous/Type1.txt';
 import type2 from '!raw-loader!@/assets/Miscellaneous/Type2.txt';
 import type3 from '!raw-loader!@/assets/Miscellaneous/Type3.txt';
+import type4 from '!raw-loader!@/assets/Miscellaneous/Type4.txt';
 import calibrateTW from '!raw-loader!@/assets/Miscellaneous/CalibrateTW.txt';
 import calibrateFW from '!raw-loader!@/assets/Miscellaneous/CalibrateFW.txt';
 export default {
@@ -226,6 +227,9 @@ export default {
         cali = calibrateTW;
       }else if(this.$store.getters.chassis == 'meccanum'){
         trac = type3;
+        cali = calibrateFW;
+      }else{
+        trac = type4;
         cali = calibrateFW;
       }
       if(this.name == null){
@@ -430,9 +434,6 @@ export default {
     confirmDelete: function() {
       //
       this.deleteWarning = false;
-      console.log(this.starpos);
-      this.$store.commit("setSide", this.starpos);
-      console.log(this.$store.getters.getSide);
       //
       if (this.sideChosen != 3) {
         if (this.starpos == "left") {
@@ -474,6 +475,9 @@ export default {
           strokeWidth: 5,
           cornerRadius: 5
         });
+        if(this.sideChosen == 4){
+          this.sideChosen = 3;
+        }
       }else{
         this.interimPoint = {
           x: this.startingPos.x,
@@ -493,6 +497,8 @@ export default {
       this.curX = this.startingPos.x;
       this.curY = this.startingPos.y;
       this.curAngle = this.startingPos.rotation;
+      //
+      this.$store.commit("setSide", [this.starpos, this.startingPos.y]);
       //
       this.getStepPoint();
       //
@@ -2308,6 +2314,8 @@ export default {
     if(this.$store.getters.getDBias){
       if(this.$store.getters.chassis == 'meccanum'){
         this.bias = 0.8;
+      }else if(this.$store.getters.chassis == 'holonomic'){
+        this.bias = 0.714;
       }
     }else{
       this.bias = this.$store.getters.getBias;
@@ -2320,10 +2328,29 @@ export default {
     if(this.$store.getters.getCPIShow != "CPI Presets"){
       this.cpi = this.$store.getters.getCPIShow;
     }
-    //
-    //console.log("")
-    this.starpos = this.$store.getters.getSide;
-    this.laststarpos = this.starpos;
+    if(this.$store.getters.getSide != "Starting Side"){
+      this.starpos = this.$store.getters.getSide;
+      this.laststarpos = this.starpos;
+      if(this.$store.getters.getYSide == "null"){
+        this.sideChosen = 0;
+        this.confirmDelete();
+      }else{
+        this.sideChosen = 3;
+        console.log(this.$store.getters.getYSide);
+        this.startingPos.y = this.$store.getters.getYSide;
+        if (this.starpos == "left") {
+          this.startingPos.x = (this.robotLength * 3 / 2 + 5);
+          this.startingPos.rotation = 90;
+          this.curAngle = 90;
+        } else if (this.starpos == "right") {
+          this.startingPos.x = this.fieldDim - (this.robotLength * 3 / 2) - 5;
+          this.startingPos.rotation = -90;
+          this.curAngle = -90;
+        }
+        this.startingPos.x
+        this.confirmDelete();
+      }
+    }
     //
     this.robotWidth = this.$store.getters.getWidth;
     this.robotLength = this.$store.getters.getLength;

@@ -42,17 +42,13 @@ export default {
   name: 'Home',
   methods: {
     chassisChanged: function(chassis){
-      if(chassis != 'holonomic'){
-        if (this.$store.getters.getFirstChassis){
-          this.chassis = chassis;
-          this.openWarning = true;
-        }else{
-          this.$store.commit("setFirstChassis");
-          this.$store.commit('changeChassis', chassis);
-          this.$router.push('/Creator');
-        }
+      if (this.$store.getters.getFirstChassis){
+        this.chassis = chassis;
+        this.openWarning = true;
       }else{
-        alert("This chassis hasn't been fine tuned yet. We hope to get this done in the next few weeks.");
+        this.$store.commit("setFirstChassis");
+        this.$store.commit('changeChassis', chassis);
+        this.$router.push('/Creator');
       }
     },
     bunnyOctopus: function(){
