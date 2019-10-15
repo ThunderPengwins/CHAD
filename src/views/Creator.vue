@@ -460,6 +460,8 @@ export default {
       this.arcs = [];
       this.interimLine = null;
       this.directionLine = null;
+      this.robotWidth = 16;
+      this.robotLength = 18;
       //
       if(this.sideChosen == 3){
         this.points.push({
@@ -497,8 +499,6 @@ export default {
       this.curX = this.startingPos.x;
       this.curY = this.startingPos.y;
       this.curAngle = this.startingPos.rotation;
-      //
-      this.$store.commit("setSide", [this.starpos, this.startingPos.y]);
       //
       this.getStepPoint();
       //
@@ -1838,6 +1838,9 @@ export default {
         //
         this.curX = this.startingPos.x;
         this.curY = mousePos.y;
+        this.startingPos.y = mousePos.y;
+        this.$store.commit("setSide", [this.starpos, this.startingPos.y]);
+        console.log("Set Y: " + this.$store.getters.getYSide);
         this.interimPoint = {
           x: this.startingPos.x,
           y: mousePos.y,
@@ -2330,6 +2333,7 @@ export default {
     }
     if(this.$store.getters.getSide != "Starting Side"){
       this.starpos = this.$store.getters.getSide;
+      console.log("Starpos: " + this.starpos);
       this.laststarpos = this.starpos;
       if(this.$store.getters.getYSide == "null"){
         this.sideChosen = 0;

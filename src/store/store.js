@@ -77,10 +77,6 @@ export const store = new Vuex.Store({
       state.roboWidth = 16;
       state.bias = 1
       state.dBias = true;
-      state.name = null;
-      state.cpi = [28, 40, 4.125];
-      state.side = null;
-      state.cpishow = "CPI Presets";
     },
     setGenCode(state, code){
       state.genCode = code;
