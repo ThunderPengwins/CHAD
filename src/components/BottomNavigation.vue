@@ -42,6 +42,16 @@
       <v-btn
         color="rgba(100,230,209)"
         flat
+        value="Scorer"
+        to="/Scorer"
+      >
+        <span>Scoring</span>
+        <v-icon>stars</v-icon>
+      </v-btn>
+
+      <v-btn
+        color="rgba(100,230,209)"
+        flat
         value="nearby"
         to="/TipsNInfo"
       >

@@ -11,6 +11,7 @@
                 </template>
                 <v-card>
                     <v-card-text>
+                        A video on this subject is available: <a href="https://www.youtube.com/watch?v=Q_lo40TsDUI">General Use Video Guide</a><br/>
                         To use this website, simply follow these steps:
                         <ol type="1">
                             <li><strong>Select</strong> a chassis on the home page. This should redirect you to the Creator Page. More information about the chassis is listed in the section below.</li>
@@ -93,6 +94,7 @@
                 </template>
                 <v-card>
                     <v-card-text>
+                        A video on this subject is available: <a href="https://www.youtube.com/watch?v=SALWD3z0kBs">Calibration Video Guide</a><br/>
                         The first time you use a CHAD autonomous with your robot, it’s best to calibrate the bias for friction and slippage. Full instructions for calibration are below.
                         <ol>
                             <li>Upon generating your code, scroll to the bottom to find the smaller text field with the calibration program. Click the button above it to <strong>copy it.</strong></li>
