@@ -46,7 +46,7 @@
         to="/Scorer"
       >
         <span>Scoring</span>
-        <v-icon>stars</v-icon>
+        <v-icon>grid_on</v-icon>
       </v-btn>
 
       <v-btn
