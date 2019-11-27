@@ -200,6 +200,13 @@ li{
     overflow: auto;
 }
 
+#disqus_thread{
+    margin-bottom: 5em;
+    overflow: auto;
+    scroll-behavior: auto;
+    color: white;
+}
+
 .main{
     width: 94%;
     margin: 3%;
