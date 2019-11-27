@@ -142,28 +142,24 @@
                 </v-card>
             </v-expansion-panel-content>
         </v-expansion-panel>
-        <!--<div id="disqus_thread"></div>-->
+        <div id="disqus_thread"></div>
         <div id="buffer"/>
     </div>
-    <!--<script id="dsq-count-scr" src="//chad-2.disqus.com/count.js" async></script>-->
 </div>
 </template>
 
 <script>
-var disqus_config = function () {
-this.page.url = 'ftcchad.com/TipsNInfo';  // Replace PAGE_URL with your page's canonical URL variable
-this.page.identifier = 'hellochad'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-};
-
-(function() { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script');
-s.src = 'https://EXAMPLE.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
 
 export default {
     name: "TipsNInfo",
+    created(){
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://chad-2.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    }
 }
 </script>
 
@@ -219,7 +215,7 @@ li{
 .panel{
     border-radius: 5px;
     scroll-behavior: auto;
-    margin-bottom: 6.6em;
+    margin-bottom: 1em;
 }
 
 .balloon{
