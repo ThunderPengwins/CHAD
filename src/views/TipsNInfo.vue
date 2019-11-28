@@ -138,7 +138,7 @@
                     <div class="head">Contact us</div>
                 </template>
                 <v-card>
-                    <v-card-text>You can reach us at <strong>thunderpengwinroboticsteam@gmail.com</strong>. You can also visit our website, <a class="link" href="https://sites.google.com/view/thunderpengwins/home" target="_blank">thunderpengwins.com</a>, to learn more about our team.</v-card-text>
+                    <v-card-text>You can reach us at <strong>thunderpengwinroboticsteam@gmail.com</strong>. You can also visit our website, <a class="link" href="https://sites.google.com/view/thunderpengwins/home" target="_blank">thunderpengwins.com</a>, to learn more about our team. A comments section is available below for feedback and suggestions.</v-card-text>
                 </v-card>
             </v-expansion-panel-content>
         </v-expansion-panel>
@@ -204,7 +204,7 @@ li{
     margin-bottom: 5em;
     overflow: auto;
     scroll-behavior: auto;
-    color: white;
+    text-decoration-color:  white;
 }
 
 .main{
