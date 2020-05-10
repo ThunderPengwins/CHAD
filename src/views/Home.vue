@@ -15,7 +15,7 @@
      <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'traction', baton:$store.getters.chassis != 'traction'}" v-on:click="chassisChanged('traction')"><img src="@/assets/Pictures/TractionB.png" alt="traction" class="chaspic"/></v-btn>
      <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'omni wheel', baton:$store.getters.chassis != 'omni wheel'}" v-on:click="chassisChanged('omni wheel')"><img src="@/assets/Pictures/OmniB.png" alt="omni" class="chaspic"/></v-btn>
      <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'meccanum', baton:$store.getters.chassis != 'meccanum'}" v-on:click="chassisChanged('meccanum')"><img src="@/assets/Pictures/MeccanumB.png" alt="meccanum" class="chaspic"/></v-btn>
-     <v-btn color="rgba(100,230,209)" v-bind:class="{betterBaton:$store.getters.chassis == 'holonomic', baton:$store.getters.chassis != 'holonomic'}" v-on:click="chassisChanged('holonomic')" outline><img src="@/assets/Pictures/Holonomic.png" alt="holonomic" class="chaspic"/></v-btn>
+     <v-btn color="rgba(100,230,209)" outline v-bind:class="{betterBaton:$store.getters.chassis == 'holonomic', baton:$store.getters.chassis != 'holonomic'}" v-on:click="chassisChanged('holonomic')"><img src="@/assets/Pictures/Holonomic.png" alt="holonomic" class="chaspic"/></v-btn>
     </div>
     <v-dialog v-model="openWarning" width="500">
       <v-card>
@@ -45,6 +45,7 @@ export default {
       if (this.$store.getters.getFirstChassis){
         this.chassis = chassis;
         this.openWarning = true;
+        console.log("Set chassis: " + chassis);
       }else{
         this.$store.commit("setFirstChassis");
         this.$store.commit('changeChassis', chassis);
@@ -56,6 +57,7 @@ export default {
       this.openWarning = false;
       this.$store.commit('changeChassis', this.chassis);
       this.$store.commit("nukeIt");
+      this.$store.commit("resetSide");
       this.$store.commit("setCurrentStep", MovementOptions.DRIVE);
     }
   },

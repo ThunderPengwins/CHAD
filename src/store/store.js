@@ -21,7 +21,8 @@ export const store = new Vuex.Store({
     cpi: [28, 40, 4.125],
     cpishow: "CPI Presets",
     side: "Starting Side",
-    yside: null
+    yside: null,
+    interim: []
   },
   mutations: {
     changeChassis(state, chassis) {
@@ -83,6 +84,13 @@ export const store = new Vuex.Store({
     },
     setGenCali(state, code){
       state.genCali = code;
+    },
+    setInterim(state, [angle, distance]){
+      state.interim.angle = angle;
+      state.interim.distance = distance;
+    },
+    resetSide(state){
+      state.side = "Starting Side";
     }
   },
   getters: {
@@ -106,6 +114,7 @@ export const store = new Vuex.Store({
     getCPI: state => state.cpi,
     getCPIShow: state => state.cpishow,
     getSide: state => state.side,
-    getYSide: state => state.yside
+    getYSide: state => state.yside,
+    getInterim: state => state.interim
   }
 })

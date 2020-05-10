@@ -81,10 +81,10 @@
                     <button block v-bind:class="{active: $store.getters.isCurrentStepMove}" v-on:click="newStep(drive)" class="button" id="tog-drive">Drive</button>
                     <button block v-bind:class="{active: $store.getters.isCurrentStepTurn}" v-on:click="newStep(turn)" class="button" id="tog-turn">Turn</button>
                     <div class="tooltip">
-                        <button block v-bind:class="{active: $store.getters.isCurrentStepArc}" v-if=$store.getters.isArcingAvail :disabled="$store.getters.chassis=='traction'" v-on:click="newStep(arc)" class="button" id="tog-fancy">Arc</button>
+                        <button block v-bind:class="{active: $store.getters.isCurrentStepArc}" v-if="$store.getters.isArcingAvail" :disabled="$store.getters.chassis=='traction'" v-on:click="newStep(arc)" class="button" id="tog-fancy">Arc</button>
                         <span class="tooltiptext" v-if="$store.getters.chassis=='traction'" id="disable">Disabled<br/><hr/><p class="hover-info">This movement type is not available for this chassis.</p></span>
                     </div>
-                    <button block v-bind:class="{active: $store.getters.isCurrentStepStrafe}" v-if=!$store.getters.isArcingAvail v-on:click="newStep(strafe)" class="button" id="tog-fancy">Strafe</button>
+                    <button block v-bind:class="{active: $store.getters.isCurrentStepStrafe}" v-if="!$store.getters.isArcingAvail" v-on:click="newStep(strafe)" class="button" id="tog-fancy">Strafe</button>
             <!-- #endregion -->
             <!-- #region inputs -->
                 <div id="stepinputs">
@@ -432,16 +432,16 @@ export default {
       }
     },
     confirmDelete: function() {
+      //this function is called when all steps are deleted or the starting position is reset
+      this.deleteWarning = false;//close warning
       //
-      this.deleteWarning = false;
-      //
-      if (this.sideChosen != 3) {
-        if (this.starpos == "left") {
+      if (this.sideChosen != 3) {//reset starting side
+        if (this.starpos == "left") {//put on left
           this.startingPos.x = (this.robotLength * 3 / 2 + 5);
           this.startingPos.y = this.fieldDim / 4;
           this.startingPos.rotation = 90;
           this.curAngle = 90;
-        } else if (this.starpos == "right") {
+        } else if (this.starpos == "right") {//put on right
           this.startingPos.x = this.fieldDim - (this.robotLength * 3 / 2) - 5;
           this.startingPos.y = this.fieldDim / 4;
           this.startingPos.rotation = -90;
@@ -453,7 +453,7 @@ export default {
         this.laststarpos = this.starpos;
       }
       //
-      this.$store.commit("nukeIt");
+      this.$store.commit("nukeIt");//Reset Everything but starting side
       this.$store.commit("setGenCode", null);
       this.points = [];
       this.lines = [];
@@ -463,8 +463,8 @@ export default {
       this.robotWidth = 16;
       this.robotLength = 18;
       //
-      if(this.sideChosen == 3){
-        this.points.push({
+      if(this.sideChosen == 3){//steps deleted, starting pos remains
+        this.points.push({//recolor starting point
           //
           x: this.startingPos.x,
           y: this.startingPos.y,
@@ -480,7 +480,7 @@ export default {
         if(this.sideChosen == 4){
           this.sideChosen = 3;
         }
-      }else{
+      }else{//prepare for fresh auto starting side setup
         this.interimPoint = {
           x: this.startingPos.x,
           y: this.startingPos.y,
@@ -494,6 +494,7 @@ export default {
           strokeWidth: 5,
           cornerRadius: 5
         }
+        this.$store.commit("resetSide");
       }
       //
       this.curX = this.startingPos.x;
@@ -515,7 +516,7 @@ export default {
       //
     },
     setGenerateVisible: function() {
-      //
+      //this function is called when the generate button is pressed
       this.readTextFile();
       //
       this.$store.commit("setGenerateVisible");
@@ -542,12 +543,13 @@ export default {
       this.$store.commit("setCPI", [this.cpr, this.gearratio, this.diameter]);
     },
     startChange: function() {
-      if (this.$store.getters.getTheSteps.length >= 1) {
+      //this function is called when a change is made to the starting position
+      if (this.$store.getters.getTheSteps.length >= 1) {//auto is aged
         this.sideChosen = 0;
-        this.deleteWarning = true;
+        this.deleteWarning = true;//request confirmation
       } else {
         this.sideChosen = 1;
-        this.confirmDelete();
+        this.confirmDelete();//no consequences, prepare new starting position
       }
       //
     },
@@ -655,13 +657,6 @@ export default {
       gradient.addColorStop(1.00, color2);
       return gradient;
     },
-    recallStep: function() {
-      //
-      for(var i = 0; i < this.$store.getters.getTheSteps.length; i++){
-        //
-      }
-      //
-    },
     confirmStep: function() {
       if(this.sideChosen == 3){
       var params;
@@ -671,7 +666,6 @@ export default {
             distance: this.$data.distance,
             speed: this.$data.speed
           };
-          //#region
           //
           var grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, this.curX, this.curY, this.curX + this.nextX, this.curY + this.nextY);
           //
@@ -690,7 +684,7 @@ export default {
           });
           //
           this.points.pop();
-          //#endregion
+          //redraw direction line
           var x1 =
             (this.robotLength / 2 + 5) *
             Math.cos((90 - this.curAngle) * Math.PI / 180);
@@ -712,7 +706,7 @@ export default {
             lineCap: "round"
           };
           //
-          this.points.push({
+          this.points.push({//repush last step with new color
             //
             x: this.curX,
             y: this.curY,
@@ -734,7 +728,7 @@ export default {
           this.curX = this.curX + mx;
           this.curY = this.curY - my;
           //
-          this.points.push({
+          this.points.push({//push new step with green color
             //
             x: this.curX,
             y: this.curY,
@@ -748,13 +742,13 @@ export default {
             cornerRadius: 5
           });
           //
-          this.distance = 30;
+          this.distance = 30;//set default distance
           //
-          var l2 = this.distance * 3;
+          var l2 = this.distance * 3;//get new interim point
           var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
           var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
           //
-          this.nextX = x2;
+          this.nextX = x2;//set new interim point
           this.nextY = y2 * -1;
           //
           this.getDrive();
@@ -1135,8 +1129,9 @@ export default {
       //
     },
     setInterimFloat: function(mousePos) {
-      if(this.sideChosen == 1 || this.sideChosen == 2){
-        this.startingPos.y = this.curY;
+      //this function is called when the field is clicked
+      if(this.sideChosen == 1 || this.sideChosen == 2){//if starting position is being finalized
+        this.startingPos.y = this.curY;//set Y starting pos
         this.startingPos.rotation = this.curAngle;
         if(this.sideChosen == 1){
           console.log("On the inside.");
@@ -1170,7 +1165,7 @@ export default {
             strokeWidth: 4,
             lineCap: "round"
           };
-        }else if(this.sideChosen == 2){
+        }else if(this.sideChosen == 2){//finalize starting point
           this.points.push({
             x: this.startingPos.x,
             y: this.startingPos.y,
@@ -1188,8 +1183,9 @@ export default {
         }
         this.sideChosen++;
       }else{
-        if (this.interimFloat) {
+        if (this.interimFloat) {//toggle interim float
           this.interimFloat = false;
+          this.$store.commit("setInterim", [this.angle, this.distance]);
         } else {
           this.interimFloat = true;
         }
@@ -1198,8 +1194,8 @@ export default {
       this.setStepPoint(mousePos);
     },
     getStepPoint: function() {
-      //
-      if (this.sideChosen == 3) {
+      //this function is called when a change is made to the input values of a step
+      if (this.sideChosen == 3) {//staring pos had been finalized
         switch (this.$store.getters.currentStep) {
           case MovementOptions.DRIVE:
             //
@@ -1222,14 +1218,15 @@ export default {
             //
             break;
         }
+        this.$store.commit("setInterim", [this.angle, this.distance]);
       }
     },
     setStepPoint: function(mousePos) {
-      //
-      if (this.sideChosen == 3) {
+      //this function is called when the mouse moves around the field
+      if (this.sideChosen == 3) {//aged auto, setting interim location
         switch (this.$store.getters.currentStep) {
           case MovementOptions.DRIVE:
-            //
+            //redraw direction line
             var x1 =
               (this.robotLength / 2 + 5) *
               Math.cos((90 - this.curAngle) * Math.PI / 180);
@@ -1251,9 +1248,9 @@ export default {
               lineCap: "round"
             };
             //
-            if (this.interimFloat) {
+            if (this.interimFloat) {//if interim is floating
               //Fix Click Assist
-              if (mousePos.x > this.curX) {
+              if (mousePos.x > this.curX) {//math for cursor reflection
                 var l1 = Math.sqrt(
                   Math.pow(this.curY - mousePos.y, 2) +
                     Math.pow(mousePos.x - this.curX, 2)
@@ -1288,7 +1285,7 @@ export default {
                     ", Y2: " +
                     y2
                 );
-                //
+                //draw interim stuff
                 this.interimPoint = {
                   //
                   x: this.curX + x2,
@@ -1382,10 +1379,10 @@ export default {
               //
               this.distance = Math.round(l2 / 3 * 5) / 5;
               //
-            } else {
-              this.getDrive();
+            } else {//interim is stationary
+              this.getDrive();//draw stationary interim
             }
-            //
+            //console the math for direction line, I guess
             x1 =
               (this.robotLength / 2 + 5) *
               Math.cos((90 - this.curAngle) * Math.PI / 180);
@@ -1423,8 +1420,7 @@ export default {
                   Math.atan(
                     (this.curY - mousePos.y) / (mousePos.x - this.curX)
                   ) *
-                    180 /
-                    Math.PI;
+                    180 / Math.PI;
               } else {
                 this.nextAngle =
                   -180 +
@@ -1456,7 +1452,7 @@ export default {
                 lineJoin: "round"
               };
               //
-              a1 = Math.round(this.nextAngle / 5) * 5 - this.curAngle;
+              a1 = Math.round(this.nextAngle / 5) * 5 - this.curAngle;//round angle to nearest five
               //
               if (Math.abs(a1) > 180) {
                 if (a1 > 0) {
@@ -1465,7 +1461,7 @@ export default {
                   a1 = a1 + 360;
                 }
               }
-              this.angle = a1;
+              this.angle = a1;//change in angles
               //
               this.interimPoint = {
                 x: this.curX,
@@ -1834,8 +1830,7 @@ export default {
             }
             break;
         }
-      }else if(this.sideChosen == 1){
-        //
+      }else if(this.sideChosen == 1){//fresh auto, setting Y starting pos
         this.curX = this.startingPos.x;
         this.curY = mousePos.y;
         this.startingPos.y = mousePos.y;
@@ -1856,8 +1851,7 @@ export default {
           lineCap: "round",
           lineJoin: "round"
         };
-        //
-      }else if(this.sideChosen == 2){
+      }else if(this.sideChosen == 2){//fresh auto, setting starting direction
         if (mousePos.x > this.curX) {
           a1 = 90 - Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
         } else {
@@ -1880,7 +1874,7 @@ export default {
           lineCap: "round",
           lineJoin: "round"
         };
-        //
+        //redraw direction line
         x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
         y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
         //
@@ -1901,6 +1895,8 @@ export default {
       }
     },
     getDrive: function() {
+      //function is to redraw interim point as solid
+      //redraw direction line
       var x1 =
         (this.robotLength / 2 + 5) *
         Math.cos((90 - this.curAngle) * Math.PI / 180);
@@ -1921,18 +1917,18 @@ export default {
         strokeWidth: 4,
         lineCap: "round"
       };
-      //
+      //remove arcing lines
       this.interimArc = {
         stroke: ""
       };
-      //
+      //calculate interim location
       var l2 = this.distance * 3;
       var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
       var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
       //
       this.nextX = x2;
       this.nextY = y2 * -1;
-      //
+      //draw interim point
       this.interimPoint = {
         //
         x: this.curX + x2,
@@ -1948,7 +1944,7 @@ export default {
         lineCap: "round",
         lineJoin: "round"
       };
-      //
+      //draw interim line
       this.interimLine = {
         x: 0,
         y: 0,
@@ -1958,7 +1954,7 @@ export default {
         lineCap: "round",
         lineJoin: "round"
       };
-      //
+      //lock interim point
       this.interimFloat = false;
     },
     getTurn: function() {
@@ -2307,38 +2303,415 @@ export default {
         lineCap: "round",
         lineJoin: "round"
       };
+    },
+    recallAuto: function(){
+      //this function is called when an auto has already been created, not deleted, and returned to
+      console.log("I've entered the function.");
+      //
+      this.curX = this.startingPos.x;
+      this.curY = this.startingPos.y;
+      //
+      var steps = this.$store.getters.getTheSteps;
+      if(steps.length >= 1){//there are saved steps
+        this.recalling = true;
+        for (var i = 0; i < steps.length; i++) {
+          //do point + line
+          console.log("Step type: " + steps[i].type);
+          switch (steps[i].type) {//redraw step in progress
+            case MovementOptions.DRIVE:
+              this.distance = steps[i].params.distance;
+              var mx =
+                this.distance * 3 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+              var my =
+                this.distance * 3 * Math.sin((90 - this.curAngle) * Math.PI / 180);
+              //
+              this.nextX = mx;
+              this.nextY = -my;
+              //
+              var grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, this.curX, this.curY, this.curX + this.nextX, this.curY + this.nextY);
+              //
+              this.lines.push({//push line to new position
+                x: 0,
+                y: 0,
+                points: [
+                  this.curX,
+                  this.curY,
+                  this.curX + this.nextX,
+                  this.curY + this.nextY
+                ],
+                stroke: grad,
+                strokeWidth: 4,
+                lineCap: "round"
+              });
+              //
+              this.points.push({//push point of old position
+                //
+                x: this.curX,
+                y: this.curY,
+                rotation: this.curAngle,
+                width: this.robotWidth * 3,
+                height: this.robotLength * 3,
+                offsetX: this.robotWidth * 3 / 2,
+                offsetY: this.robotLength * 3 / 2,
+                stroke: this.stepColors[this.currentColor],
+                strokeWidth: 5,
+                cornerRadius: 5
+              });
+              this.curX = this.curX + this.nextX;
+              this.curY = this.curY + this.nextY;
+              break;
+            case MovementOptions.TURN:
+              this.angle = steps[i].params.angle;
+              //
+              this.nextAngle = this.curAngle + this.angle;
+              //
+              if (this.angle > 0) {//push arc to new angle
+                console.log("Positive Change");
+                this.arcs.push({
+                  x: this.curX,
+                  y: this.curY,
+                  innerRadius: 0,
+                  outerRadius: 50,
+                  angle: this.angle,
+                  rotation: this.curAngle - 90,
+                  stroke: this.stepColors[this.currentColor + 1],
+                  strokeWidth: 4,
+                  lineCap: "round",
+                  lineJoin: "round"
+                });
+              } else {
+                console.log("Negative change");
+                this.arcs.push({
+                  x: this.curX,
+                  y: this.curY,
+                  innerRadius: 0,
+                  outerRadius: 50,
+                  angle: -this.angle,
+                  rotation: this.nextAngle - 90,
+                  stroke: this.stepColors[this.currentColor + 1],
+                  strokeWidth: 4,
+                  lineCap: "round",
+                  lineJoin: "round"
+                });
+              }
+              //
+              this.points.push({//push point of old angle
+                x: this.curX,
+                y: this.curY,
+                rotation: this.curAngle,
+                width: this.robotWidth * 3,
+                height: this.robotLength * 3,
+                offsetX: this.robotWidth * 3 / 2,
+                offsetY: this.robotLength * 3 / 2,
+                stroke: this.stepColors[this.currentColor],
+                strokeWidth: 5,
+                cornerRadius: 5
+              });
+              //
+              this.curAngle = this.curAngle + this.angle;
+              break;
+            case MovementOptions.ARC:
+              this.distance = steps[i].params.distance;
+              this.angle = steps[i].params.angle;
+              //
+              this.points.push({//push point of old position
+                x: this.curX,
+                y: this.curY,
+                rotation: this.curAngle,
+                width: this.robotWidth * 3,
+                height: this.robotLength * 3,
+                offsetX: this.robotWidth * 3 / 2,
+                offsetY: this.robotLength * 3 / 2,
+                stroke: this.stepColors[this.currentColor],
+                strokeWidth: 5,
+                cornerRadius: 5
+              });
+              //crazy math starts here
+              var ang = Number(this.angle);
+              if (ang / 90 == Math.round(ang / 90)) {
+                ang += 0.1;
+              }
+              //
+              this.nextAy =
+                this.distance *
+                3 *
+                Math.cos((Number(ang) + this.curAngle) * Math.PI / 180);
+              this.nextAx =
+                this.distance *
+                3 *
+                Math.sin((Number(ang) + this.curAngle) * Math.PI / 180);
+              //
+              if (this.nextAx == 0) {
+                this.nextAx = 0.01;
+              }
+              if (this.nextAy == 0) {
+                this.nextAy = 0.01;
+              }
+              //
+              this.nextAx = this.curX + this.nextAx;
+              this.nextAy = this.curY - this.nextAy;
+              //
+              var curA = this.curAngle;
+              if (curA < -90) {
+                curA += 180;
+              } else if (curA > 90) {
+                curA -= 180;
+              }
+              //
+              var d1 = Math.sqrt(
+                Math.pow(this.nextAx - this.curX, 2) +
+                  Math.pow(this.curY - this.nextAy, 2)
+              );
+              var a1 =
+                Math.atan((this.curY - this.nextAy) / (this.nextAx - this.curX)) *
+                180 /
+                Math.PI;
+              var r =
+                d1 *
+                Math.sin((90 - (90 - a1 - curA)) * Math.PI / 180) /
+                Math.sin(2 * (90 - a1 - curA) * Math.PI / 180);
+              var x1 = r * Math.cos(-1 * curA * Math.PI / 180);
+              var y1 = r * Math.sin(-1 * curA * Math.PI / 180);
+              var perp =
+                (this.nextAx - this.curX) * Math.tan(curA * Math.PI / 180) +
+                this.curY;
+              var par =
+                (this.curY - this.nextAy) / Math.tan((90 - curA) * Math.PI / 180) +
+                this.curX;
+              if (a1 > 90 - curA) {
+                a1 = a1 - 180;
+              }
+              //
+              var start = curA - 90;
+              //
+              if (this.nextAx < par) {
+                start = curA + 90;
+              }
+              //
+              if (this.nextAx < this.curX) {
+                x1 = x1 * -1;
+                y1 = y1 * -1;
+              }
+              //
+              if (r < 0) {
+                r = r * -1;
+              }
+              //
+              var a2 = (90 - a1 - curA) * 2;
+              if (a2 > 360) {
+                a2 = a2 - 360;
+              }
+              //crazy math ends here, draw arcs
+              if (
+                (this.nextAy > perp && this.nextAx > par) ||
+                (this.nextAx < par && this.nextAy < perp)
+              ) {
+                this.arcs.push({
+                  x: this.curX + x1,
+                  y: this.curY - y1,
+                  innerRadius: r,
+                  outerRadius: r,
+                  angle: 2 * (90 + a1 + curA),
+                  rotation: start + (360 - 2 * (90 + a1 + curA)) - 90,
+                  stroke: this.stepColors[this.currentColor + 1],
+                  strokeWidth: 4,
+                  lineCap: "round",
+                  lineJoin: "round"
+                });
+              } else if (this.nextAy <= perp) {
+                this.arcs.push({
+                  x: this.curX + x1,
+                  y: this.curY - y1,
+                  innerRadius: r,
+                  outerRadius: r,
+                  angle: a2,
+                  rotation: curA - 180,
+                  stroke: this.stepColors[this.currentColor + 1],
+                  strokeWidth: 4,
+                  lineCap: "round",
+                  lineJoin: "round"
+                });
+              } else {
+                this.arcs.push({
+                  x: this.curX + x1,
+                  y: this.curY - y1,
+                  innerRadius: r,
+                  outerRadius: r,
+                  angle: a2,
+                  rotation: curA,
+                  stroke: this.stepColors[this.currentColor + 1],
+                  strokeWidth: 4,
+                  lineCap: "round",
+                  lineJoin: "round"
+                });
+              }
+              //
+              this.curX = this.nextAx;
+              this.curY = this.nextAy;
+              //
+              var nang = this.curAngle - (this.curAngle + (a1 + 90)) * 2;
+              if (this.nextAy > perp && Math.abs(this.curAngle) < 90) {
+                nang += 180;
+              }
+              if (nang > 180) {
+                nang -= 360;
+              } else if (nang < -180) {
+                nang += 360;
+              }
+              this.curAngle = nang;
+              //
+              break;
+            case MovementOptions.STRAFE:
+              this.distance = steps[i].params.distance;
+              //
+              mx =
+                this.distance * 3 * Math.cos((180 - this.curAngle) * Math.PI / 180);
+              my =
+                this.distance * 3 * Math.sin((180 - this.curAngle) * Math.PI / 180);
+              //
+              this.nextX = -mx;
+              this.nextY = my;
+              console.log("mx: " + this.nextX + ", my: " + this.nextY);
+              console.log("x: " + (this.curX + this.nextX) + ", y: " + (this.curY + this.nextY));
+              //
+              grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, this.curX, this.curY, this.curX + this.nextX, this.curY + this.nextY);
+              //
+              this.lines.push({//push line to new position
+                x: 0,
+                y: 0,
+                points: [
+                  this.curX,
+                  this.curY,
+                  this.curX + this.nextX,
+                  this.curY + this.nextY
+                ],
+                stroke: grad,
+                strokeWidth: 4,
+                lineCap: "round"
+              });
+              //
+              this.points.push({//push point of old position
+                //
+                x: this.curX,
+                y: this.curY,
+                rotation: this.curAngle,
+                width: this.robotWidth * 3,
+                height: this.robotLength * 3,
+                offsetX: this.robotWidth * 3 / 2,
+                offsetY: this.robotLength * 3 / 2,
+                stroke: this.stepColors[this.currentColor],
+                strokeWidth: 5,
+                cornerRadius: 5
+              });
+              //
+              this.curX = this.curX + this.nextX;
+              this.curY = this.curY + this.nextY;
+              break;
+          }
+          //
+          if (this.currentColor > this.stepColors.length - 3) {
+            this.currentColor = 0;
+          } else {
+            this.currentColor++;
+          }
+          //
+          console.log("I'm on step: " + (i + 1));
+          /*
+          Steps:
+          1. Determine step type
+          2. Update nextX, nextY, nextAngle
+          3. Draw Current Position
+          4. Draw line to Next Position
+          5. Update curX, curY, curAngle
+          6. Repeat
+          */
+        }
+        //
+        this.points.push({//push final green curPos
+          x: this.curX,
+          y: this.curY,
+          rotation: this.curAngle,
+          width: this.robotWidth * 3,
+          height: this.robotLength * 3,
+          offsetX: this.robotWidth * 3 / 2,
+          offsetY: this.robotLength * 3 / 2,
+          stroke: "#32cd32",
+          strokeWidth: 5,
+          cornerRadius: 5
+        });
+        //
+      }else{//there are no saved steps
+        this.points.push({
+            x: this.startingPos.x,
+            y: this.startingPos.y,
+            width: this.robotWidth * 3,
+            height: this.robotLength * 3,
+            offsetX: this.robotWidth * 3 / 2,
+            offsetY: this.robotLength * 3 / 2,
+            stroke: "#32cd32",
+            strokeWidth: 5,
+            cornerRadius: 5,
+            rotation: this.startingPos.rotation,
+            lineCap: "round",
+            lineJoin: "round"
+          });
+          this.curX = this.startingPos.x;
+          this.curY = this.startingPos.y;
+      }
+      this.distance = this.$store.getters.getInterim.distance;//get interim data
+      this.angle = this.$store.getters.getInterim.angle;
+      //
+      switch (this.$store.getters.currentStep) {//redraw step in progress
+        case MovementOptions.DRIVE:
+          this.getDrive();
+          break;
+        case MovementOptions.TURN:
+          this.getTurn();
+          break;
+        case MovementOptions.ARC:
+          this.getArc();
+          break;
+        case MovementOptions.STRAFE:
+          this.getStrafe();
+          break;
+      }
     }
   },
   created() {
     //
-    if (this.$store.getters.chassis == null) {
+    console.log("chassis: " + this.$store.getters.chassis);
+    //
+    if (this.$store.getters.chassis == null) {//Go home if no chassis
       this.$router.push("/");
     }
-    if(this.$store.getters.getDBias){
-      if(this.$store.getters.chassis == 'meccanum'){
+    if(this.$store.getters.getDBias){//fresh auto
+      if(this.$store.getters.chassis == 'meccanum'){//meccy bias
         this.bias = 0.8;
-      }else if(this.$store.getters.chassis == 'holonomic'){
+      }else if(this.$store.getters.chassis == 'holonomic'){//holo bias
         this.bias = 0.714;
       }
-    }else{
+    }else{//Recall auto - bias
       this.bias = this.$store.getters.getBias;
     }
     this.name = this.$store.getters.getName;
     //
+    this.distance = 30;
+    this.angle = 45;
+    //
     this.cpr = this.$store.getters.getCPI[0];
     this.gearratio = this.$store.getters.getCPI[1];
     this.diameter = this.$store.getters.getCPI[2];
-    if(this.$store.getters.getCPIShow != "CPI Presets"){
+    if(this.$store.getters.getCPIShow != "CPI Presets"){//Recall auto - CPI
       this.cpi = this.$store.getters.getCPIShow;
     }
-    if(this.$store.getters.getSide != "Starting Side"){
+    if(this.$store.getters.getSide != "Starting Side"){//Recall auto - starting side
       this.starpos = this.$store.getters.getSide;
       console.log("Starpos: " + this.starpos);
       this.laststarpos = this.starpos;
-      if(this.$store.getters.getYSide == "null"){
+      if(this.$store.getters.getYSide == "null"){//position hasn't been finalized
         this.sideChosen = 0;
         this.confirmDelete();
-      }else{
+      }else{//pos is final
         this.sideChosen = 3;
         console.log(this.$store.getters.getYSide);
         this.startingPos.y = this.$store.getters.getYSide;
@@ -2351,8 +2724,7 @@ export default {
           this.startingPos.rotation = -90;
           this.curAngle = -90;
         }
-        this.startingPos.x
-        this.confirmDelete();
+        this.recallAuto();
       }
     }
     //
@@ -2423,7 +2795,8 @@ export default {
       "#ff00ff",
       "#ff0000"
     ],
-    currentColor: 0
+    currentColor: 0,
+    recalling: false
   })
 };
 </script>
