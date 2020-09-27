@@ -55,7 +55,7 @@
             <v-overflow-btn outline color="gray" style="margin-top: 0em" height="2em" margin="0em" :items="starts" label="starting side" target=".encoders"></v-overflow-btn>-->
         <!-- #endregion -->
         <!-- #region Field Container -->
-            <!-- 36 pixels per foot or 3 pixels per inch -->
+            <!-- 36 pixels per foot or 3 pixels per inch >> changed to this.pxperinch -->
             <!--<svg width="396" height="396">-->
                 <div id="field">
                     <draw-lines
@@ -339,13 +339,13 @@ export default {
             x: this.curX,
             y: this.curY,
             rotation: this.curAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: "#32cd32",
-            strokeWidth: 5,
-            cornerRadius: 5
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch
           });
           this.$store.commit("setCurrentStep", MovementOptions.DRIVE);
           this.getDrive();
@@ -361,20 +361,20 @@ export default {
             x: this.curX,
             y: this.curY,
             rotation: this.curAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: "#32cd32",
-            strokeWidth: 5,
-            cornerRadius: 5
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch
           });
           this.$store.commit("setCurrentStep", MovementOptions.TURN);
           this.getTurn();
           break;
         case MovementOptions.ARC:
           //
-          console.log("Should be working.");
+          //console.log("Should be working.");
           this.arcs.pop();
           this.points.pop();
           this.curAngle = this.points[this.points.length - 1].rotation;
@@ -387,13 +387,13 @@ export default {
             x: this.curX,
             y: this.curY,
             rotation: this.curAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: "#32cd32",
-            strokeWidth: 5,
-            cornerRadius: 5
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch
           });
           this.$store.commit("setCurrentStep", MovementOptions.ARC);
           this.getArc();
@@ -410,13 +410,13 @@ export default {
             x: this.curX,
             y: this.curY,
             rotation: this.curAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: "#32cd32",
-            strokeWidth: 5,
-            cornerRadius: 5
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch
           });
           this.$store.commit("setCurrentStep", MovementOptions.STRAFE);
           this.getStrafe();
@@ -437,12 +437,12 @@ export default {
       //
       if (this.sideChosen != 3) {//reset starting side
         if (this.starpos == "left") {//put on left
-          this.startingPos.x = (this.robotLength * 3 / 2 + 5);
+          this.startingPos.x = (this.robotLength * this.pxperinch / 2 + 5);
           this.startingPos.y = this.fieldDim / 4;
           this.startingPos.rotation = 90;
           this.curAngle = 90;
         } else if (this.starpos == "right") {//put on right
-          this.startingPos.x = this.fieldDim - (this.robotLength * 3 / 2) - 5;
+          this.startingPos.x = this.fieldDim - (this.robotLength * this.pxperinch / 2) - 5;
           this.startingPos.y = this.fieldDim / 4;
           this.startingPos.rotation = -90;
           this.curAngle = -90;
@@ -469,13 +469,13 @@ export default {
           x: this.startingPos.x,
           y: this.startingPos.y,
           rotation: this.startingPos.rotation,
-          width: this.robotWidth * 3,
-          height: this.robotLength * 3,
-          offsetX: this.robotWidth * 3 / 2,
-          offsetY: this.robotLength * 3 / 2,
+          width: this.robotWidth * this.pxperinch,
+          height: this.robotLength * this.pxperinch,
+          offsetX: this.robotWidth * this.pxperinch / 2,
+          offsetY: this.robotLength * this.pxperinch / 2,
           stroke: "#32cd32",
-          strokeWidth: 5,
-          cornerRadius: 5
+          strokeWidth: 5 / 3 * this.pxperinch,
+          cornerRadius: 5 / 3 * this.pxperinch
         });
         if(this.sideChosen == 4){
           this.sideChosen = 3;
@@ -485,14 +485,14 @@ export default {
           x: this.startingPos.x,
           y: this.startingPos.y,
           rotation: this.startingPos.rotation,
-          width: this.robotWidth * 3,
-          height: this.robotLength * 3,
-          offsetX: this.robotWidth * 3 / 2,
-          offsetY: this.robotLength * 3 / 2,
+          width: this.robotWidth * this.pxperinch,
+          height: this.robotLength * this.pxperinch,
+          offsetX: this.robotWidth * this.pxperinch / 2,
+          offsetY: this.robotLength * this.pxperinch / 2,
           stroke: this.newColor,
           dash: [20, 20],
-          strokeWidth: 5,
-          cornerRadius: 5
+          strokeWidth: 5 / 3 * this.pxperinch,
+          cornerRadius: 5 / 3 * this.pxperinch
         }
         this.$store.commit("resetSide");
       }
@@ -509,7 +509,7 @@ export default {
       this.deleteWarning = false;
       //
       if (this.sideChosen == 0) {
-        console.log(this.laststarpos);
+        //console.log(this.laststarpos);
         this.starpos = this.laststarpos;
         this.sideChosen == 3;
       }
@@ -605,12 +605,12 @@ export default {
           color2 = color2.substring(1);
       }
       //
-      console.log('valid: c1 => ' + color1 + ', c2 => ' + color2);
+      //console.log('valid: c1 => ' + color1 + ', c2 => ' + color2);
       // 3: we have valid input, convert colors to rgb
       color1 = [parseInt(color1[0] + color1[1], 16), parseInt(color1[2] + color1[3], 16), parseInt(color1[4] + color1[5], 16)];
       color2 = [parseInt(color2[0] + color2[1], 16), parseInt(color2[2] + color2[3], 16), parseInt(color2[4] + color2[5], 16)];
       //
-      console.log('hex -> rgba: c1 => [' + color1.join(', ') + '], c2 => [' + color2.join(', ') + ']');
+      //console.log('hex -> rgba: c1 => [' + color1.join(', ') + '], c2 => [' + color2.join(', ') + ']');
       // 4: blend
       var color3 = [ 
           (1 - percentage) * color1[0] + percentage * color2[0], 
@@ -618,12 +618,12 @@ export default {
           (1 - percentage) * color1[2] + percentage * color2[2]
       ];
       //
-      console.log('c3 => [' + color3.join(', ') + ']');
+      //console.log('c3 => [' + color3.join(', ') + ']');
       //
       // 5: convert to hex
       color3 = '#' + this.int_to_hex(color3[0]) + this.int_to_hex(color3[1]) + this.int_to_hex(color3[2]);
       //
-      console.log(color3);
+      //console.log(color3);
       //
       // color3 in the middle
       //ctx.fillStyle = color3;
@@ -652,7 +652,7 @@ export default {
       gradient.addColorStop(0.00, color1);
       for(var i = 0; i < steps - 1; i++){
         gradient.addColorStop((i + 1) / 5, this.blend_colors(color1, color2, (i + 1)/ steps));
-        console.log("Stuff" + this.blend_colors(color1, color2, (i + 1) / steps));
+        //console.log("Stuff" + this.blend_colors(color1, color2, (i + 1) / steps));
       }
       gradient.addColorStop(1.00, color2);
       return gradient;
@@ -679,7 +679,7 @@ export default {
               this.curY + this.nextY
             ],
             stroke: grad,
-            strokeWidth: 4,
+            strokeWidth: 4 / 3 * this.pxperinch,
             lineCap: "round"
           });
           //
@@ -698,11 +698,11 @@ export default {
             points: [
               this.curX + this.nextX,
               this.curY + this.nextY,
-              this.curX + this.nextX + x1 * 3,
-              this.curY + this.nextY - y1 * 3
+              this.curX + this.nextX + x1 * this.pxperinch,
+              this.curY + this.nextY - y1 * this.pxperinch
             ],
             stroke: "orange",
-            strokeWidth: 4,
+            strokeWidth: 4 / 3 * this.pxperinch,
             lineCap: "round"
           };
           //
@@ -711,19 +711,19 @@ export default {
             x: this.curX,
             y: this.curY,
             rotation: this.curAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: this.stepColors[this.currentColor],
-            strokeWidth: 5,
-            cornerRadius: 5
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch
           });
           //
           var mx =
-            this.distance * 3 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+            this.distance * this.pxperinch * Math.cos((90 - this.curAngle) * Math.PI / 180);
           var my =
-            this.distance * 3 * Math.sin((90 - this.curAngle) * Math.PI / 180);
+            this.distance * this.pxperinch * Math.sin((90 - this.curAngle) * Math.PI / 180);
           //
           this.curX = this.curX + mx;
           this.curY = this.curY - my;
@@ -733,18 +733,18 @@ export default {
             x: this.curX,
             y: this.curY,
             rotation: this.curAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: "#32cd32",
-            strokeWidth: 5,
-            cornerRadius: 5
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch
           });
           //
           this.distance = 30;//set default distance
           //
-          var l2 = this.distance * 3;//get new interim point
+          var l2 = this.distance * this.pxperinch;//get new interim point
           var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
           var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
           //
@@ -767,9 +767,9 @@ export default {
           x2 = 50 * Math.sin((this.curAngle + this.angle) * Math.PI / 180) + this.curX;
           y2 = -50 * Math.cos((this.curAngle + this.angle) * Math.PI / 180) + this.curY;
           //
-          console.log("gradient cords:");
-          console.log("x1: " + x1 + ", y1: " + y1);
-          console.log("x2: " + x2 + ", y2: " + y2);
+          //console.log("gradient cords:");
+          //console.log("x1: " + x1 + ", y1: " + y1);
+          //console.log("x2: " + x2 + ", y2: " + y2);
           //
           //grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, x1, y1, x2, y2);
           //
@@ -782,7 +782,7 @@ export default {
               angle: this.angle,
               rotation: this.curAngle - 90,
               stroke: this.stepColors[this.currentColor + 1],
-              strokeWidth: 4,
+              strokeWidth: 4 / 3 * this.pxperinch,
               lineCap: "round",
               lineJoin: "round"
             });
@@ -795,7 +795,7 @@ export default {
               angle: -this.angle,
               rotation: this.nextAngle - 90,
               stroke: this.stepColors[this.currentColor + 1],
-              strokeWidth: 4,
+              strokeWidth: 4 / 3 * this.pxperinch,
               lineCap: "round",
               lineJoin: "round"
             });
@@ -807,26 +807,26 @@ export default {
             x: this.curX,
             y: this.curY,
             rotation: this.curAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: this.stepColors[this.currentColor],
-            strokeWidth: 5,
-            cornerRadius: 5
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch
           });
           //
           this.points.push({
             x: this.curX,
             y: this.curY,
             rotation: this.nextAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: "#32cd32",
-            strokeWidth: 5,
-            cornerRadius: 5
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch
           });
           //
           this.curAngle = Math.round(this.nextAngle / 5) * 5;
@@ -835,7 +835,7 @@ export default {
           //
           this.distance = 30;
           //
-          l2 = this.distance * 3;
+          l2 = this.distance * this.pxperinch;
           x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
           y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
           //
@@ -852,7 +852,7 @@ export default {
             y: 0,
             points: [this.curX, this.curY, this.curX + x1, this.curY - y1],
             stroke: "orange",
-            strokeWidth: 4,
+            strokeWidth: 4 / 3 * this.pxperinch,
             lineCap: "round"
           };
           //
@@ -874,12 +874,12 @@ export default {
             x: this.curX,
             y: this.curY,
             rotation: this.curAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: this.stepColors[this.currentColor],
-            strokeWidth: 5,
+            strokeWidth: 5 / 3 * this.pxperinch,
             cornerRadius: 5
           });
           //
@@ -890,11 +890,11 @@ export default {
           //
           this.nextAy =
             this.distance *
-            3 *
+            this.pxperinch *
             Math.cos((Number(ang) + this.curAngle) * Math.PI / 180);
           this.nextAx =
             this.distance *
-            3 *
+            this.pxperinch *
             Math.sin((Number(ang) + this.curAngle) * Math.PI / 180);
           //
           if (this.nextAx == 0) {
@@ -972,7 +972,7 @@ export default {
               angle: 2 * (90 + a1 + curA),
               rotation: start + (360 - 2 * (90 + a1 + curA)) - 90,
               stroke: this.stepColors[this.currentColor + 1],
-              strokeWidth: 4,
+              strokeWidth: 4 / 3 * this.pxperinch,
               lineCap: "round",
               lineJoin: "round"
             });
@@ -985,7 +985,7 @@ export default {
               angle: a2,
               rotation: curA - 180,
               stroke: this.stepColors[this.currentColor + 1],
-              strokeWidth: 4,
+              strokeWidth: 4 / 3 * this.pxperinch,
               lineCap: "round",
               lineJoin: "round"
             });
@@ -998,7 +998,7 @@ export default {
               angle: a2,
               rotation: curA,
               stroke: this.stepColors[this.currentColor + 1],
-              strokeWidth: 4,
+              strokeWidth: 4 / 3 * this.pxperinch,
               lineCap: "round",
               lineJoin: "round"
             });
@@ -1007,13 +1007,13 @@ export default {
           this.points.push({
             x: this.nextAx,
             y: this.nextAy,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: "#32cd32",
-            strokeWidth: 5,
-            cornerRadius: 5,
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch,
             rotation: this.curAngle - (curA + (a1 + 90)) * 2,
             lineCap: "round",
             lineJoin: "round"
@@ -1025,17 +1025,17 @@ export default {
           this.curX = this.nextAx;
           this.curY = this.nextAy;
           var nang = this.curAngle - (this.curAngle + (a1 + 90)) * 2;
-          console.log("nang1: " + nang);
+          //console.log("nang1: " + nang);
           if (this.nextAy > perp && Math.abs(this.curAngle) < 90) {
             nang += 180;
           }
-          console.log("nang2: " + nang);
+          //console.log("nang2: " + nang);
           if (nang > 180) {
             nang -= 360;
           } else if (nang < -180) {
             nang += 360;
           }
-          console.log("nang3: " + nang);
+          //console.log("nang3: " + nang);
           this.curAngle = nang;
           //
           this.getArc();
@@ -1060,7 +1060,7 @@ export default {
               this.curY + this.nextAy
             ],
             stroke: grad,
-            strokeWidth: 4,
+            strokeWidth: 4 / 3 * this.pxperinch,
             lineCap: "round"
           });
           //
@@ -1072,19 +1072,19 @@ export default {
             x: this.curX,
             y: this.curY,
             rotation: this.curAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: this.stepColors[this.currentColor],
-            strokeWidth: 5,
-            cornerRadius: 5
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch
           });
           //
           mx =
-            this.distance * 3 * Math.cos((180 - this.curAngle) * Math.PI / 180);
+            this.distance * this.pxperinch * Math.cos((180 - this.curAngle) * Math.PI / 180);
           my =
-            this.distance * 3 * Math.sin((180 - this.curAngle) * Math.PI / 180);
+            this.distance * this.pxperinch * Math.sin((180 - this.curAngle) * Math.PI / 180);
           //
           this.curX = this.curX - mx;
           this.curY = this.curY + my;
@@ -1094,18 +1094,18 @@ export default {
             x: this.curX,
             y: this.curY,
             rotation: this.curAngle,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: "#32cd32",
-            strokeWidth: 5,
-            cornerRadius: 5
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch
           });
           //
           this.distance = 30;
           //
-          l2 = this.distance * 3;
+          l2 = this.distance * this.pxperinch;
           x2 = l2 * Math.cos((180 - this.curAngle) * Math.PI / 180);
           y2 = l2 * Math.sin((180 - this.curAngle) * Math.PI / 180);
           //
@@ -1134,17 +1134,17 @@ export default {
         this.startingPos.y = this.curY;//set Y starting pos
         this.startingPos.rotation = this.curAngle;
         if(this.sideChosen == 1){
-          console.log("On the inside.");
+          //console.log("On the inside.");
           this.interimPoint = {
             x: this.startingPos.x,
             y: this.startingPos.y,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: this.newColor,
-            strokeWidth: 5,
-            cornerRadius: 5,
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch,
             rotation: this.curAngle,
             lineCap: "round"
           };
@@ -1158,24 +1158,24 @@ export default {
             points: [
               this.curX,
               this.curY,
-              this.curX + ix * 3,
-              this.curY - iy * 3
+              this.curX + ix * this.pxperinch,
+              this.curY - iy * this.pxperinch
             ],
             stroke: "orange",
-            strokeWidth: 4,
+            strokeWidth: 4 / 3 * this.pxperinch,
             lineCap: "round"
           };
         }else if(this.sideChosen == 2){//finalize starting point
           this.points.push({
             x: this.startingPos.x,
             y: this.startingPos.y,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: "#32cd32",
-            strokeWidth: 5,
-            cornerRadius: 5,
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch,
             rotation: this.startingPos.rotation,
             lineCap: "round",
             lineJoin: "round"
@@ -1240,11 +1240,11 @@ export default {
               points: [
                 this.curX /*+ this.nextX*/,
                 this.curY /*+ this.nextY*/,
-                this.curX /* + this.nextX*/ + x1 * 3,
-                this.curY /* + this.nextY*/ - y1 * 3
+                this.curX /* + this.nextX*/ + x1 * this.pxperinch,
+                this.curY /* + this.nextY*/ - y1 * this.pxperinch
               ],
               stroke: "orange",
-              strokeWidth: 4,
+              strokeWidth: 4 / 3 * this.pxperinch,
               lineCap: "round"
             };
             //
@@ -1265,13 +1265,13 @@ export default {
                 var l2 = l1 * Math.cos(a2 * Math.PI / 180);
                 var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
                 var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
-                console.log(
+                /*console.log(
                   "L2 components--Y: " +
                     Math.pow(this.curY - mousePos.y, 2) +
                     ", X: " +
                     Math.pow(mousePos.x - this.curX, 2)
-                );
-                console.log(
+                );*/
+                /*console.log(
                   "New position--L1: " +
                     l1 +
                     ", A1: " +
@@ -1284,20 +1284,20 @@ export default {
                     x2 +
                     ", Y2: " +
                     y2
-                );
+                );*/
                 //draw interim stuff
                 this.interimPoint = {
                   //
                   x: this.curX + x2,
                   y: this.curY - y2,
-                  width: this.robotWidth * 3,
-                  height: this.robotLength * 3,
-                  offsetX: this.robotWidth * 3 / 2,
-                  offsetY: this.robotLength * 3 / 2,
+                  width: this.robotWidth * this.pxperinch,
+                  height: this.robotLength * this.pxperinch,
+                  offsetX: this.robotWidth * this.pxperinch / 2,
+                  offsetY: this.robotLength * this.pxperinch / 2,
                   stroke: this.newColor,
-                  strokeWidth: 5,
+                  strokeWidth: 5 / 3 * this.pxperinch,
                   dash: [20, 20],
-                  cornerRadius: 5,
+                  cornerRadius: 5 / 3 * this.pxperinch,
                   rotation: this.curAngle,
                   lineCap: "round",
                   lineJoin: "round"
@@ -1313,7 +1313,7 @@ export default {
                     this.curY - y2
                   ],
                   stroke: this.newColor,
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   dash: [20, 20],
                   lineCap: "round",
                   lineJoin: "round"
@@ -1342,14 +1342,14 @@ export default {
                   //
                   x: this.curX - x2,
                   y: this.curY + y2,
-                  width: this.robotWidth * 3,
-                  height: this.robotLength * 3,
-                  offsetX: this.robotWidth * 3 / 2,
-                  offsetY: this.robotLength * 3 / 2,
+                  width: this.robotWidth * this.pxperinch,
+                  height: this.robotLength * this.pxperinch,
+                  offsetX: this.robotWidth * this.pxperinch / 2,
+                  offsetY: this.robotLength * this.pxperinch / 2,
                   stroke: this.newColor,
-                  strokeWidth: 5,
+                  strokeWidth: 5 / 3 * this.pxperinch,
                   dash: [20, 20],
-                  cornerRadius: 5,
+                  cornerRadius: 5 / 3 * this.pxperinch,
                   rotation: this.curAngle,
                   lineCap: "round",
                   lineJoin: "round"
@@ -1365,7 +1365,7 @@ export default {
                     this.curY + y2
                   ],
                   stroke: this.newColor,
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   dash: [20, 20],
                   lineCap: "round",
                   lineJoin: "round"
@@ -1377,12 +1377,12 @@ export default {
                 //
               }
               //
-              this.distance = Math.round(l2 / 3 * 5) / 5;
+              this.distance = Math.round(l2 / this.pxperinch * 5) / 5;
               //
             } else {//interim is stationary
               this.getDrive();//draw stationary interim
             }
-            //console the math for direction line, I guess
+            ////console the math for direction line, I guess
             x1 =
               (this.robotLength / 2 + 5) *
               Math.cos((90 - this.curAngle) * Math.PI / 180);
@@ -1390,7 +1390,7 @@ export default {
               (this.robotLength / 2 + 5) *
               Math.sin((90 - this.curAngle) * Math.PI / 180);
             //
-            console.log("X1: " + x1 + ", Y1: " + y1);
+            //console.log("X1: " + x1 + ", Y1: " + y1);
             //
             break;
           case MovementOptions.TURN:
@@ -1408,7 +1408,7 @@ export default {
               y: 0,
               points: [this.curX, this.curY, this.curX + x1, this.curY - y1],
               stroke: "orange",
-              strokeWidth: 4,
+              strokeWidth: 4 / 3 * this.pxperinch,
               lineCap: "round"
             };
             //
@@ -1446,7 +1446,7 @@ export default {
                 y: 0,
                 points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
                 stroke: this.newColor,
-                strokeWidth: 4,
+                strokeWidth: 4 / 3 * this.pxperinch,
                 dash: [20, 20],
                 lineCap: "round",
                 lineJoin: "round"
@@ -1466,13 +1466,13 @@ export default {
               this.interimPoint = {
                 x: this.curX,
                 y: this.curY,
-                width: this.robotWidth * 3,
-                height: this.robotLength * 3,
-                offsetX: this.robotWidth * 3 / 2,
-                offsetY: this.robotLength * 3 / 2,
+                width: this.robotWidth * this.pxperinch,
+                height: this.robotLength * this.pxperinch,
+                offsetX: this.robotWidth * this.pxperinch / 2,
+                offsetY: this.robotLength * this.pxperinch / 2,
                 stroke: this.newColor,
-                strokeWidth: 5,
-                cornerRadius: 5,
+                strokeWidth: 5 / 3 * this.pxperinch,
+                cornerRadius: 5 / 3 * this.pxperinch,
                 rotation: this.nextAngle,
                 dash: [20, 20],
                 lineCap: "round",
@@ -1497,7 +1497,7 @@ export default {
                   angle: a2,
                   rotation: this.curAngle - 90,
                   stroke: this.newColor,
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   lineCap: "round",
                   lineJoin: "round"
                 };
@@ -1510,7 +1510,7 @@ export default {
                   angle: -a2,
                   rotation: this.nextAngle - 90,
                   stroke: this.newColor,
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   lineCap: "round",
                   lineJoin: "round"
                 };
@@ -1530,16 +1530,16 @@ export default {
               this.directionLine = {
                 x: 0,
                 y: 0,
-                points: [this.curX, this.curY, this.curX + x1 * 3, this.curY - y1 * 3],
+                points: [this.curX, this.curY, this.curX + x1 * this.pxperinch, this.curY - y1 * this.pxperinch],
                 stroke: "orange",
-                strokeWidth: 4,
+                strokeWidth: 4 / 3 * this.pxperinch,
                 lineCap: "round"
               };
               //
               this.interimLine = null;
               //
               var curA = this.curAngle;
-              console.log("curA: " + curA);
+              //console.log("curA: " + curA);
               if (curA < -90) {
                 curA += 180;
               } else if (curA > 90) {
@@ -1604,14 +1604,14 @@ export default {
                   rotation: start + (360 - 2 * (90 + a1 + curA)) - 90,
                   stroke: this.newColor,
                   dash: [20, 20],
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   lineCap: "round",
                   lineJoin: "round"
                 };
-                console.log("Angle: " + 2 * (90 + a1 + curA));
-                console.log(
+                //console.log("Angle: " + 2 * (90 + a1 + curA));
+                /*console.log(
                   "Rotation: " + (start + (360 - 2 * (90 + a1 + curA)))
-                );
+                );*/
               } else if (mousePos.y < perp) {
                 this.interimArc = {
                   x: this.curX + x1,
@@ -1622,11 +1622,11 @@ export default {
                   rotation: curA - 180,
                   stroke: this.newColor,
                   dash: [20, 20],
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   lineCap: "round",
                   lineJoin: "round"
                 };
-                console.log("first");
+                //console.log("first");
               } else {
                 this.interimArc = {
                   x: this.curX + x1,
@@ -1637,23 +1637,23 @@ export default {
                   rotation: curA,
                   dash: [20, 20],
                   stroke: this.newColor,
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   lineCap: "round",
                   lineJoin: "round"
                 };
-                console.log("Fourth");
+                //console.log("Fourth");
               }
               //
               this.interimPoint = {
                 x: mousePos.x,
                 y: mousePos.y,
-                width: this.robotWidth * 3,
-                height: this.robotLength * 3,
-                offsetX: this.robotWidth * 3 / 2,
-                offsetY: this.robotLength * 3 / 2,
+                width: this.robotWidth * this.pxperinch,
+                height: this.robotLength * this.pxperinch,
+                offsetX: this.robotWidth * this.pxperinch / 2,
+                offsetY: this.robotLength * this.pxperinch / 2,
                 stroke: this.newColor,
-                strokeWidth: 5,
-                cornerRadius: 5,
+                strokeWidth: 5 / 3 * this.pxperinch,
+                cornerRadius: 5 / 3 * this.pxperinch,
                 rotation: this.curAngle - (curA + (a1 + 90)) * 2,
                 dash: [20, 20],
                 lineCap: "round",
@@ -1664,7 +1664,7 @@ export default {
                 Math.pow(this.curY - mousePos.y, 2) +
                   Math.pow(mousePos.x - this.curX, 2)
               );
-              this.distance = Math.round(dis / 3 * 5) / 5;
+              this.distance = Math.round(dis / this.pxperinch * 5) / 5;
               var ang =
                 Math.asin((this.curY - mousePos.y) / dis) * 180 / Math.PI - 90;
               if (mousePos.x > this.curX) {
@@ -1700,11 +1700,11 @@ export default {
               points: [
                 this.curX /*+ this.nextX*/,
                 this.curY /*+ this.nextY*/,
-                this.curX /* + this.nextX*/ + x1 * 3,
-                this.curY /* + this.nextY*/ - y1 * 3
+                this.curX /* + this.nextX*/ + x1 * this.pxperinch,
+                this.curY /* + this.nextY*/ - y1 * this.pxperinch
               ],
               stroke: "orange",
-              strokeWidth: 4,
+              strokeWidth: 4 / 3 * this.pxperinch,
               lineCap: "round"
             };
             //
@@ -1725,25 +1725,25 @@ export default {
                 l2 = l1 * Math.cos(a2 * Math.PI / 180);
                 x2 = l2 * Math.cos((180 - this.curAngle) * Math.PI / 180);
                 y2 = l2 * Math.sin((180 - this.curAngle) * Math.PI / 180);
-                console.log(
+                /*console.log(
                   "L2 components--Y: " +
                     Math.pow(this.curY - mousePos.y, 2) +
                     ", X: " +
                     Math.pow(mousePos.x - this.curX, 2)
-                );
+                );*/setGenerateVisible
                 //
                 this.interimPoint = {
                   //
                   x: this.curX + x2,
                   y: this.curY - y2,
-                  width: this.robotWidth * 3,
-                  height: this.robotLength * 3,
-                  offsetX: this.robotWidth * 3 / 2,
-                  offsetY: this.robotLength * 3 / 2,
+                  width: this.robotWidth * this.pxperinch,
+                  height: this.robotLength * this.pxperinch,
+                  offsetX: this.robotWidth * this.pxperinch / 2,
+                  offsetY: this.robotLength * this.pxperinch / 2,
                   stroke: this.newColor,
-                  strokeWidth: 5,
+                  strokeWidth: 5 / 3 * this.pxperinch,
                   dash: [20, 20],
-                  cornerRadius: 5,
+                  cornerRadius: 5 / 3 * this.pxperinch,
                   rotation: this.curAngle,
                   lineCap: "round",
                   lineJoin: "round"
@@ -1759,7 +1759,7 @@ export default {
                     this.curY - y2
                   ],
                   stroke: this.newColor,
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   dash: [20, 20],
                   lineCap: "round",
                   lineJoin: "round"
@@ -1788,14 +1788,14 @@ export default {
                   //
                   x: this.curX - x2,
                   y: this.curY + y2,
-                  width: this.robotWidth * 3,
-                  height: this.robotLength * 3,
-                  offsetX: this.robotWidth * 3 / 2,
-                  offsetY: this.robotLength * 3 / 2,
+                  width: this.robotWidth * this.pxperinch,
+                  height: this.robotLength * this.pxperinch,
+                  offsetX: this.robotWidth * this.pxperinch / 2,
+                  offsetY: this.robotLength * this.pxperinch / 2,
                   stroke: this.newColor,
-                  strokeWidth: 5,
+                  strokeWidth: 5 / 3 * this.pxperinch,
                   dash: [20, 20],
-                  cornerRadius: 5,
+                  cornerRadius: 5 / 3 * this.pxperinch,
                   rotation: this.curAngle,
                   lineCap: "round",
                   lineJoin: "round"
@@ -1811,7 +1811,7 @@ export default {
                     this.curY + y2
                   ],
                   stroke: this.newColor,
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   dash: [20, 20],
                   lineCap: "round",
                   lineJoin: "round"
@@ -1823,7 +1823,7 @@ export default {
                 //
               }
               //
-              this.distance = Math.round(l2 / 3 * 5) / -5;
+              this.distance = Math.round(l2 / this.pxperinch * 5) / -5;
               //
             } else {
               this.getStrafe();
@@ -1835,17 +1835,17 @@ export default {
         this.curY = mousePos.y;
         this.startingPos.y = mousePos.y;
         this.$store.commit("setSide", [this.starpos, this.startingPos.y]);
-        console.log("Set Y: " + this.$store.getters.getYSide);
+        //console.log("Set Y: " + this.$store.getters.getYSide);
         this.interimPoint = {
           x: this.startingPos.x,
           y: mousePos.y,
-          width: this.robotWidth * 3,
-          height: this.robotLength * 3,
-          offsetX: this.robotWidth * 3 / 2,
-          offsetY: this.robotLength * 3 / 2,
+          width: this.robotWidth * this.pxperinch,
+          height: this.robotLength * this.pxperinch,
+          offsetX: this.robotWidth * this.pxperinch / 2,
+          offsetY: this.robotLength * this.pxperinch / 2,
           stroke: this.newColor,
-          strokeWidth: 5,
-          cornerRadius: 5,
+          strokeWidth: 5 / 3 * this.pxperinch,
+          cornerRadius: 5 / 3 * this.pxperinch,
           dash: [20, 20],
           rotation: this.startingPos.rotation,
           lineCap: "round",
@@ -1863,13 +1863,13 @@ export default {
         this.interimPoint = {
           x: this.startingPos.x,
           y: this.startingPos.y,
-          width: this.robotWidth * 3,
-          height: this.robotLength * 3,
-          offsetX: this.robotWidth * 3 / 2,
-          offsetY: this.robotLength * 3 / 2,
+          width: this.robotWidth * this.pxperinch,
+          height: this.robotLength * this.pxperinch,
+          offsetX: this.robotWidth * this.pxperinch / 2,
+          offsetY: this.robotLength * this.pxperinch / 2,
           stroke: this.newColor,
-          strokeWidth: 5,
-          cornerRadius: 5,
+          strokeWidth: 5 / 3 * this.pxperinch,
+          cornerRadius: 5 / 3 * this.pxperinch,
           rotation: this.curAngle,
           lineCap: "round",
           lineJoin: "round"
@@ -1884,11 +1884,11 @@ export default {
           points: [
             this.curX,
             this.curY,
-            this.curX + x1 * 3,
-            this.curY - y1 * 3
+            this.curX + x1 * this.pxperinch,
+            this.curY - y1 * this.pxperinch
           ],
           stroke: "orange",
-          strokeWidth: 4,
+          strokeWidth: 4 / 3 * this.pxperinch,
           lineCap: "round"
         };
         //
@@ -1910,11 +1910,11 @@ export default {
         points: [
           this.curX,
           this.curY,
-          this.curX + x1 * 3,
-          this.curY - y1 * 3
+          this.curX + x1 * this.pxperinch,
+          this.curY - y1 * this.pxperinch
         ],
         stroke: "orange",
-        strokeWidth: 4,
+        strokeWidth: 4 / 3 * this.pxperinch,
         lineCap: "round"
       };
       //remove arcing lines
@@ -1922,7 +1922,7 @@ export default {
         stroke: ""
       };
       //calculate interim location
-      var l2 = this.distance * 3;
+      var l2 = this.distance * this.pxperinch;
       var x2 = l2 * Math.cos((90 - this.curAngle) * Math.PI / 180);
       var y2 = l2 * Math.sin((90 - this.curAngle) * Math.PI / 180);
       //
@@ -1933,13 +1933,13 @@ export default {
         //
         x: this.curX + x2,
         y: this.curY - y2,
-        width: this.robotWidth * 3,
-        height: this.robotLength * 3,
-        offsetX: this.robotWidth * 3 / 2,
-        offsetY: this.robotLength * 3 / 2,
+        width: this.robotWidth * this.pxperinch,
+        height: this.robotLength * this.pxperinch,
+        offsetX: this.robotWidth * this.pxperinch / 2,
+        offsetY: this.robotLength * this.pxperinch / 2,
         stroke: this.newColor,
-        strokeWidth: 5,
-        cornerRadius: 5,
+        strokeWidth: 5 / 3 * this.pxperinch,
+        cornerRadius: 5 / 3 * this.pxperinch,
         rotation: this.curAngle,
         lineCap: "round",
         lineJoin: "round"
@@ -1950,7 +1950,7 @@ export default {
         y: 0,
         points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
         stroke: this.newColor,
-        strokeWidth: 4,
+        strokeWidth: 4 / 3 * this.pxperinch,
         lineCap: "round",
         lineJoin: "round"
       };
@@ -1968,7 +1968,7 @@ export default {
         y: 0,
         points: [this.curX, this.curY, this.curX + x1, this.curY - y1],
         stroke: "orange",
-        strokeWidth: 4,
+        strokeWidth: 4 / 3 * this.pxperinch,
         lineCap: "round"
       };
       //
@@ -1984,7 +1984,7 @@ export default {
         y: 0,
         points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
         stroke: this.newColor,
-        strokeWidth: 4,
+        strokeWidth: 4 / 3 * this.pxperinch,
         lineCap: "round",
         lineJoin: "round"
       };
@@ -1992,13 +1992,13 @@ export default {
       this.interimPoint = {
         x: this.curX,
         y: this.curY,
-        width: this.robotWidth * 3,
-        height: this.robotLength * 3,
-        offsetX: this.robotWidth * 3 / 2,
-        offsetY: this.robotLength * 3 / 2,
+        width: this.robotWidth * this.pxperinch,
+        height: this.robotLength * this.pxperinch,
+        offsetX: this.robotWidth * this.pxperinch / 2,
+        offsetY: this.robotLength * this.pxperinch / 2,
         stroke: this.newColor,
-        strokeWidth: 5,
-        cornerRadius: 5,
+        strokeWidth: 5 / 3 * this.pxperinch,
+        cornerRadius: 5 / 3 * this.pxperinch,
         rotation: this.nextAngle,
         lineCap: "round",
         lineJoin: "round"
@@ -2013,7 +2013,7 @@ export default {
           angle: this.angle,
           rotation: this.curAngle - 90,
           stroke: this.newColor,
-          strokeWidth: 4,
+          strokeWidth: 4 / 3 * this.pxperinch,
           lineCap: "round",
           lineJoin: "round"
         };
@@ -2026,7 +2026,7 @@ export default {
           angle: -this.angle,
           rotation: this.nextAngle - 90,
           stroke: this.newColor,
-          strokeWidth: 4,
+          strokeWidth: 4 / 3 * this.pxperinch,
           lineCap: "round",
           lineJoin: "round"
         };
@@ -2043,23 +2043,23 @@ export default {
       //
       this.nextAy =
         this.distance *
-        3 *
+        this.pxperinch *
         Math.cos((Number(ang) + this.curAngle) * Math.PI / 180);
       this.nextAx =
         this.distance *
-        3 *
+        this.pxperinch *
         Math.sin((Number(ang) + this.curAngle) * Math.PI / 180);
       //
-      console.log("angle: " + (Number(ang) + this.curAngle));
+      //console.log("angle: " + (Number(ang) + this.curAngle));
       //
-      console.log(
+      /*console.log(
         "ayL: " +
-          this.distance * 3 * Math.cos((ang + this.curAngle) * Math.PI / 180)
+          this.distance * this.pxperinch * Math.cos((ang + this.curAngle) * Math.PI / 180)
       );
-      console.log(
+      //console.log(
         "axL: " +
-          this.distance * 3 * Math.sin((ang + this.curAngle) * Math.PI / 180)
-      );
+          this.distance * this.pxperinch * Math.sin((ang + this.curAngle) * Math.PI / 180)
+      );*/
       //
       if (this.nextAx == 0) {
         this.nextAx = 0.01;
@@ -2081,16 +2081,16 @@ export default {
       this.directionLine = {
         x: 0,
         y: 0,
-        points: [this.curX, this.curY, this.curX + x1 * 3, this.curY - y1 * 3],
+        points: [this.curX, this.curY, this.curX + x1 * this.pxperinch, this.curY - y1 * this.pxperinch],
         stroke: "orange",
-        strokeWidth: 4,
+        strokeWidth: 4 / 3 * this.pxperinch,
         lineCap: "round"
       };
       //
       this.interimLine = null;
       //
       var curA = this.curAngle;
-      console.log("curA: " + curA);
+      //console.log("curA: " + curA);
       if (curA < -90) {
         curA += 180;
       } else if (curA > 90) {
@@ -2140,9 +2140,9 @@ export default {
         a2 = a2 - 360;
       }
       //
-      console.log(
+      /*console.log(
         "D1: " + d1 + ", A1: " + a1 + ", R: " + r + ", X1: " + x1 + ", Y1: " + y1 + ", Perp: " + perp + ", Par: " + par);
-      //
+      /*/
       if (
         (this.nextAy > perp && this.nextAx > par) ||
         (this.nextAx < par && this.nextAy < perp)
@@ -2155,12 +2155,12 @@ export default {
           angle: 2 * (90 + a1 + curA),
           rotation: start + (360 - 2 * (90 + a1 + curA)) - 90,
           stroke: this.newColor,
-          strokeWidth: 4,
+          strokeWidth: 4 / 3 * this.pxperinch,
           lineCap: "round",
           lineJoin: "round"
         };
-        console.log("Angle: " + 2 * (90 + a1 + curA));
-        console.log("Rotation: " + (start + (360 - 2 * (90 + a1 + curA))));
+        //console.log("Angle: " + 2 * (90 + a1 + curA));
+        //console.log("Rotation: " + (start + (360 - 2 * (90 + a1 + curA))));
       } else if (this.nextAy <= perp) {
         this.interimArc = {
           x: this.curX + x1,
@@ -2170,11 +2170,11 @@ export default {
           angle: a2,
           rotation: curA - 180,
           stroke: this.newColor,
-          strokeWidth: 4,
+          strokeWidth: 4 / 3 * this.pxperinch,
           lineCap: "round",
           lineJoin: "round"
         };
-        console.log("first");
+        //console.log("first");
       } else {
         this.interimArc = {
           x: this.curX + x1,
@@ -2184,29 +2184,29 @@ export default {
           angle: a2,
           rotation: curA,
           stroke: this.newColor,
-          strokeWidth: 4,
+          strokeWidth: 4 / 3 * this.pxperinch,
           lineCap: "round",
           lineJoin: "round"
         };
-        console.log("Fourth");
+        //console.log("Fourth");
       }
       //
       this.interimPoint = {
         x: this.nextAx,
         y: this.nextAy,
-        width: this.robotWidth * 3,
-        height: this.robotLength * 3,
-        offsetX: this.robotWidth * 3 / 2,
-        offsetY: this.robotLength * 3 / 2,
+        width: this.robotWidth * this.pxperinch,
+        height: this.robotLength * this.pxperinch,
+        offsetX: this.robotWidth * this.pxperinch / 2,
+        offsetY: this.robotLength * this.pxperinch / 2,
         stroke: this.newColor,
-        strokeWidth: 5,
-        cornerRadius: 5,
+        strokeWidth: 5 / 3 * this.pxperinch,
+        cornerRadius: 5 / 3 * this.pxperinch,
         rotation: this.curAngle - (curA + (a1 + 90)) * 2,
         lineCap: "round",
         lineJoin: "round"
       };
       //
-      console.log("Ay: " + this.nextAy + " , Ax: " + this.nextAx);
+      //console.log("Ay: " + this.nextAy + " , Ax: " + this.nextAx);
       //
     },
     getStrafe: function() {
@@ -2223,11 +2223,11 @@ export default {
         points: [
           this.curX /*+ this.nextX*/,
           this.curY /*+ this.nextY*/,
-          this.curX /* + this.nextX*/ + x1 * 3,
-          this.curY /* + this.nextY*/ - y1 * 3
+          this.curX /* + this.nextX*/ + x1 * this.pxperinch,
+          this.curY /* + this.nextY*/ - y1 * this.pxperinch
         ],
         stroke: "orange",
-        strokeWidth: 4,
+        strokeWidth: 4 / 3 * this.pxperinch,
         lineCap: "round"
       };
       //
@@ -2235,7 +2235,7 @@ export default {
         stroke: ""
       };
       //
-      var l2 = this.distance * 3;
+      var l2 = this.distance * this.pxperinch;
       var x2 = l2 * Math.cos((180 - this.curAngle) * Math.PI / 180);
       var y2 = l2 * Math.sin((180 - this.curAngle) * Math.PI / 180);
       x2 = x2 * -1;
@@ -2248,13 +2248,13 @@ export default {
         //
         x: this.curX + x2,
         y: this.curY - y2,
-        width: this.robotWidth * 3,
-        height: this.robotLength * 3,
-        offsetX: this.robotWidth * 3 / 2,
-        offsetY: this.robotLength * 3 / 2,
+        width: this.robotWidth * this.pxperinch,
+        height: this.robotLength * this.pxperinch,
+        offsetX: this.robotWidth * this.pxperinch / 2,
+        offsetY: this.robotLength * this.pxperinch / 2,
         stroke: this.newColor,
-        strokeWidth: 5,
-        cornerRadius: 5,
+        strokeWidth: 5 / 3 * this.pxperinch,
+        cornerRadius: 5 / 3 * this.pxperinch,
         rotation: this.curAngle,
         lineCap: "round",
         lineJoin: "round"
@@ -2265,7 +2265,7 @@ export default {
         y: 0,
         points: [this.curX, this.curY, this.curX + x2, this.curY - y2],
         stroke: this.newColor,
-        strokeWidth: 4,
+        strokeWidth: 4 / 3 * this.pxperinch,
         lineCap: "round",
         lineJoin: "round"
       };
@@ -2277,13 +2277,13 @@ export default {
         //
         x: this.curX + this.nextX,
         y: this.curY + this.nextY,
-        width: this.robotWidth * 3,
-        height: this.robotLength * 3,
-        offsetX: this.robotWidth * 3 / 2,
-        offsetY: this.robotLength * 3 / 2,
+        width: this.robotWidth * this.pxperinch,
+        height: this.robotLength * this.pxperinch,
+        offsetX: this.robotWidth * this.pxperinch / 2,
+        offsetY: this.robotLength * this.pxperinch / 2,
         stroke: this.newColor,
-        strokeWidth: 5,
-        cornerRadius: 5,
+        strokeWidth: 5 / 3 * this.pxperinch,
+        cornerRadius: 5 / 3 * this.pxperinch,
         rotation: this.curAngle,
         lineCap: "round",
         lineJoin: "round"
@@ -2299,14 +2299,14 @@ export default {
           this.curY + this.nextY
         ],
         stroke: this.newColor,
-        strokeWidth: 4,
+        strokeWidth: 4 / 3 * this.pxperinch,
         lineCap: "round",
         lineJoin: "round"
       };
     },
     recallAuto: function(){
       //this function is called when an auto has already been created, not deleted, and returned to
-      console.log("I've entered the function.");
+      //console.log("I've entered the function.");
       //
       this.curX = this.startingPos.x;
       this.curY = this.startingPos.y;
@@ -2316,14 +2316,14 @@ export default {
         this.recalling = true;
         for (var i = 0; i < steps.length; i++) {
           //do point + line
-          console.log("Step type: " + steps[i].type);
+          //console.log("Step type: " + steps[i].type);
           switch (steps[i].type) {//redraw step in progress
             case MovementOptions.DRIVE:
               this.distance = steps[i].params.distance;
               var mx =
-                this.distance * 3 * Math.cos((90 - this.curAngle) * Math.PI / 180);
+                this.distance * this.pxperinch * Math.cos((90 - this.curAngle) * Math.PI / 180);
               var my =
-                this.distance * 3 * Math.sin((90 - this.curAngle) * Math.PI / 180);
+                this.distance * this.pxperinch * Math.sin((90 - this.curAngle) * Math.PI / 180);
               //
               this.nextX = mx;
               this.nextY = -my;
@@ -2340,7 +2340,7 @@ export default {
                   this.curY + this.nextY
                 ],
                 stroke: grad,
-                strokeWidth: 4,
+                strokeWidth: 4 / 3 * this.pxperinch,
                 lineCap: "round"
               });
               //
@@ -2349,13 +2349,13 @@ export default {
                 x: this.curX,
                 y: this.curY,
                 rotation: this.curAngle,
-                width: this.robotWidth * 3,
-                height: this.robotLength * 3,
-                offsetX: this.robotWidth * 3 / 2,
-                offsetY: this.robotLength * 3 / 2,
+                width: this.robotWidth * this.pxperinch,
+                height: this.robotLength * this.pxperinch,
+                offsetX: this.robotWidth * this.pxperinch / 2,
+                offsetY: this.robotLength * this.pxperinch / 2,
                 stroke: this.stepColors[this.currentColor],
-                strokeWidth: 5,
-                cornerRadius: 5
+                strokeWidth: 5 / 3 * this.pxperinch,
+                cornerRadius: 5 / 3 * this.pxperinch
               });
               this.curX = this.curX + this.nextX;
               this.curY = this.curY + this.nextY;
@@ -2366,7 +2366,7 @@ export default {
               this.nextAngle = this.curAngle + this.angle;
               //
               if (this.angle > 0) {//push arc to new angle
-                console.log("Positive Change");
+                //console.log("Positive Change");
                 this.arcs.push({
                   x: this.curX,
                   y: this.curY,
@@ -2375,12 +2375,12 @@ export default {
                   angle: this.angle,
                   rotation: this.curAngle - 90,
                   stroke: this.stepColors[this.currentColor + 1],
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   lineCap: "round",
                   lineJoin: "round"
                 });
               } else {
-                console.log("Negative change");
+                //console.log("Negative change");
                 this.arcs.push({
                   x: this.curX,
                   y: this.curY,
@@ -2389,7 +2389,7 @@ export default {
                   angle: -this.angle,
                   rotation: this.nextAngle - 90,
                   stroke: this.stepColors[this.currentColor + 1],
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   lineCap: "round",
                   lineJoin: "round"
                 });
@@ -2399,13 +2399,13 @@ export default {
                 x: this.curX,
                 y: this.curY,
                 rotation: this.curAngle,
-                width: this.robotWidth * 3,
-                height: this.robotLength * 3,
-                offsetX: this.robotWidth * 3 / 2,
-                offsetY: this.robotLength * 3 / 2,
+                width: this.robotWidth * this.pxperinch,
+                height: this.robotLength * this.pxperinch,
+                offsetX: this.robotWidth * this.pxperinch / 2,
+                offsetY: this.robotLength * this.pxperinch / 2,
                 stroke: this.stepColors[this.currentColor],
-                strokeWidth: 5,
-                cornerRadius: 5
+                strokeWidth: 5 / 3 * this.pxperinch,
+                cornerRadius: 5 / 3 * this.pxperinch
               });
               //
               this.curAngle = this.curAngle + this.angle;
@@ -2418,13 +2418,13 @@ export default {
                 x: this.curX,
                 y: this.curY,
                 rotation: this.curAngle,
-                width: this.robotWidth * 3,
-                height: this.robotLength * 3,
-                offsetX: this.robotWidth * 3 / 2,
-                offsetY: this.robotLength * 3 / 2,
+                width: this.robotWidth * this.pxperinch,
+                height: this.robotLength * this.pxperinch,
+                offsetX: this.robotWidth * this.pxperinch / 2,
+                offsetY: this.robotLength * this.pxperinch / 2,
                 stroke: this.stepColors[this.currentColor],
-                strokeWidth: 5,
-                cornerRadius: 5
+                strokeWidth: 5 / 3 * this.pxperinch,
+                cornerRadius: 5 / 3 * this.pxperinch
               });
               //crazy math starts here
               var ang = Number(this.angle);
@@ -2434,11 +2434,11 @@ export default {
               //
               this.nextAy =
                 this.distance *
-                3 *
+                this.pxperinch *
                 Math.cos((Number(ang) + this.curAngle) * Math.PI / 180);
               this.nextAx =
                 this.distance *
-                3 *
+                this.pxperinch *
                 Math.sin((Number(ang) + this.curAngle) * Math.PI / 180);
               //
               if (this.nextAx == 0) {
@@ -2514,7 +2514,7 @@ export default {
                   angle: 2 * (90 + a1 + curA),
                   rotation: start + (360 - 2 * (90 + a1 + curA)) - 90,
                   stroke: this.stepColors[this.currentColor + 1],
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   lineCap: "round",
                   lineJoin: "round"
                 });
@@ -2527,7 +2527,7 @@ export default {
                   angle: a2,
                   rotation: curA - 180,
                   stroke: this.stepColors[this.currentColor + 1],
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   lineCap: "round",
                   lineJoin: "round"
                 });
@@ -2540,7 +2540,7 @@ export default {
                   angle: a2,
                   rotation: curA,
                   stroke: this.stepColors[this.currentColor + 1],
-                  strokeWidth: 4,
+                  strokeWidth: 4 / 3 * this.pxperinch,
                   lineCap: "round",
                   lineJoin: "round"
                 });
@@ -2565,14 +2565,14 @@ export default {
               this.distance = steps[i].params.distance;
               //
               mx =
-                this.distance * 3 * Math.cos((180 - this.curAngle) * Math.PI / 180);
+                this.distance * this.pxperinch * Math.cos((180 - this.curAngle) * Math.PI / 180);
               my =
-                this.distance * 3 * Math.sin((180 - this.curAngle) * Math.PI / 180);
+                this.distance *  this.pxperinch* Math.sin((180 - this.curAngle) * Math.PI / 180);
               //
               this.nextX = -mx;
               this.nextY = my;
-              console.log("mx: " + this.nextX + ", my: " + this.nextY);
-              console.log("x: " + (this.curX + this.nextX) + ", y: " + (this.curY + this.nextY));
+              //console.log("mx: " + this.nextX + ", my: " + this.nextY);
+              //console.log("x: " + (this.curX + this.nextX) + ", y: " + (this.curY + this.nextY));
               //
               grad = this.createGradient(this.stepColors[this.currentColor], this.stepColors[this.currentColor + 1], 5, this.curX, this.curY, this.curX + this.nextX, this.curY + this.nextY);
               //
@@ -2586,7 +2586,7 @@ export default {
                   this.curY + this.nextY
                 ],
                 stroke: grad,
-                strokeWidth: 4,
+                strokeWidth: 4 / 3 * this.pxperinch,
                 lineCap: "round"
               });
               //
@@ -2595,13 +2595,13 @@ export default {
                 x: this.curX,
                 y: this.curY,
                 rotation: this.curAngle,
-                width: this.robotWidth * 3,
-                height: this.robotLength * 3,
-                offsetX: this.robotWidth * 3 / 2,
-                offsetY: this.robotLength * 3 / 2,
+                width: this.robotWidth * this.pxperinch,
+                height: this.robotLength * this.pxperinch,
+                offsetX: this.robotWidth * this.pxperinch / 2,
+                offsetY: this.robotLength * this.pxperinch / 2,
                 stroke: this.stepColors[this.currentColor],
-                strokeWidth: 5,
-                cornerRadius: 5
+                strokeWidth: 5 / 3 * this.pxperinch,
+                cornerRadius: 5 / 3 * this.pxperinch
               });
               //
               this.curX = this.curX + this.nextX;
@@ -2615,7 +2615,7 @@ export default {
             this.currentColor++;
           }
           //
-          console.log("I'm on step: " + (i + 1));
+          ////console.log("I'm on step: " + (i + 1));
           /*
           Steps:
           1. Determine step type
@@ -2631,26 +2631,26 @@ export default {
           x: this.curX,
           y: this.curY,
           rotation: this.curAngle,
-          width: this.robotWidth * 3,
-          height: this.robotLength * 3,
-          offsetX: this.robotWidth * 3 / 2,
-          offsetY: this.robotLength * 3 / 2,
+          width: this.robotWidth * this.pxperinch,
+          height: this.robotLength * this.pxperinch,
+          offsetX: this.robotWidth * this.pxperinch / 2,
+          offsetY: this.robotLength * this.pxperinch / 2,
           stroke: "#32cd32",
-          strokeWidth: 5,
-          cornerRadius: 5
+          strokeWidth: 5 / 3 * this.pxperinch,
+          cornerRadius: 5 / 3 * this.pxperinch
         });
         //
       }else{//there are no saved steps
         this.points.push({
             x: this.startingPos.x,
             y: this.startingPos.y,
-            width: this.robotWidth * 3,
-            height: this.robotLength * 3,
-            offsetX: this.robotWidth * 3 / 2,
-            offsetY: this.robotLength * 3 / 2,
+            width: this.robotWidth * this.pxperinch,
+            height: this.robotLength * this.pxperinch,
+            offsetX: this.robotWidth * this.pxperinch / 2,
+            offsetY: this.robotLength * this.pxperinch / 2,
             stroke: "#32cd32",
-            strokeWidth: 5,
-            cornerRadius: 5,
+            strokeWidth: 5 / 3 * this.pxperinch,
+            cornerRadius: 5 / 3 * this.pxperinch,
             rotation: this.startingPos.rotation,
             lineCap: "round",
             lineJoin: "round"
@@ -2677,13 +2677,37 @@ export default {
       }
     }
   },
-  created() {
+  mounted() {
+    console.log("Created called");
+    //console.log("chassis: " + this.$store.getters.chassis);
     //
-    console.log("chassis: " + this.$store.getters.chassis);
+    var scrw = window.innerWidth;//get screen width
+    var scrh = window.innerHeight;//get screen height
+    //
+    //console.log(`Width: ${scrw}, Height: ${scrh}`);
     //
     if (this.$store.getters.chassis == null) {//Go home if no chassis
       this.$router.push("/");
     }
+    if(!this.$store.getters.getFirstChassis){
+      alert("Please note: the current starting position system is outdated, and will be updated shortly.");
+    }
+    //
+    if(!this.$store.getters.getYSide){
+      //set field dimensions
+      console.log(`Fresh auto`);
+      var factor = 0;
+      if(scrh / scrw > 0.481){//bigger height than normal
+        factor = scrw / 1422;
+      }else{//bigger width than normal
+        factor = scrh / 684;
+      }
+      console.log(`Factor: ${factor}`);
+      this.pxperinch = 3 * factor;
+      this.fieldDim = (423 / 3) * this.pxperinch;
+      console.log(`FieldDim: ${this.fieldDim}`);
+    }
+    //
     if(this.$store.getters.getDBias){//fresh auto
       if(this.$store.getters.chassis == 'meccanum'){//meccy bias
         this.bias = 0.8;
@@ -2706,21 +2730,21 @@ export default {
     }
     if(this.$store.getters.getSide != "Starting Side"){//Recall auto - starting side
       this.starpos = this.$store.getters.getSide;
-      console.log("Starpos: " + this.starpos);
+      //console.log("Starpos: " + this.starpos);
       this.laststarpos = this.starpos;
       if(this.$store.getters.getYSide == "null"){//position hasn't been finalized
         this.sideChosen = 0;
         this.confirmDelete();
       }else{//pos is final
         this.sideChosen = 3;
-        console.log(this.$store.getters.getYSide);
+        //console.log(this.$store.getters.getYSide);
         this.startingPos.y = this.$store.getters.getYSide;
         if (this.starpos == "left") {
-          this.startingPos.x = (this.robotLength * 3 / 2 + 5);
+          this.startingPos.x = (this.robotLength * this.pxperinch / 2 + 5);
           this.startingPos.rotation = 90;
           this.curAngle = 90;
         } else if (this.starpos == "right") {
-          this.startingPos.x = this.fieldDim - (this.robotLength * 3 / 2) - 5;
+          this.startingPos.x = this.fieldDim - (this.robotLength * this.pxperinch / 2) - 5;
           this.startingPos.rotation = -90;
           this.curAngle = -90;
         }
@@ -2759,7 +2783,7 @@ export default {
     interimLine: null,
     interimArc: null,
     directionLine: null,
-    field: require("@/assets/Pictures/skyField1.png"),
+    field: require("@/assets/Pictures/ultimateField.png"),
     fieldDim: 423,
     curX: 268,
     curY: 159,
@@ -2847,7 +2871,7 @@ input:disabled {
 
 #pos-name {
   position: absolute;
-  left: 2%;
+  left: .5%;
   top: 12%;
   width: 16.5%;
   height: 5%;
