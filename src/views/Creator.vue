@@ -1834,7 +1834,7 @@ export default {
         this.curX = this.startingPos.x;
         this.curY = mousePos.y;
         this.startingPos.y = mousePos.y;
-        this.$store.commit("setSide", [this.starpos, this.startingPos.y]);
+        this.$store.commit("setSide", [this.starpos, this.startingPos.y, this.startingPos.rotation]);
         //console.log("Set Y: " + this.$store.getters.getYSide);
         this.interimPoint = {
           x: this.startingPos.x,
@@ -1891,6 +1891,8 @@ export default {
           strokeWidth: 4 / 3 * this.pxperinch,
           lineCap: "round"
         };
+        //
+        this.$store.commit("setSide", [this.starpos, this.startingPos.y, this.curAngle]);
         //
       }
     },
@@ -2678,7 +2680,7 @@ export default {
     }
   },
   mounted() {
-    console.log("Created called");
+    //console.log("Created called");
     //console.log("chassis: " + this.$store.getters.chassis);
     //
     var scrw = window.innerWidth;//get screen width
@@ -2706,6 +2708,11 @@ export default {
       this.pxperinch = 3 * factor;
       this.fieldDim = (423 / 3) * this.pxperinch;
       console.log(`FieldDim: ${this.fieldDim}`);
+      //
+      this.$store.commit("setPx", this.pxperinch);
+    }else{
+      this.pxperinch = this.$store.getters.getPxPerInch;
+      this.fieldDim = (423 / 3) * this.pxperinch;
     }
     //
     if(this.$store.getters.getDBias){//fresh auto
@@ -2741,13 +2748,12 @@ export default {
         this.startingPos.y = this.$store.getters.getYSide;
         if (this.starpos == "left") {
           this.startingPos.x = (this.robotLength * this.pxperinch / 2 + 5);
-          this.startingPos.rotation = 90;
-          this.curAngle = 90;
         } else if (this.starpos == "right") {
           this.startingPos.x = this.fieldDim - (this.robotLength * this.pxperinch / 2) - 5;
-          this.startingPos.rotation = -90;
-          this.curAngle = -90;
         }
+        this.startingPos.rotation = this.$store.getters.getStartRot;
+        this.curAngle = this.startingPos.rotation;
+        console.log(`Stating rotation: ${this.curAngle}`);
         this.recallAuto();
       }
     }
