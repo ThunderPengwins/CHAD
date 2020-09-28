@@ -289,11 +289,11 @@ export default {
           }
           line += "arc(" + angy + ", " + disy + ", " + spd + ");";
         }else{
-          var disy = steps[i].params.distance;
+          disy = steps[i].params.distance;
           if(this.isWhole(disy)){
             disy = disy + ".0";
           }
-          var spd = steps[i].params.speed;
+          spd = steps[i].params.speed;
           if(this.isWhole(spd)){//fix this
             spd += ".0";
           }
@@ -1730,7 +1730,7 @@ export default {
                     Math.pow(this.curY - mousePos.y, 2) +
                     ", X: " +
                     Math.pow(mousePos.x - this.curX, 2)
-                );*/setGenerateVisible
+                );*/
                 //
                 this.interimPoint = {
                   //
@@ -2697,17 +2697,17 @@ export default {
     //
     if(!this.$store.getters.getYSide){
       //set field dimensions
-      console.log(`Fresh auto`);
+      //console.log(`Fresh auto`);
       var factor = 0;
       if(scrh / scrw > 0.481){//bigger height than normal
         factor = scrw / 1422;
       }else{//bigger width than normal
         factor = scrh / 684;
       }
-      console.log(`Factor: ${factor}`);
+      //console.log(`Factor: ${factor}`);
       this.pxperinch = 3 * factor;
       this.fieldDim = (423 / 3) * this.pxperinch;
-      console.log(`FieldDim: ${this.fieldDim}`);
+      //console.log(`FieldDim: ${this.fieldDim}`);
       //
       this.$store.commit("setPx", this.pxperinch);
     }else{
@@ -2753,7 +2753,7 @@ export default {
         }
         this.startingPos.rotation = this.$store.getters.getStartRot;
         this.curAngle = this.startingPos.rotation;
-        console.log(`Stating rotation: ${this.curAngle}`);
+        //console.log(`Stating rotation: ${this.curAngle}`);
         this.recallAuto();
       }
     }
