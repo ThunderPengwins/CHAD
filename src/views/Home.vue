@@ -36,6 +36,9 @@
 
 <script>
 var file1 = require('@/assets/slideshow/p1.jpg')
+var file2 = require('@/assets/slideshow/p2.jpg')
+var file3 = require('@/assets/slideshow/p3.jpg')
+var file4 = require('@/assets/slideshow/p4.jpg')
 
 import { MovementOptions } from "@/store/steps";
 export default {
@@ -45,7 +48,7 @@ export default {
       if (this.$store.getters.getFirstChassis){
         this.chassis = chassis;
         this.openWarning = true;
-        console.log("Set chassis: " + chassis);
+        //console.log("Set chassis: " + chassis);
       }else{
         this.$store.commit("setFirstChassis");
         this.$store.commit('changeChassis', chassis);
@@ -68,13 +71,13 @@ export default {
             src: file1
           },
           {
-            src: 'https://www.brookings.edu/wp-content/uploads/2017/11/metro_20171121_tech-empowers-tech-polarizes-mark-muro.jpg'
+            src: file2
           },
           {
-            src: 'https://www.homage.sg/wp-content/uploads/2018/09/47724337_l-1080x675.jpg'
+            src: file3
           },
           {
-            src: 'http://www.sandiego-tech.com/wp-content/uploads/2016/09/tech3.jpg'
+            src: file4
           }
         ],
         openWarning: false,
