@@ -69,6 +69,30 @@ export default {
         }
     },
     created() {
+        //
+        var scrw = window.innerWidth;//get screen width
+        var scrh = window.innerHeight;//get screen height
+        //
+        if(!this.$store.getters.getYSide){
+            //set field dimensions
+            var factor = 0;
+            if(scrh / scrw > 0.481){//bigger height than normal
+                factor = scrw / 1422;
+            }else{//bigger width than normal
+                factor = scrh / 684;
+            }
+            this.pxperinch = 3 * factor;
+            this.fieldDim = (423 / 3) * this.pxperinch;
+            //
+            this.$store.commit("setPx", this.pxperinch);
+        }else{
+            this.pxperinch = this.$store.getters.getPxPerInch;
+            this.fieldDim = (423 / 3) * this.pxperinch;
+        }
+        //
+        this.imageHeight = this.fieldDim;
+        this.imageWidth = this.fieldDim;
+        //
         const image = new window.Image();
         image.src = this.imageSrc;
         this.configKonva = {
