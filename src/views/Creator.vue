@@ -1847,6 +1847,7 @@ export default {
         this.curX = this.startingPos.x;
         //
         this.sideChosen = 2;
+        this.$store.commit("setSide", [this.starpos, this.startingPos.y, this.startingPos.rotation]);
         //
         /*this.curX = this.startingPos.x;
         this.curY = mousePos.y;
