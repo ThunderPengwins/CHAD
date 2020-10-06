@@ -435,24 +435,6 @@ export default {
       //this function is called when all steps are deleted or the starting position is reset
       this.deleteWarning = false;//close warning
       //
-      if (this.sideChosen != 3) {//reset starting side
-        if (this.starpos == "left") {//put on left
-          this.startingPos.x = (this.robotLength * this.pxperinch / 2 + 5);
-          this.startingPos.y = this.fieldDim / 4;
-          this.startingPos.rotation = 90;
-          this.curAngle = 90;
-        } else if (this.starpos == "right") {//put on right
-          this.startingPos.x = this.fieldDim - (this.robotLength * this.pxperinch / 2) - 5;
-          this.startingPos.y = this.fieldDim / 4;
-          this.startingPos.rotation = -90;
-          this.curAngle = -90;
-        }
-        if(this.sideChosen == 0){
-          this.sideChosen = 1;
-        }
-        this.laststarpos = this.starpos;
-      }
-      //
       this.$store.commit("nukeIt");//Reset Everything but starting side
       this.$store.commit("setGenCode", null);
       this.points = [];
@@ -462,6 +444,34 @@ export default {
       this.directionLine = null;
       this.robotWidth = 16;
       this.robotLength = 18;
+      //
+      if (this.sideChosen != 3) {//reset starting side
+        this.startingPos.rotation = 0;//face forward
+        this.curAngle = 0;
+        this.startingPos.y = this.fieldDim - this.robotLength - 10;//bottom of the field
+        //
+        switch(this.starpos){
+          case "left blue":
+            this.startingPos.x = this.fieldDim / 6;//x position 1/6 from left of field
+            break;
+          case "right blue":
+            this.startingPos.x = this.fieldDim * 2 / 6;//x position 2/6 from left of field
+            break;
+          case "left red":
+            this.startingPos.x = this.fieldDim * 4 / 6;//x position 4/6 from left of field
+            break;
+          case "right red":
+            this.startingPos.x = this.fieldDim * 5 / 6;//x position 5/6 from left of field
+            break;
+          default:
+            this.startingPos.x = 0;
+            break;
+        }
+        //
+        this.sideChosen = 1;
+        //
+        this.laststarpos = this.starpos;
+      }
       //
       if(this.sideChosen == 3){//steps deleted, starting pos remains
         this.points.push({//recolor starting point
@@ -1830,10 +1840,16 @@ export default {
             }
             break;
         }
-      }else if(this.sideChosen == 1){//fresh auto, setting Y starting pos
+      }else if(this.sideChosen == 1){//fresh auto, setting starting rotation
+        let n = mousePos.x - this.startingPos.x;
+        let m = mousePos.y - this.startingPos.y;
+        //
         this.curX = this.startingPos.x;
+        //
+        this.sideChosen = 2;
+        //
+        /*this.curX = this.startingPos.x;
         this.curY = mousePos.y;
-        this.startingPos.y = mousePos.y;
         this.$store.commit("setSide", [this.starpos, this.startingPos.y, this.startingPos.rotation]);
         //console.log("Set Y: " + this.$store.getters.getYSide);
         this.interimPoint = {
@@ -1850,7 +1866,7 @@ export default {
           rotation: this.startingPos.rotation,
           lineCap: "round",
           lineJoin: "round"
-        };
+        };*/
       }else if(this.sideChosen == 2){//fresh auto, setting starting direction
         if (mousePos.x > this.curX) {
           a1 = 90 - Math.atan((this.curY - mousePos.y) / (mousePos.x - this.curX)) * 180 / Math.PI;
@@ -2761,7 +2777,7 @@ export default {
   },
   data: () => ({
     presets: ["Gear ratio: 20", "Gear ratio: 40", "Gear ratio: 60", "Custom"],
-    starts: ["left", "right"],
+    starts: ["left blue", "right blue", "left red", "right red"],
     dialog: false,
     drive: MovementOptions.DRIVE,
     turn: MovementOptions.TURN,
@@ -3013,6 +3029,7 @@ input:disabled {
   top: 25%;
   background-color: white;
   position: absolute;
+  font-size: 100%;
 }
 
 #tog-drive {
