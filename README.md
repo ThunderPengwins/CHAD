@@ -12,14 +12,14 @@ Okay, here we go
   3. Choose your CPI present, usually based on motor gear ratio but sometimes with custom stuff (google the terms) - also important
   4. Enter the dimensions of your robot - not super important (yet)
   5. Pick a starting position
-    a. choose one of the tapes
-    b. move your cursor over the field and then click to confirm rotation
-    c. move your cursor across the field and click to confirm x position
+  - a. choose one of the tapes
+  - b. move your cursor over the field and then click to confirm rotation
+  - c. move your cursor across the field and click to confirm x position
   6. Use the different step types to build an autonomous
-    a. Move your cursor over the field and click to confirm values or
-    b. enter custom values in the input fields
-    c. click done to confirm the step
-    d. click the trash can to delete a step and the X to delete all steps
+  - a. Move your cursor over the field and click to confirm values or
+  - b. enter custom values in the input fields
+  - c. click done to confirm the step
+  - d. click the trash can to delete a step and the X to delete all steps
   7. Click generate
   8. Click copy to clipboard
   9. Make a new class in the ftc app and call it your autonomous name (case sensitive)
@@ -45,30 +45,30 @@ Also, if your autonomous starts acting weird and you haven't changed the robot, 
 
 # Troubleshooting
 My robot is turning while moving
-  -> You have a disconnected encoder, which means either it's broken or a wire is broken or a wire is disconnected.
+-> You have a disconnected encoder, which means either it's broken or a wire is broken or a wire is disconnected.
 
 My robot turns a little more or less than it should
-  -> Your range needs to be changed.
+---> Your range needs to be changed.
       In the `turnWithGyro` function, there should be lines the following lines:
-      ```java
-      Double firsta = convertify(first - 5);//175
-      Double firstb = convertify(first + 5);//-175
-      ```
+```java
+Double firsta = convertify(first - 5);//175
+Double firstb = convertify(first + 5);//-175
+```
       and
-      ```java
-      Double seconda = convertify(second - 5);//175
-      Double secondb = convertify(second + 5);//-175
-      ```
+```java
+Double seconda = convertify(second - 5);//175
+Double secondb = convertify(second + 5);//-175
+```
       The -5 and +5 you see are creating your turning range, which means the robot will stop once it's anywhere in that range. The default is 5 degrees more and less than your target. However, you can change this to whatever you wish. Just remember to change the numbers in all programs as CHAD functions are all independent.
 
 My robot turns a lot more or less than it should
-  -> Either you've got a wrong input or your Gyro is broken. Since the IMU throws an error on initializing when it's configured incorrectly, if the inputs are correct then it's just broken. Test it a few more ways and then replace your hub.
+---> Either you've got a wrong input or your Gyro is broken. Since the IMU throws an error on initializing when it's configured incorrectly, if the inputs are correct then it's just broken. Test it a few more ways and then replace your hub.
 
 I get an error when starting a CHAD program that says something about the IMU
-  -> You've probably got a wrong configuration. Try to run the program regardless, and if it works ignore the error. If it doesn't, make sure you've configure your IMU in an I2C port as "imu" Sometimes there's a number after it by default, so look out for that.
+---> You've probably got a wrong configuration. Try to run the program regardless, and if it works ignore the error. If it doesn't, make sure you've configure your IMU in an I2C port as "imu" Sometimes there's a number after it by default, so look out for that.
 
 I get an error in my IDE (Android Studio or onbot) when I put CHAD programs in a folder
-  -> By default, CHAD files cannot be put in folders past the normal spot, but this can be changed.
+---> By default, CHAD files cannot be put in folders past the normal spot, but this can be changed.
     The issue comes from this line:
     ```java
     package org.firstinspires.ftc.teamcode;
