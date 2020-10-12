@@ -22,6 +22,7 @@ export const store = new Vuex.Store({
     cpishow: "CPI Presets",
     side: "Starting Side",
     yside: null,
+    xside: null,
     startRot: null,
     interim: [],
     pxPerInch: null
@@ -53,10 +54,11 @@ export const store = new Vuex.Store({
     setCPIShow(state, show){
       state.cpishow = show;
     },
-    setSide(state, [side, yside, rotation]){
+    setSide(state, [side, startingPos]){
       state.side = side;
-      state.yside = yside;
-      state.startRot = rotation;
+      state.xside = startingPos.x;
+      state.yside = startingPos.y;
+      state.startRot = startingPos.rotation;
     },
     confirmStep(state, params){
       state.listOfSteps.push({
@@ -121,6 +123,7 @@ export const store = new Vuex.Store({
     getCPIShow: state => state.cpishow,
     getSide: state => state.side,
     getYSide: state => state.yside,
+    getXSide: state => state.xside,
     getStartRot: state => state.startRot,
     getInterim: state => state.interim,
     getPxPerInch: state => state.pxPerInch
