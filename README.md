@@ -29,7 +29,7 @@ Okay, here we go
   13. Done!
 It seems like a lot, but I tried it once and did an entire autonomous in 1.5 minutes!
 
-#Second Time Instructions (same chassis)
+# Second Time Instructions (same chassis)
 This doesn't really deserve it's own section, but just do everything the same as above except two things:
   1. Enter the bias you got from calibration
   2. Don't both downloading the calibration code and recalibrating
