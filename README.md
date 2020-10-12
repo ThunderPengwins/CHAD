@@ -44,39 +44,46 @@ So, CHAD's defaults should be pretty close from the get go, but it's still good 
 Also, if your autonomous starts acting weird and you haven't changed the robot, it's good to troubleshoot before recalibrating
 
 # Troubleshooting
-My robot is turning while moving
--> You have a disconnected encoder, which means either it's broken or a wire is broken or a wire is disconnected.
+### My robot is turning while moving
+You have a disconnected encoder, which means either it's broken or a wire is broken or a wire is disconnected.
 
-My robot turns a little more or less than it should
----> Your range needs to be changed.
-      In the `turnWithGyro` function, there should be lines the following lines:
+### My robot turns a little more or less than it should
+Your range needs to be changed.
+
+In the `turnWithGyro` function, there should be lines the following lines:
+
 ```java
 Double firsta = convertify(first - 5);//175
 Double firstb = convertify(first + 5);//-175
 ```
-      and
+
+and
+      
 ```java
 Double seconda = convertify(second - 5);//175
 Double secondb = convertify(second + 5);//-175
 ```
-      The -5 and +5 you see are creating your turning range, which means the robot will stop once it's anywhere in that range. The default is 5 degrees more and less than your target. However, you can change this to whatever you wish. Just remember to change the numbers in all programs as CHAD functions are all independent.
 
-My robot turns a lot more or less than it should
----> Either you've got a wrong input or your Gyro is broken. Since the IMU throws an error on initializing when it's configured incorrectly, if the inputs are correct then it's just broken. Test it a few more ways and then replace your hub.
+The -5 and +5 you see are creating your turning range, which means the robot will stop once it's anywhere in that range. The default is 5 degrees more and less than your target. However, you can change this to whatever you wish. Just remember to change the numbers in all programs as CHAD functions are all independent.
 
-I get an error when starting a CHAD program that says something about the IMU
----> You've probably got a wrong configuration. Try to run the program regardless, and if it works ignore the error. If it doesn't, make sure you've configure your IMU in an I2C port as "imu" Sometimes there's a number after it by default, so look out for that.
+### My robot turns a lot more or less than it should
+Either you've got a wrong input or your Gyro is broken. Since the IMU throws an error on initializing when it's configured incorrectly, if the inputs are correct then it's just broken. Test it a few more ways and then replace your hub.
 
-I get an error in my IDE (Android Studio or onbot) when I put CHAD programs in a folder
----> By default, CHAD files cannot be put in folders past the normal spot, but this can be changed.
-    The issue comes from this line:
-    ```java
-    package org.firstinspires.ftc.teamcode;
-    ```
-    This line specifies where the code is located. If you want to put a CHAD program in a folder, add dot and the name of your folder. For instance, if you have a folder named trash, the line should say:
-    ```java
-    package org.firstinspires.ftc.teamcode.trash;
-    ```
+### I get an error when starting a CHAD program that says something about the IMU
+You've probably got a wrong configuration. Try to run the program regardless, and if it works ignore the error. If it doesn't, make sure you've configure your IMU in an I2C port as "imu" Sometimes there's a number after it by default, so look out for that.
+
+### I get an error in my IDE (Android Studio or onbot) when I put CHAD programs in a folder
+By default, CHAD files cannot be put in folders past the normal spot, but this can be changed.
+The issue comes from this line:
+
+```java
+package org.firstinspires.ftc.teamcode;
+```
+This line specifies where the code is located. If you want to put a CHAD program in a folder, add dot and the name of your folder. For instance, if you have a folder named trash, the line should say:
+
+```java
+package org.firstinspires.ftc.teamcode.trash;
+```
 
 Most other issues come down to configuration, wiring, CPI numbers, and hardware initialization, which cannot possibly be covered in every aspect (and which will have to be dealt with in programs not using CHAD as well).
 
