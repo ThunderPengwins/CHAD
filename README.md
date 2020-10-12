@@ -34,7 +34,7 @@ This doesn't really deserve it's own section, but just do everything the same as
   1. Enter the bias you got from calibration
   2. Don't both downloading the calibration code and recalibrating
 
-#Calibration Instructions
+# Calibration Instructions
 So, CHAD's defaults should be pretty close from the get go, but it's still good to calibrate. Just keep in mind if you're getting a bias of more than 2 or less than 0.3 you probably have an issue with your CPI numbers.
   1. Set a tape measure next to your robot and run the Calibrate autonomous program
   2. Meause how far it went
@@ -43,7 +43,7 @@ So, CHAD's defaults should be pretty close from the get go, but it's still good 
   5. If you make major changes to the robot like adding a lot of weight or changing the center of balance you should recalibrate
 Also, if your autonomous starts acting weird and you haven't changed the robot, it's good to troubleshoot before recalibrating
 
-#Troubleshooting
+# Troubleshooting
 My robot is turning while moving
   -> You have a disconnected encoder, which means either it's broken or a wire is broken or a wire is disconnected.
 
