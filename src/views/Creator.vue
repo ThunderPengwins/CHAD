@@ -442,8 +442,6 @@ export default {
       this.arcs = [];
       this.interimLine = null;
       this.directionLine = null;
-      this.robotWidth = 16;
-      this.robotLength = 18;
       //
       if (this.sideChosen != 3) {//reset starting side
         this.startingPos.rotation = 0;//face forward
@@ -2846,8 +2844,10 @@ export default {
     }
     //
     if(this.$store.getters.getDBias){//fresh auto
+      //
       if(this.$store.getters.chassis == 'meccanum'){//meccy bias
         this.bias = 0.8;
+        //console.log("Restore bias");
       }else if(this.$store.getters.chassis == 'holonomic'){//holo bias
         this.bias = 0.714;
       }
@@ -2858,6 +2858,11 @@ export default {
     //
     this.distance = 30;
     this.angle = 45;
+    //
+    if(this.$store.getters.getDimChange){
+      this.robotWidth = this.$store.getters.getWidth;
+      this.robotLength = this.$store.getters.getLength;
+    }
     //
     this.cpr = this.$store.getters.getCPI[0];
     this.gearratio = this.$store.getters.getCPI[1];
@@ -2884,9 +2889,6 @@ export default {
         this.recallAuto();
       }
     }
-    //
-    this.robotWidth = this.$store.getters.getWidth;
-    this.robotLength = this.$store.getters.getLength;
     //
   },
   data: () => ({

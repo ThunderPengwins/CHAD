@@ -15,6 +15,7 @@ export const store = new Vuex.Store({
     genCali: null,
     roboLength: 18,
     roboWidth: 16,
+    dimChange: false,
     bias: 1,
     name: null,
     dBias: true,
@@ -31,15 +32,22 @@ export const store = new Vuex.Store({
     changeChassis(state, chassis) {
       state.chassis = chassis;
       state.listOfSteps = [];
+      state.roboWidth = 16;
+      state.roboLength = 18;
+      state.dimChange = false;
+      state.bias = 1
+      state.dBias = true;
     },
     setCurrentStep(state, step) {
       state.currentStep = step
     },
     setWidth(state, width){
       state.roboWidth = width;
+      state.dimChange = true;
     },
     setLength(state, length){
       state.roboLength = length;
+      state.dimChange = true;
     },
     setBias(state, bias){
       state.bias = bias;
@@ -79,10 +87,6 @@ export const store = new Vuex.Store({
     nukeIt(state){
       state.listOfSteps = [];
       state.generateClicked = false;
-      state.roboLength = 18;
-      state.roboWidth = 16;
-      state.bias = 1
-      state.dBias = true;
     },
     setGenCode(state, code){
       state.genCode = code;
@@ -116,6 +120,7 @@ export const store = new Vuex.Store({
     getGenCali: state => state.genCali,
     getWidth: state => state.roboWidth,
     getLength: state => state.roboLength,
+    getDimChange: state => state.dimChange,
     getBias: state => state.bias,
     getName: state => state.name,
     getDBias: state => state.dBias,
