@@ -42,8 +42,8 @@
       <v-btn
         color="rgba(100,230,209)"
         flat
-        value="Scorer"
-        to="/Scorer"
+        value="Puzzles"
+        to="http://chad-shifter.s3-website-us-east-1.amazonaws.com/"
       >
         <span>Scoring</span>
         <v-icon>grid_on</v-icon>
