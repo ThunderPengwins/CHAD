@@ -24,10 +24,11 @@
                 <span class="tooltiptext">CPI Info<br/><hr/><p class="hover-info">Determines rotation of wheels. Presets assume 4.125 inch wheel diameter and 28 counts per rotation motor. Select custom to bypass this.</p></span>
             </div>
             <div class="tooltip" id="pos-start">
-                <select v-model="starpos" @change="startChange($event)" class="dropdown">
+                <!--<select v-model="starpos" @change="startChange($event)" class="dropdown">
                     <option disabled selected>Starting Side</option>
                     <option v-for="(start, index) in starts" v-bind:key="index + 'starting_side'">{{start}}</option>
-                </select>
+                </select>-->
+                <v-btn id="posButton" class="dropdown" @click="startChange()">Position Bot</v-btn>
                 <span class="tooltiptext">Side Info<br/><hr/><p class="hover-info">Used for the field display. This won't affect the code.</p></span>
             </div>
             <div class="tooltip" id="pos-dims">
@@ -441,9 +442,54 @@ export default {
       this.lines = [];
       this.arcs = [];
       this.interimLine = null;
+      this.interimArc = null;
       this.directionLine = null;
       //
-      if (this.sideChosen != 3) {//reset starting side
+      if(this.sideChosen == 1 || this.sideChosen == 3){//keep starting position
+        this.startingPos.x = this.curX;
+        this.startingPos.y = this.curY;
+        this.startingPos.rotation = 5 * Math.round(this.curAngle / 5);
+        this.curAngle = this.startingPos.rotation;
+        //
+        //console.log("Start confirmed");
+        this.points.push({//recolor starting point
+          //
+          x: this.startingPos.x,
+          y: this.startingPos.y,
+          rotation: this.startingPos.rotation,
+          width: this.robotWidth * this.pxperinch,
+          height: this.robotLength * this.pxperinch,
+          offsetX: this.robotWidth * this.pxperinch / 2,
+          offsetY: this.robotLength * this.pxperinch / 2,
+          stroke: "#32cd32",
+          strokeWidth: 5 / 3 * this.pxperinch,
+          cornerRadius: 5 / 3 * this.pxperinch
+        });
+        this.sideChosen = 3;
+      }else{//new starting position
+        this.startingPos.rotation = 0;//face forward
+        this.startingPos.x = this.fieldDim / 2;//position in center of field
+        this.startingPos.y = this.fieldDim / 2;
+        //
+        this.interimPoint = {//draw initial position
+          x: this.startingPos.x,
+          y: this.startingPos.y,
+          rotation: this.startingPos.rotation,
+          width: this.robotWidth * this.pxperinch,
+          height: this.robotLength * this.pxperinch,
+          offsetX: this.robotWidth * this.pxperinch / 2,
+          offsetY: this.robotLength * this.pxperinch / 2,
+          stroke: this.newColor,
+          dash: [20, 20],
+          strokeWidth: 5 / 3 * this.pxperinch,
+          cornerRadius: 5 / 3 * this.pxperinch
+        }
+        //
+        this.$store.commit("resetSide");
+        this.sideChosen = 1;
+      }
+      //
+      /*if (this.sideChosen != 3) {//reset starting side
         this.startingPos.rotation = 0;//face forward
         this.curAngle = 0;
         this.startingPos.y = this.fieldDim - this.robotLength - 10;//bottom of the field
@@ -503,7 +549,7 @@ export default {
           cornerRadius: 5 / 3 * this.pxperinch
         }
         this.$store.commit("resetSide");
-      }
+      }*/
       //
       this.curX = this.startingPos.x;
       this.curY = this.startingPos.y;
@@ -551,12 +597,15 @@ export default {
       this.$store.commit("setCPI", [this.cpr, this.gearratio, this.diameter]);
     },
     startChange: function() {
+      //console.log("Function called");
       //this function is called when a change is made to the starting position
       if (this.$store.getters.getTheSteps.length >= 1) {//auto is aged
         this.sideChosen = 0;
         this.deleteWarning = true;//request confirmation
       } else {
-        this.sideChosen = 1;
+        if(this.sideChosen != 1 && this.sideChosen != 2){
+          this.sideChosen = -1;
+        }
         this.confirmDelete();//no consequences, prepare new starting position
       }
       //
@@ -1143,12 +1192,14 @@ export default {
       if(this.sideChosen == 1 || this.sideChosen == 2){//if starting position is being finalized
         this.startingPos.y = this.curY;//set Y starting pos
         //
-        if(this.sideChosen == 1){//finish rotation
+        if(this.sideChosen == 1){//finish position
           //
           this.curAngle = 5 * Math.round(this.curAngle / 5);
           this.nextX = mousePos.x - this.startingPos.x;
           //
-          this.interimPoint = {
+          //console.log(`x: ${this.curX}, y: ${this.curY}, a: ${this.curAngle}`);
+          //
+          /*this.interimPoint = {
             x: this.curX,
             y: this.curY,
             width: this.robotWidth * this.pxperinch,
@@ -1159,8 +1210,12 @@ export default {
             strokeWidth: 5 / 3 * this.pxperinch,
             cornerRadius: 5 / 3 * this.pxperinch,
             rotation: this.curAngle
-          };
+          };*/
           //
+          if(this.curY > mousePos.y){
+            y1 = -y1;
+            x1 = -x1;
+          }
           var ix = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
           var iy = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
           //
@@ -1244,6 +1299,7 @@ export default {
     },
     setStepPoint: function(mousePos) {
       //this function is called when the mouse moves around the field
+      //console.log(this.curAngle);
       if (this.sideChosen == 3) {//aged auto, setting interim location
         switch (this.$store.getters.currentStep) {
           case MovementOptions.DRIVE:
@@ -1851,8 +1907,8 @@ export default {
             }
             break;
         }
-      }else if(this.sideChosen == 1){//fresh auto, setting starting rotation
-        let n = mousePos.x - this.startingPos.x;
+      }else if(this.sideChosen == 2){//fresh auto, setting starting rotation
+        /*let n = mousePos.x - this.startingPos.x;
         let m = this.startingPos.y - mousePos.y;
         //
         let theta1 = Math.atan(n / m);
@@ -1875,22 +1931,31 @@ export default {
           g = (-1 / Math.tan(theta1)) * (c - b1);
         }
         //
-        this.curX = this.startingPos.x;
-        this.curY = this.fieldDim - g - (1 * this.pxperinch);
-        this.curAngle = Math.round(180 * theta1 / Math.PI);
+        //this.curX = this.startingPos.x;
+        //this.curY = this.fieldDim - g - (1 * this.pxperinch);*/
+        //
+        let n = mousePos.x - this.curX;
+        let m = this.curY - mousePos.y;
+        //
+        let theta1 = Math.atan(n / m);//flawed if m < 0
+        theta1 = Math.round(180 * theta1 / Math.PI);
+        if(m < 0){
+          theta1 += 180;
+        }else if(m == 0){
+          theta1 = 0;
+        }
+        //console.log(theta1);
+        //
+        this.curAngle = theta1;
         this.startingPos.rotation = this.curAngle;
-        if(mousePos.y > this.startingPos.y){//if mouse is below robot, correct atan
-          this.curAngle += 180;
-          //
-          if(this.curAngle > 180){//if angle is 180 to 270, make it -180 to -90
+        if(this.curAngle > 180){//if angle is 180 to 270, make it -180 to -90
             this.curAngle -= 360;
           }
-        }
         //
         //console.log(`curAngle: ${this.curAngle}`);
         //
         this.interimPoint = {
-          x: this.startingPos.x,
+          x: this.curX,
           y: this.curY,
           width: this.robotWidth * this.pxperinch,
           height: this.robotLength * this.pxperinch,
@@ -1899,12 +1964,31 @@ export default {
           stroke: this.newColor,
           strokeWidth: 5 / 3 * this.pxperinch,
           cornerRadius: 5 / 3 * this.pxperinch,
-          dash: [20, 20],
           rotation: this.curAngle,
           lineCap: "round",
           lineJoin: "round"
         };
         //
+        x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
+        y1 = (this.robotLength / 2 + 5) * Math.sin((90 - this.curAngle) * Math.PI / 180);
+        if(m < 0){
+          //y1 = -y1;
+          //x1 = -x1;
+        }
+        //
+        this.directionLine = {
+          x: 0,
+          y: 0,
+          points: [
+            this.curX,
+            this.curY,
+            this.curX + x1 * this.pxperinch,
+            this.curY - y1 * this.pxperinch
+          ],
+          stroke: "orange",
+          strokeWidth: 4 / 3 * this.pxperinch,
+          lineCap: "round"
+        };
         //this.$store.commit("setSide", [this.starpos, this.startingPos]);
         //
         /*this.curX = this.startingPos.x;
@@ -1926,9 +2010,9 @@ export default {
           lineCap: "round",
           lineJoin: "round"
         };*/
-      }else if(this.sideChosen == 2){//fresh auto, setting starting x position
+      }else if(this.sideChosen == 1){//fresh auto, setting starting x position
         //
-        let theta1 = this.startingPos.rotation * Math.PI / 180;
+        /*let theta1 = this.startingPos.rotation * Math.PI / 180;
         x1 = this.robotWidth * this.pxperinch / 2;
         y1 = this.robotLength * this.pxperinch / 2;
         let d = Math.sqrt(Math.pow(x1,2) + Math.pow(y1,2));
@@ -1949,9 +2033,13 @@ export default {
           this.curX = a;
         }else{
           this.curX = mousePos.x - this.nextX;
-        }
+        }*/
         //this.$store.commit("setSide", [this.starpos, this.startingPos]);
         //console.log("Set Y: " + this.$store.getters.getYSide);
+        //
+        this.curX = mousePos.x;
+        this.curY = mousePos.y;
+        //
         this.interimPoint = {
           x: this.curX,
           y: this.curY,
@@ -1962,7 +2050,8 @@ export default {
           stroke: this.newColor,
           strokeWidth: 5 / 3 * this.pxperinch,
           cornerRadius: 5 / 3 * this.pxperinch,
-          rotation: this.curAngle
+          rotation: this.curAngle,
+          dash: [20, 20],
         };
         //
         x1 = (this.robotLength / 2 + 5) * Math.cos((90 - this.curAngle) * Math.PI / 180);
@@ -2961,6 +3050,12 @@ export default {
 </script>
 
 <style lang="scss">
+#posButton{
+  text-transform: none;
+  top: -10%;
+  height: 65%;
+}
+
 #top {
   height: 5%;
   width: 100%;
