@@ -1943,6 +1943,11 @@ export default {
           theta1 += 180;
         }else if(m == 0){
           theta1 = 0;
+          if(n > 0){
+            theta1 = 90;
+          }else if(n != 0){
+            theta1 = -90;
+          }
         }
         //console.log(theta1);
         //
@@ -3007,7 +3012,7 @@ export default {
     interimLine: null,
     interimArc: null,
     directionLine: null,
-    field: require("@/assets/Pictures/ultimateField.png"),
+    field: require("@/assets/Pictures/fieldv1.png"),
     fieldDim: 423,
     curX: 268,
     curY: 159,
