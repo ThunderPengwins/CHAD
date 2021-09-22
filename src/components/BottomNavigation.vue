@@ -39,7 +39,7 @@
         <v-icon>code</v-icon>
       </v-btn>
       
-      <v-btn
+      <!--<v-btn
         color="rgba(100,230,209)"
         flat
         value="Scorer"
@@ -47,7 +47,7 @@
       >
         <span>Scoring</span>
         <v-icon>grid_on</v-icon>
-      </v-btn>
+      </v-btn>-->
 
       <v-btn
         color="rgba(100,230,209)"
