@@ -12,7 +12,7 @@ Okay, here we go
   3. Choose your CPI present, usually based on motor gear ratio but sometimes with custom stuff (google the terms) - also important
   4. Enter the dimensions of your robot - not super important (yet)
   5. Position your robot
-  - a. use the "Position Bot"
+  - a. use the "Position Bot" button
   - b. move your cursor over the field and then click to confirm position
   - c. move your cursor around the field and click to confirm rotation
   6. Use the different step types to build an autonomous
