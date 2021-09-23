@@ -3012,7 +3012,7 @@ export default {
     interimLine: null,
     interimArc: null,
     directionLine: null,
-    field: require("@/assets/Pictures/fieldv1.png"),
+    field: require("@/assets/Pictures/fieldv2.png"),
     fieldDim: 423,
     curX: 268,
     curY: 159,
