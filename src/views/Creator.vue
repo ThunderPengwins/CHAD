@@ -74,6 +74,7 @@
                         :directionLine = 'directionLine'
                     >
                     </draw-lines>
+                    <p id="credit">Field image provided by team 7026 JDroids</p>
                 </div>
             <!--</svg>-->
         <!-- #endregion -->
@@ -3055,6 +3056,11 @@ export default {
 </script>
 
 <style lang="scss">
+#credit{
+  color: white;
+  font-family: "Montserrat", sans-serif;
+}
+
 #posButton{
   text-transform: none;
   top: -10%;
