@@ -23,7 +23,7 @@
                                 <li>When entering the gear ratio, be sure to take into account both the internal and external gear boxes, and whether they are increasing speed or torque.</li>
                                 <li>When measuring the diameter, do so from the center of the rim of the wheel.</li>
                             </ol>
-                            <li><strong>Select a starting position</strong> for your autonomous. While this does not directly affect your generated autonomous code, it will help us visual the process on the field.</li>
+                            <li><strong>Position the robot</strong> for your autonomous. Drag your mouse over the field and click once to confirm position and twice to confirm rotation. While this does not directly affect your generated autonomous code, it will help us visualize the process on the field.</li>
                             <li>Generally, you will leave the <strong>movement bias</strong> at the default of 1, but if you have used CHAD before and know there are adjustments that need to be made, feel free to enter in a decimal or integer that will be multiplied against the encoder counts to counteract friction or other extraneous influences.</li>
                             <li><strong>Select the type of your first step.</strong> Depending on what chassis you have chosen, you will be given the option of Drive, Turn, and Arc or Strafe.</li>
                             <ol type="a">

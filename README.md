@@ -11,10 +11,10 @@ Okay, here we go
   2. Name your autonomous - important
   3. Choose your CPI present, usually based on motor gear ratio but sometimes with custom stuff (google the terms) - also important
   4. Enter the dimensions of your robot - not super important (yet)
-  5. Pick a starting position
-  - a. choose one of the tapes
-  - b. move your cursor over the field and then click to confirm rotation
-  - c. move your cursor across the field and click to confirm x position
+  5. Position your robot
+  - a. use the "Position Bot" button
+  - b. move your cursor over the field and then click to confirm position
+  - c. move your cursor around the field and click to confirm rotation
   6. Use the different step types to build an autonomous
   - a. Move your cursor over the field and click to confirm values or
   - b. enter custom values in the input fields
