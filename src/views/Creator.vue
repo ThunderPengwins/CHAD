@@ -74,7 +74,7 @@
                         :directionLine = 'directionLine'
                     >
                     </draw-lines>
-                    <p id="credit">Field image provided by team 7026 JDroids</p>
+                    <p id="credit">Field image provided by team 11039 Innov8rz</p>
                 </div>
             <!--</svg>-->
         <!-- #endregion -->
@@ -3013,7 +3013,7 @@ export default {
     interimLine: null,
     interimArc: null,
     directionLine: null,
-    field: require("@/assets/Pictures/fieldv2.png"),
+    field: require("@/assets/Pictures/fieldv3.jpg"),
     fieldDim: 423,
     curX: 268,
     curY: 159,
